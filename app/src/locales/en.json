@@ -1,0 +1,19 @@
+{
+    "menu":{
+        "bonuses":"Bonuses",
+        "chibi":"Chibiverse",
+        "battles": "Battles",
+        "friens":"Friens",
+        "tasks":"Tasks",
+        "more":"More"
+    },
+    "wallet":{
+        "balance":"Balance",
+        "keys":"Keys"
+    },
+    "screens":{
+        "bonuses":{
+            "time":"Time"
+        }
+    }
+}

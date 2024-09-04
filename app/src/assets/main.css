@@ -1,0 +1,18 @@
+@import './base.css';
+
+
+@layer components {
+    button {
+        @apply bg-primary p-4 text-white font-bold rounded-xl
+        duration-300 transition-all;
+    }
+
+    button:disabled,
+    button[disabled] {
+        @apply bg-dark
+    }
+
+    .label{
+        @apply text-dark text-sm;
+    }
+}

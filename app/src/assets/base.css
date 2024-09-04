@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* semantic color variables for this project */
+:root {
+  --primary: #DA2F20;
+  --secondary: #FFCF23;
+  --dark: #8A8A8F;
+  --half-dark: #F2F2F7; 
+}
+
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  width: 100%;
+  line-height: 1.6;
+  font-family: sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: darkscale;
+}
+
+#app{
+  width: 100%;
+}

@@ -1,0 +1,19 @@
+{
+    "menu":{
+        "bonuses":"Бонусы",
+        "chibi":"Chibiverse",
+        "battles": "Битвы",
+        "friens":"Друзья",
+        "tasks":"Задачи",
+        "more":"Больше"
+    },
+    "wallet":{
+        "balance":"Баланс",
+        "keys":"Ключи"
+    },
+    "screens":{
+        "bonuses":{
+            "time":"Время"
+        }
+    }
+}
