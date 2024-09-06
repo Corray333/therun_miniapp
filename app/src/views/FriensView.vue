@@ -5,7 +5,9 @@ import Navbar from '@/components/Navbar.vue'
 
 <template>
     <section>
-        <h1>Friens</h1>
+        <section class=" flex justify-center items-center min-h-screen h-full w-full">
+            <h1 class=" font-bold text-2xl text-dark">Coming soon</h1>
+        </section>
         <Navbar  class=" fixed bottom-0"/>
     </section>
 </template>

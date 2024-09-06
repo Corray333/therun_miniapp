@@ -8,12 +8,10 @@ import (
 	"github.com/Corray333/therun_miniapp/internal/domains/user/types"
 	"github.com/Corray333/therun_miniapp/pkg/server/auth"
 	"github.com/go-chi/chi"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 type UserTransport struct {
 	router  *chi.Mux
-	bot     *tgbotapi.BotAPI
 	service service
 }
 
@@ -23,18 +21,20 @@ type service interface {
 	ListReferals(userID int64) ([]types.Referal, error)
 }
 
-func New(router *chi.Mux, bot *tgbotapi.BotAPI, service service) *UserTransport {
+func New(router *chi.Mux, service service) *UserTransport {
 	return &UserTransport{
-		router: router,
-		bot:    bot,
+		router:  router,
+		service: service,
 	}
 }
 
 func (t *UserTransport) RegisterRoutes() {
-	t.router.Use(auth.NewAuthMiddleware())
-	t.router.Post("/auth", t.auth)
-	t.router.Get("/user/{userID}", t.getUser)
-	t.router.Get("/user/{userID}/referals", t.listReferals)
+	t.router.Post("/api/users/auth", t.auth)
+	t.router.Group(func(r chi.Router) {
+		r.Use(auth.NewAuthMiddleware())
+		r.Get("/api/users/{userID}", t.getUser)
+		r.Get("/api/users/{userID}/referals", t.listReferals)
+	})
 }
 
 type authRequest struct {
@@ -55,7 +55,7 @@ func (t *UserTransport) auth(w http.ResponseWriter, r *http.Request) {
 
 	token, err := t.service.AuthUser(req.InitData, req.RefCode)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 

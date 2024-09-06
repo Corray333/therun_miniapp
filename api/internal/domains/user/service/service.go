@@ -2,6 +2,8 @@ package service
 
 import (
 	"database/sql"
+	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/user/types"
@@ -10,7 +12,7 @@ import (
 )
 
 const MaxPointsDefault = 200
-const FarmTimeDefault = 7200
+const FarmingTimeDefault = 7200
 const MaxNumberOfRetries = 10
 
 type repository interface {
@@ -74,7 +76,7 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, er
 		KeyBalance:   0,
 		LastClaim:    time.Now().Unix(),
 		MaxPoints:    MaxPointsDefault,
-		FarmTime:     FarmTimeDefault,
+		FarmingTime:  FarmingTimeDefault,
 	}
 
 	avatar, err := s.external.GetAvatar(creds.ID)
@@ -104,10 +106,13 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, er
 		if err != nil {
 			return "", err
 		}
+		fmt.Println("\nToken: ", token)
 
 		if err := s.repo.CreateUser(user); err == nil {
 			// TODO: maybe notify referer
 			return token, nil
+		} else {
+			slog.Error("error creating user: " + err.Error())
 		}
 		numberOfRetries++
 		if numberOfRetries > MaxNumberOfRetries {

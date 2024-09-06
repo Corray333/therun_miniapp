@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Corray333/therun_miniapp/internal/domains/user/types"
+	"github.com/Corray333/therun_miniapp/internal/types"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -93,7 +93,7 @@ func NewAuthMiddleware() func(next http.Handler) http.Handler {
 				slog.Error("Unauthorized: " + err.Error())
 				return
 			}
-			r = r.WithContext(context.WithValue(r.Context(), types.ContextKey("creds"), creds))
+			r = r.WithContext(context.WithValue(r.Context(), types.ContextID, creds.ID))
 			next.ServeHTTP(w, r)
 		}
 		return http.HandlerFunc(fn)

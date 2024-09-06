@@ -1,26 +1,28 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Balances from '@/components/Balances.vue';
 import clock from '@/components/icons/clock-icon.vue'
 import bcoin from '@/components/icons/bcoin-icon.vue'
 import Navbar from '@/components/Navbar.vue'
 import { Vue3Lottie } from 'vue3-lottie'
 import RunningJSON from '@/assets/animations/running.json'
-import { useBalanceStore } from '@/stores/counter'
-import { storeToRefs } from 'pinia';
+import { useAccountStore } from '@/stores/account'
+import axios from 'axios'
 
-const balanceStore = useBalanceStore()
+// import { storeToRefs } from 'pinia'
+
+const accStore = useAccountStore()
 
 
-class Farming {
-    maxPoints: number = 200;
-    endTime: number = 1725091363; // Unix timestamp in seconds
-}
+// class Farming {
+//     maxPoints: number = 200;
+//     endTime: number = 1725091363; // Unix timestamp in seconds
+// }
 
-const farming = ref<Farming>({
-    maxPoints: 200,
-    endTime: 1725091363,
-});
+// const farming = ref<Farming>({
+//     maxPoints: 200,
+//     endTime: 1725091363,
+// });
 
 const remainingTime = ref<string>('');
 const currentPoints = ref<number>(0);
@@ -38,11 +40,11 @@ const formatTime = (seconds: number) => {
 // Function to calculate remaining time and current points
 const calculateRemainingTimeAndPoints = () => {
     const now = Math.floor(Date.now() / 1000); // Current time in seconds (Unix timestamp)
-    const secondsLeft = farming.value.endTime - now;
+    const secondsLeft = accStore.user.lastClaim + accStore.user.farmingTime - now;
 
     if (secondsLeft <= 0) {
         remainingTime.value = '00:00:00';
-        currentPoints.value = farming.value.maxPoints; // All points earned
+        currentPoints.value = accStore.user.maxPoints; // All points earned
         clearInterval(coinsGainInterval.value)
         return;
     }
@@ -50,7 +52,7 @@ const calculateRemainingTimeAndPoints = () => {
     remainingTime.value = formatTime(secondsLeft);
 
     const elapsedTime = totalDuration - secondsLeft;
-    currentPoints.value = Math.round((elapsedTime / totalDuration) * farming.value.maxPoints * 100) / 100;
+    currentPoints.value = Math.round((elapsedTime / totalDuration) * accStore.user.maxPoints * 100) / 100;
 };
 
 const coinsGainInterval = ref(0)
@@ -67,10 +69,23 @@ onMounted(() => {
 
 })
 
-const claim = () => {
-    balanceStore.bonuses += farming.value.maxPoints
-    farming.value.endTime = Math.floor(Date.now() / 1000) + totalDuration
-    coinsGainInterval.value = setInterval(createSmallCoin, 500);
+const claim = async () => {
+    try {
+		const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/farming/claim`,{}, {
+			withCredentials: true,
+			headers: {
+				Authorization: accStore.token
+			}
+		})
+        accStore.user.farmingTime = data.farmingTime
+        accStore.user.lastClaim = data.lastClaim
+        accStore.user.pointBalance = data.pointBalance
+        accStore.user.maxPoints
+		return true
+	} catch (error) {
+		console.error(error)
+	}
+    coinsGainInterval.value = setInterval(createSmallCoin, 500)
 }
 
 const coinsContainer = ref<HTMLDivElement>()
@@ -106,22 +121,21 @@ function createSmallCoin() {
             <Balances />
             <span class=" flex gap-2 justify-center items-center">
                 <bcoin />
-                <p class=" text-left text-4xl font-bold">{{ currentPoints }}</p>
+                <p class=" text-left text-2xl font-bold">{{ currentPoints }}</p>
             </span>
             <span class=" relative mx-10">
                 <Vue3Lottie class=" absolute  duration-500 -top-12 left-0"
-                    :style="`margin-left: calc(${currentPoints / (farming.maxPoints / 100)}% - 32px)`"
-                    :animationData="RunningJSON" :height="48" :width="48" />
+                    :style="`margin-left: calc(${currentPoints / (accStore.user.maxPoints / 100)}% - 32px)`"
+                    :animationData="RunningJSON" :height="48" :width="48"/>
                 <span
-                    class=" relative overflow-hidden flex w-full justify-between py-1 px-4 font-bold bg-half_dark rounded-full">
+                    class=" relative overflow-hidden flex w-full justify-between text-white px-4 font-bold bg-half_dark rounded-full">
                     <span class=" absolute duration-500 bg-green-500 h-full left-0 top-0 rounded-full"
-                        :style="`width: ${currentPoints / (farming.maxPoints / 100)}%`"></span>
+                        :style="`width: ${currentPoints / (accStore.user.maxPoints / 100)}%`"></span>
                     <p class=" relative z-10">0</p>
-                    <p class=" relative z-10">{{ farming.maxPoints }}</p>
+                    <p class=" relative z-10">{{ accStore.user.maxPoints }}</p>
                 </span>
             </span>
             <section class=" flex relative items-center justify-center" ref="coinsContainer">
-                <div id="glow" class=" absolute rounded-full"></div>
                 <img id="coin" src="../components/coin-tap.png" class=" relative z-10" alt="">
             </section>
             <div class=" w-full flex justify-end">
@@ -133,8 +147,8 @@ function createSmallCoin() {
                     <p class=" text-dark text-sm">{{ $t('screens.bonuses.time') }}</p>
                 </div>
             </div>
-            <button @click="claim" :disabled="farming.endTime - Math.floor(Date.now() / 1000) > 1">Claim {{
-                    farming.maxPoints }}</button>
+            <button @click="claim" :disabled="accStore.user.lastClaim + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1">Claim {{
+                    accStore.user.maxPoints }}</button>
         </section>
         <Navbar class="" />
     </section>
@@ -143,6 +157,8 @@ function createSmallCoin() {
 <style>
 #coin {
     animation: coin-breath 5s infinite;
+    height: 15rem;
+    width: 15rem;
 }
 
 @keyframes coin-breath {
@@ -170,19 +186,6 @@ function createSmallCoin() {
 
 }
 
-#glow {
-    left: 50%;
-    top: 50%;
-    width: 250px;
-    height: 250px;
-    background-color: rgba(255, 215, 0, 0.5);
-    /* Золотистый цвет с прозрачностью */
-    z-index: 1;
-    /* Чтобы свечение было позади монеты */
-    filter: blur(20px);
-    /* Размытие для эффекта свечения */
-    animation: glow-animation 2s infinite;
-}
 
 @keyframes glow-animation {
     0% {
@@ -211,3 +214,4 @@ function createSmallCoin() {
     }
 }
 </style>
+@/stores/balance

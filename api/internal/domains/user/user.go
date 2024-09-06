@@ -7,25 +7,33 @@ import (
 	"github.com/Corray333/therun_miniapp/internal/domains/user/transport"
 	"github.com/Corray333/therun_miniapp/internal/files"
 	"github.com/Corray333/therun_miniapp/internal/storage"
+	"github.com/Corray333/therun_miniapp/internal/telegram"
 	"github.com/go-chi/chi"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 type UserController struct {
-	repo      repository.UserRepository
-	service   service.UserService
-	transport transport.UserTransport
+	repo      *repository.UserRepository
+	service   *service.UserService
+	transport *transport.UserTransport
 }
 
-func NewUserController(router *chi.Mux, tg *tgbotapi.BotAPI, store *storage.Storage, fileManager *files.FileManager) *UserController {
+func (c *UserController) GetService() *service.UserService {
+	return c.service
+}
+
+func NewUserController(router *chi.Mux, tg *telegram.TelegramClient, store *storage.Storage, fileManager *files.FileManager) *UserController {
 	repo := repository.New(store)
 	external := external.New(tg)
 	service := service.New(repo, external, fileManager)
-	transport := transport.New(router, tg, service)
+	transport := transport.New(router, service)
 
 	return &UserController{
-		repo:      *repo,
-		service:   *service,
-		transport: *transport,
+		repo:      repo,
+		service:   service,
+		transport: transport,
 	}
+}
+
+func (c *UserController) Build() {
+	c.transport.RegisterRoutes()
 }

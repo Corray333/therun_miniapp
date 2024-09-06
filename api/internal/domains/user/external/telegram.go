@@ -11,9 +11,13 @@ type External struct {
 	bot *tgbotapi.BotAPI
 }
 
-func New(bot *tgbotapi.BotAPI) *External {
+type botGetter interface {
+	GetBot() *tgbotapi.BotAPI
+}
+
+func New(tgclient botGetter) *External {
 	return &External{
-		bot: bot,
+		bot: tgclient.GetBot(),
 	}
 }
 

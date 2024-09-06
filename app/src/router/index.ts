@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+declare const Telegram: any
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -6,7 +7,8 @@ const router = createRouter({
     {
       path: '/farm',
       name: 'farm',
-      component: () => import('../views/FarmView.vue')
+      component: () => import('../views/FarmView.vue'),
+      alias:['/']
     },
     {
       path: '/chibi',
@@ -34,6 +36,18 @@ const router = createRouter({
       component: () => import('../views/MoreView.vue')
     }
   ]
+})
+
+router.beforeEach(async (to, from, next) => {
+  const tg = Telegram.WebApp
+	var BackButton = Telegram.WebApp.BackButton
+  if (to.name === 'farm') {
+    BackButton.hide()
+  } else{
+    BackButton.show() 
+  }
+
+  next()
 })
 
 export default router

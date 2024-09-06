@@ -18,12 +18,12 @@ func New(store *storage.Storage) *UserRepository {
 
 func (r *UserRepository) GetUser(userID int64) (*types.User, error) {
 	user := &types.User{}
-	err := r.db.Get(user, "SELECT * FROM users WHERE id = $1", userID)
+	err := r.db.Get(user, "SELECT * FROM users WHERE user_id = $1", userID)
 	return user, err
 }
 
 func (r *UserRepository) UpdateUser(user *types.User) error {
-	_, err := r.db.NamedExec("UPDATE users SET point_balance = :point_balance, last_claim = :last_claim WHERE id = :id", user)
+	_, err := r.db.NamedExec("UPDATE users SET point_balance = :point_balance, last_claim = :last_claim WHERE user_id = :user_id", user)
 	return err
 }
 
@@ -34,7 +34,7 @@ func (r *UserRepository) GetRefererID(refCode string) (int64, error) {
 }
 
 func (r *UserRepository) CreateUser(user *types.User) error {
-	_, err := r.db.NamedExec("INSERT INTO users (user_id, username, point_balance, race_balance, key_balance, last_claim, max_points, farm_time, ref_code, referer) VALUES (:user_id, :username, :point_balance, :race_balance, :key_balance, :last_claim, :max_points, :farm_time, :ref_code, :referer)", user)
+	_, err := r.db.NamedExec("INSERT INTO users (user_id, username, avatar, in_app_id, point_balance, race_balance, key_balance, last_claim, max_points, farm_time, ref_code, referer) VALUES (:user_id, :username, :avatar, 0, :point_balance, :race_balance, :key_balance, :last_claim, :max_points, :farm_time, :ref_code, :referer)", user)
 	return err
 }
 

@@ -9,7 +9,7 @@ type FarmingRepository struct {
 	db *sqlx.DB
 }
 
-func New(store storage.Storage) *FarmingRepository {
+func New(store *storage.Storage) *FarmingRepository {
 	return &FarmingRepository{
 		db: store.DB(),
 	}

@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/Corray333/therun_miniapp/docs"
 	"github.com/Corray333/therun_miniapp/internal/config"
+	"github.com/Corray333/therun_miniapp/internal/domains/farming"
 	"github.com/Corray333/therun_miniapp/internal/domains/user"
 	"github.com/Corray333/therun_miniapp/internal/files"
 	"github.com/Corray333/therun_miniapp/internal/storage"
@@ -18,12 +19,23 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+type controller interface {
+	Build()
+}
+
 type App struct {
-	server http.Server
+	server      *http.Server
+	controllers []controller
+}
+
+func (app *App) AddController(c controller) {
+	app.controllers = append(app.controllers, c)
 }
 
 func New() *App {
 	config.MustInit("../.env")
+
+	app := &App{}
 
 	router := chi.NewMux()
 	router.Use(logger.NewLoggerMiddleware())
@@ -41,10 +53,12 @@ func New() *App {
 	router.Get("/api/swagger/*", httpSwagger.WrapHandler)
 
 	// TODO: add timeouts
-	server := http.Server{
+	server := &http.Server{
 		Addr:    "0.0.0.0:" + viper.GetString("port"),
 		Handler: router,
 	}
+
+	app.server = server
 
 	telegramClient := telegram.NewClient(os.Getenv("BOT_TOKEN"))
 	store, err := storage.New()
@@ -54,14 +68,23 @@ func New() *App {
 
 	fileManager := files.New()
 
-	user.NewUserController(router, telegramClient.GetBot(), store, fileManager)
+	userController := user.NewUserController(router, telegramClient, store, fileManager)
+	app.AddController(userController)
 
-	return &App{
-		server: server,
+	farmingController := farming.NewFarmingController(router, store, userController.GetService())
+	app.AddController(farmingController)
+
+	return app
+}
+
+func (app *App) Init() *App {
+	for _, c := range app.controllers {
+		c.Build()
 	}
+	return app
 }
 
 func (app *App) Run() {
-
+	slog.Info("Server started at " + app.server.Addr)
 	slog.Error(app.server.ListenAndServe().Error())
 }

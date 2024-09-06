@@ -1,9 +1,14 @@
 package service
 
 import (
+	"errors"
 	"time"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/user/types"
+)
+
+var (
+	ErrClaimTooEarly = errors.New("claim too early")
 )
 
 type repository interface {
@@ -32,6 +37,10 @@ func (s *FarmingService) ClaimTokens(userID int64) (pointsGot, pointBalance, far
 		return
 	}
 
+	if user.LastClaim+int64(user.FarmingTime) > time.Now().Unix() {
+		return 0, user.PointBalance, user.FarmingTime, user.MaxPoints, user.LastClaim, ErrClaimTooEarly
+	}
+
 	user.PointBalance += user.MaxPoints
 	user.LastClaim = time.Now().Unix()
 
@@ -39,7 +48,7 @@ func (s *FarmingService) ClaimTokens(userID int64) (pointsGot, pointBalance, far
 		return
 	}
 
-	return user.MaxPoints, user.PointBalance, user.FarmTime, user.MaxPoints, user.LastClaim, nil
+	return user.MaxPoints, user.PointBalance, user.FarmingTime, user.MaxPoints, user.LastClaim, nil
 }
 
 func (s *FarmingService) GetUser(userID int64) (user *types.User, err error) {

@@ -4,6 +4,9 @@ import (
 	"github.com/Corray333/therun_miniapp/internal/domains/farming/repository"
 	"github.com/Corray333/therun_miniapp/internal/domains/farming/service"
 	"github.com/Corray333/therun_miniapp/internal/domains/farming/transport"
+	user_service "github.com/Corray333/therun_miniapp/internal/domains/user/service"
+	"github.com/Corray333/therun_miniapp/internal/storage"
+	"github.com/go-chi/chi"
 )
 
 type FarmingController struct {
@@ -12,14 +15,18 @@ type FarmingController struct {
 	transport transport.FarmingTransport
 }
 
-// func NewFarmingController(router *chi.Mux, tg *tgbotapi.BotAPI, store storage.Storage) *FarmingController {
-// 	repo := repository.New(store)
-// 	service := service.New(repo)
-// 	transport := transport.New(router, tg, service)
+func NewFarmingController(router *chi.Mux, store *storage.Storage, userService *user_service.UserService) *FarmingController {
+	repo := repository.New(store)
+	service := service.New(repo, userService)
+	transport := transport.New(router, service)
 
-// 	return &FarmingController{
-// 		repo:      *repo,
-// 		service:   *service,
-// 		transport: *transport,
-// 	}
-// }
+	return &FarmingController{
+		repo:      *repo,
+		service:   *service,
+		transport: *transport,
+	}
+}
+
+func (c *FarmingController) Build() {
+	c.transport.RegisterRoutes()
+}
