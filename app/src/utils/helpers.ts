@@ -7,10 +7,14 @@ declare const Telegram: any
 export const auth = async () => {
     const store = useAccountStore()
     let initData = ""
+    let refCode = ""
     if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
         const tg = Telegram.WebApp;
         if (tg.initData) {
             initData = tg.initData;
+        }
+        if (tg.initDataUnsafe){
+            refCode = tg.initDataUnsafe.start_param
         }
     } else {
         console.log("Telegram Web App SDK не доступен.");
@@ -21,7 +25,8 @@ export const auth = async () => {
 
     try {
         const {data} = await axios.post(`${import.meta.env.VITE_API_URL}/users/auth`, {
-            initData: initData
+            initData: initData,
+            refCode: refCode
         }, {
             withCredentials: true
         })

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { RouterView, useRouter } from 'vue-router'
+import { RouterView, useRouter, useRoute } from 'vue-router'
 import { auth } from '@/utils/helpers'
 import { useAccountStore } from './stores/account'
 import axios from 'axios'
@@ -27,6 +27,8 @@ const getUser = async (uid: number) => {
 }
 
 onBeforeMount(async () => {
+
+	
 	const tg = Telegram.WebApp
 	temp.value = tg.initData
 	const uid = tg.initDataUnsafe.user.id

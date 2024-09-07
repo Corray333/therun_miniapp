@@ -11,3 +11,8 @@ export class User {
     refCode: string="";
     referer?: number;
 }
+
+export class Referal {
+    avatar: string="";
+    username: string="";
+}

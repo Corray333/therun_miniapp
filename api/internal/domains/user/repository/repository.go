@@ -50,3 +50,9 @@ func (r *UserRepository) ListReferals(userID int64) ([]types.Referal, error) {
 	err := r.db.Select(&referals, "SELECT avatar, username FROM users WHERE referer = $1", userID)
 	return referals, err
 }
+
+func (r *UserRepository) CountReferals(userID int64) (int, error) {
+	var count int
+	err := r.db.Get(&count, "SELECT COUNT(*) FROM users WHERE referer = $1", userID)
+	return count, err
+}

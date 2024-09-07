@@ -139,7 +139,7 @@ function createSmallCoin() {
                 <img id="coin" src="../components/coin-tap.png" class=" relative z-10" alt="">
             </section>
             <div class=" w-full flex justify-end">
-                <div class=" flex flex-col items-center w-fit bg-half_dark p-4 rounded-xl">
+                <div class=" flex flex-col items-center w-fit bg-half_dark p-4 rounded-2xl">
                     <span class="flex gap-2">
                         <clock color="var(--primary)" />
                         <span class=" font-bold">{{ remainingTime }}</span>

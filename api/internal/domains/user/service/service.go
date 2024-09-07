@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/user/types"
@@ -22,6 +24,7 @@ type repository interface {
 	CheckIfRefCodeExists(refCode string) (bool, error)
 	GetRefererID(refCode string) (int64, error)
 	ListReferals(userID int64) ([]types.Referal, error)
+	CountReferals(userID int64) (int, error)
 }
 type external interface {
 	GetAvatar(userID int64) ([]byte, error)
@@ -89,12 +92,12 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, er
 		if err != nil {
 			return "", err
 		}
-		user.Avatar = filePath
+		user.Avatar = strings.TrimPrefix(filePath, "..")
 	}
 
 	if refCode != "" {
 		referer, err := s.repo.GetRefererID(refCode)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			return "", err
 		}
 		user.Referer = &referer
@@ -145,5 +148,51 @@ func (s *UserService) UpdateUser(user *types.User) error {
 }
 
 func (s *UserService) ListReferals(userID int64) ([]types.Referal, error) {
-	return s.repo.ListReferals(userID)
+	refs, err := s.repo.ListReferals(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range refs {
+		refs[i].Avatar = os.Getenv("BASE_URL") + refs[i].Avatar
+	}
+
+	return refs, nil
+}
+
+const (
+	Level1Referals = 3
+	Level2Referals = 5
+	Level3Referals = 10
+	Level4Referals = 20
+	Level5Referals = 50
+	Level6Referals = 100
+	Level7Referals = 200
+	Level8Referals = 500
+	Level9Referals = 1000
+)
+
+var levels = [9]int{3, 5, 10, 20, 50, 100, 200, 500, 1000}
+
+func (s *UserService) CountReferals(userID int64) (count, level, nextLevelCount, previousLevelCount int, err error) {
+	count, err = s.repo.CountReferals(userID)
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+	level = 1
+	nextLevelCount = levels[0]
+
+	for i, l := range levels {
+		if count >= l {
+			level = i + 1
+			if i == len(levels)-1 {
+				nextLevelCount = 1000000
+			} else {
+				nextLevelCount = levels[i+1]
+				previousLevelCount = levels[i]
+			}
+		}
+	}
+
+	return count, level, nextLevelCount, previousLevelCount, nil
 }
