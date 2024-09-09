@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"fmt"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/user/types"
 	global_types "github.com/Corray333/therun_miniapp/internal/types"
@@ -56,10 +57,11 @@ func (t *UserTransport) auth(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
+	fmt.Printf("\nRequest: %+v\n", req)
 	token, err := t.service.AuthUser(req.InitData, req.RefCode)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
+		slog.Error(err.Error())
 		return
 	}
 

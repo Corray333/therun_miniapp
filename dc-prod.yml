@@ -8,6 +8,7 @@ services:
     volumes:
       - ./api:/app
       - .env/:/app/.env
+      - ./files:/app/files
     command: make run
     depends_on:
       - db
@@ -15,10 +16,10 @@ services:
   app:
     image: node:latest
     build:
-      context: ./admin_dashboard
+      context: ./app
       dockerfile: Dockerfile
     volumes:
-      - ./admin_dashboard:/app
+      - ./app:/app
     working_dir: /app
 
   db:
@@ -34,7 +35,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx-prod.conf:/etc/nginx/nginx.conf
       - ./app/dist:/usr/share/nginx/html
       - ./files:/usr/share/nginx/files
       - ./certbot/conf:/etc/letsencrypt
