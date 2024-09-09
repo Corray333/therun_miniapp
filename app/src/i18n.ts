@@ -6,6 +6,7 @@ import ru from './locales/ru.json'
 // Настройка i18n
 const i18n = createI18n({
     locale: 'en', 
+    legacy: false,
     fallbackLocale: 'en',
     messages: {
         en,

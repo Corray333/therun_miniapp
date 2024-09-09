@@ -4,7 +4,11 @@ import { RouterView, useRouter, useRoute } from 'vue-router'
 import { auth } from '@/utils/helpers'
 import { useAccountStore } from './stores/account'
 import axios from 'axios'
+import { useI18n } from 'vue-i18n'
 declare const Telegram: any
+
+const i18n = useI18n()
+
 
 const router = useRouter()
 const temp = ref<string>("")
@@ -27,6 +31,9 @@ const getUser = async (uid: number) => {
 }
 
 onBeforeMount(async () => {
+
+	const locale = localStorage.getItem('locale') || 'en'
+	i18n.locale.value = locale
 
 	
 	const tg = Telegram.WebApp

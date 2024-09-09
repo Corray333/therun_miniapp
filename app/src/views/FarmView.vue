@@ -7,29 +7,21 @@ import Navbar from '@/components/Navbar.vue'
 import { Vue3Lottie } from 'vue3-lottie'
 import RunningJSON from '@/assets/animations/running.json'
 import { useAccountStore } from '@/stores/account'
+import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 
-// import { storeToRefs } from 'pinia'
+const { t } = useI18n()
+
 
 const accStore = useAccountStore()
 
 
-// class Farming {
-//     maxPoints: number = 200;
-//     endTime: number = 1725091363; // Unix timestamp in seconds
-// }
-
-// const farming = ref<Farming>({
-//     maxPoints: 200,
-//     endTime: 1725091363,
-// });
 
 const remainingTime = ref<string>('');
 const currentPoints = ref<number>(0);
 
 const totalDuration = 7200
 
-// Helper function to format time
 const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
     const minutes = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
@@ -124,19 +116,20 @@ function createSmallCoin() {
                 <p class=" text-left text-2xl font-bold">{{ currentPoints }}</p>
             </span>
             <span class=" relative mx-10">
-                <Vue3Lottie class=" absolute  duration-500 -top-12 left-0"
+                <Vue3Lottie class=" absolute  duration-500 -top-8 left-0"
                     :style="`margin-left: calc(${currentPoints / (accStore.user.maxPoints / 100)}% - 32px)`"
-                    :animationData="RunningJSON" :height="48" :width="48"/>
+                    :animationData="RunningJSON" :height="36" :width="36"/>
                 <span
                     class=" relative overflow-hidden flex w-full justify-between text-white px-4 font-bold bg-half_dark rounded-full">
-                    <span class=" absolute duration-500 bg-green-500 h-full left-0 top-0 rounded-full"
+                    <span class=" absolute duration-500 bg-green h-full left-0 top-0 rounded-full"
                         :style="`width: ${currentPoints / (accStore.user.maxPoints / 100)}%`"></span>
-                    <p class=" relative z-10">0</p>
-                    <p class=" relative z-10">{{ accStore.user.maxPoints }}</p>
+                    <p class=" text-white relative z-10">0</p>
+                    <p class=" text-white relative z-10">{{ accStore.user.maxPoints }}</p>
                 </span>
             </span>
             <section class=" flex relative items-center justify-center" ref="coinsContainer">
-                <img id="coin" src="../components/coin-tap.png" class=" relative z-10" alt="">
+                <img id="pulsing" src="../assets/images/farming/pulsing.png" class=" absolute z-10" alt="">
+                <img id="coin" src="../components/coin-tap.png" class=" relative z-20" alt="">
             </section>
             <div class=" w-full flex justify-end">
                 <div class=" flex flex-col items-center w-fit bg-half_dark p-4 rounded-2xl">
@@ -144,7 +137,7 @@ function createSmallCoin() {
                         <clock color="var(--primary)" />
                         <span class=" font-bold">{{ remainingTime }}</span>
                     </span>
-                    <p class=" text-dark text-sm">{{ $t('screens.bonuses.time') }}</p>
+                    <p class=" text-dark text-sm">{{ t('screens.bonuses.time') }}</p>
                 </div>
             </div>
             <button @click="claim" :disabled="accStore.user.lastClaim + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1">Claim {{
@@ -157,8 +150,15 @@ function createSmallCoin() {
 <style>
 #coin {
     animation: coin-breath 5s infinite;
-    height: 15rem;
-    width: 15rem;
+    height: 13rem;
+    width: 13rem;
+}
+
+#pulsing {
+    animation: coin-breath 3s infinite;
+    opacity: 75%;
+    height: 17rem;
+    width: 17rem;
 }
 
 @keyframes coin-breath {

@@ -5,7 +5,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/farm',
+      path: '/',
       name: 'farm',
       component: () => import('../views/FarmView.vue'),
       alias:['/']

@@ -15,6 +15,13 @@
         "bonuses":{
             "time":"Time"
         },
+        "chibi":{
+            "game":{
+                "header":"Radar game",
+                "subheader":"In Radar game you can get more boxes!",
+                "description":"In the Radar game you can find many useful and interesting things that will help you improve your chibi and find even more boxes"
+            }
+        },
         "friens":{
             "header":"My friends",
             "call": "Invite your friends and get bonuses",
