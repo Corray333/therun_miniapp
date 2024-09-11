@@ -63,21 +63,21 @@ onMounted(() => {
 
 const claim = async () => {
     try {
-		const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/farming/claim`,{}, {
-			withCredentials: true,
-			headers: {
-				Authorization: accStore.token
-			}
-		})
+        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/farming/claim`, {}, {
+            withCredentials: true,
+            headers: {
+                Authorization: accStore.token
+            }
+        })
         accStore.user.farmingTime = data.farmingTime
         accStore.user.lastClaim = data.lastClaim
         accStore.user.pointBalance = data.pointBalance
         accStore.user.maxPoints
-		return true
-	} catch (error) {
-		console.error(error)
-	}
-    coinsGainInterval.value = setInterval(createSmallCoin, 500)
+        coinsGainInterval.value = setInterval(createSmallCoin, 500)
+        return true
+    } catch (error) {
+        console.error(error)
+    }
 }
 
 const coinsContainer = ref<HTMLDivElement>()
@@ -111,20 +111,22 @@ function createSmallCoin() {
     <section class=" h-screen flex overflow-hidden flex-col">
         <section class=" h-full flex flex-col justify-between p-4">
             <Balances />
-            <span class=" flex gap-2 justify-center items-center">
-                <bcoin />
-                <p class=" text-left text-2xl font-bold">{{ currentPoints }}</p>
+            <span class=" flex justify-center">
+                <div class="flex gap-2 p-2 bg-white rounded-full items-center">
+                    <bcoin />
+                <p class=" text-left text-2xl font-bold w-16">{{ currentPoints }}</p>
+                </div>
             </span>
             <span class=" relative mx-10">
                 <Vue3Lottie class=" absolute  duration-500 -top-8 left-0"
-                    :style="`margin-left: calc(${currentPoints / (accStore.user.maxPoints / 100)}% - 32px)`"
-                    :animationData="RunningJSON" :height="36" :width="36"/>
+                    :style="`margin-left: calc(${currentPoints / (accStore.user.maxPoints / 100)}% - 18px)`"
+                    :animationData="RunningJSON" :height="36" :width="36" />
                 <span
                     class=" relative overflow-hidden flex w-full justify-between text-white px-4 font-bold bg-half_dark rounded-full">
-                    <span class=" absolute duration-500 bg-green-400 h-full left-0 top-0 rounded-full"
+                    <span class=" absolute duration-500 bg-green-400 h-full left-0 top-0"
                         :style="`width: ${currentPoints / (accStore.user.maxPoints / 100)}%`"></span>
-                    <p class=" text-green-900 relative z-10">0</p>
-                    <p class=" text-green-900 relative z-10">{{ accStore.user.maxPoints }}</p>
+                    <p class=" text-green-800 relative z-10">0</p>
+                    <p class=" text-green-800 relative z-10">{{ accStore.user.maxPoints }}</p>
                 </span>
             </span>
             <section class=" flex relative items-center justify-center" ref="coinsContainer">
@@ -132,16 +134,22 @@ function createSmallCoin() {
                 <img id="coin" src="../components/coin-tap.png" class=" relative z-20" alt="">
             </section>
             <div class=" w-full flex justify-end">
-                <div class=" flex flex-col items-center w-fit bg-half_dark p-4 rounded-2xl">
+                <div class=" flex flex-col items-center w-32 bg-half_dark p-4 rounded-2xl">
                     <span class="flex gap-2">
                         <clock color="var(--primary)" />
                         <span class=" font-bold">{{ remainingTime }}</span>
                     </span>
-                    <p class=" text-dark text-sm">{{ t('screens.bonuses.time') }}</p>
+                    <p class=" text-dark text-sm text-center">{{ t('screens.bonuses.time') }}</p>
                 </div>
             </div>
-            <button @click="claim" :disabled="accStore.user.lastClaim + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1">Claim {{
-                    accStore.user.maxPoints }}</button>
+            <button class="flex items-center justify-center gap-2" @click="claim"
+                :disabled="accStore.user.lastClaim + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1">
+                Claim
+                <p class="flex items-center gap-1">
+                    <bcoin />
+                    {{ accStore.user.maxPoints }}
+                </p>
+            </button>
         </section>
         <Navbar class="" />
     </section>
@@ -156,7 +164,8 @@ function createSmallCoin() {
 
 #pulsing {
     animation: coin-breath 3s infinite;
-    opacity: 75%;
+    opacity: 100%;
+    border: solid 2px red;
     height: 17rem;
     width: 17rem;
 }
@@ -181,6 +190,7 @@ function createSmallCoin() {
     height: 2rem;
     background-image: url(../components/icons/bcoin.svg);
     background-size: contain;
+    background-repeat: no-repeat;
     border-radius: 50%;
     z-index: -10;
 

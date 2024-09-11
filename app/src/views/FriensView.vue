@@ -95,7 +95,7 @@ const shareOnTelegram = () => {
                     </div>
                     <div class="progress relative h-6 rounded-full w-full bg-white overflow-hidden">
                         <div :style="`width: ${Math.round((friendsInfo.count - friendsInfo.previousLevelCount) / (friendsInfo.nextLevelCount - friendsInfo.previousLevelCount) * 100)}%;`"
-                            class="progress-bar relative z-10 bg-green h-full"></div>
+                            class="progress-bar relative z-10 bg-green-400 h-full"></div>
                         <div class=" absolute top-0 left-0 w-full h-full flex justify-around">
                             <span class=" h-full w-0.5 bg-half_dark z-10"></span>
                             <span class=" h-full w-0.5 bg-half_dark z-10"></span>

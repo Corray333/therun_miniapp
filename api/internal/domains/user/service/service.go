@@ -194,5 +194,5 @@ func (s *UserService) CountReferals(userID int64) (count, level, nextLevelCount,
 		}
 	}
 
-	return count, level, nextLevelCount, previousLevelCount, nil
+	return count, level + 1, nextLevelCount, previousLevelCount, nil
 }

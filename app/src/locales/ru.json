@@ -13,7 +13,7 @@
     },
     "screens":{
         "bonuses":{
-            "time":"Время"
+            "time":"Осталось"
         },
         "chibi":{
             "game":{
