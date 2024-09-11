@@ -121,10 +121,10 @@ function createSmallCoin() {
                     :animationData="RunningJSON" :height="36" :width="36"/>
                 <span
                     class=" relative overflow-hidden flex w-full justify-between text-white px-4 font-bold bg-half_dark rounded-full">
-                    <span class=" absolute duration-500 bg-green h-full left-0 top-0 rounded-full"
+                    <span class=" absolute duration-500 bg-green-400 h-full left-0 top-0 rounded-full"
                         :style="`width: ${currentPoints / (accStore.user.maxPoints / 100)}%`"></span>
-                    <p class=" text-white relative z-10">0</p>
-                    <p class=" text-white relative z-10">{{ accStore.user.maxPoints }}</p>
+                    <p class=" text-green-900 relative z-10">0</p>
+                    <p class=" text-green-900 relative z-10">{{ accStore.user.maxPoints }}</p>
                 </span>
             </span>
             <section class=" flex relative items-center justify-center" ref="coinsContainer">

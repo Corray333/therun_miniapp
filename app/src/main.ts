@@ -9,6 +9,7 @@ import i18n from './i18n'
 import Vue3Lottie from 'vue3-lottie'
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
+import 'primeicons/primeicons.css';
 
 const app = createApp(App)
 

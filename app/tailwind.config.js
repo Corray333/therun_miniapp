@@ -10,7 +10,7 @@ export default {
         secondary: 'var(--secondary)',
         dark: 'var(--dark)',
         half_dark: 'var(--half-dark)',
-        green: 'var(--green)'
+        // green: 'var(--green)'
       }
     },
   },

@@ -6,31 +6,32 @@ const { t } = useI18n()
 
 </script>
 
+
 <template>
-    <section class="">
+    <section class=" pb-24">
         <section class=" flex flex-col p-5 h-full w-full">
-            <div class="game text-center flex flex-col gap-2">
-                <h1 class=" font-bold text-xl">{{ t("screens.chibi.game.header") }}</h1>
+            <div class="game text-center flex flex-col gap-4">
+                <h1 class=" font-bold text-2xl">{{ t("screens.chibi.game.header") }}</h1>
                 <p>{{ t("screens.chibi.game.subheader") }}</p>
                 <img src="../assets/images/chibi/phones.png" alt="">
                 <p>{{ t("screens.chibi.game.description") }}</p>
-                <div class="slider">
-                    <div class="slide-track">
-                        <img src="../assets/images/chibi/slider/box.png" alt="" class="slide">
-                        <img src="../assets/images/chibi/slider/box-1.png" alt="" class="slide">
-                        <img src="../assets/images/chibi/slider/box-2.png" alt="" class="slide">
-                        <img src="../assets/images/chibi/slider/box-3.png" alt="" class="slide">
-                        <img src="../assets/images/chibi/slider/box-4.png" alt="" class="slide">
-                        <!-- Дублируем изображения для бесконечного эффекта -->
-                        <img src="../assets/images/chibi/slider/box.png" alt="" class="slide">
-                        <img src="../assets/images/chibi/slider/box-1.png" alt="" class="slide">
-                        <img src="../assets/images/chibi/slider/box-2.png" alt="" class="slide">
-                        <img src="../assets/images/chibi/slider/box-3.png" alt="" class="slide">
-                        <img src="../assets/images/chibi/slider/box-4.png" alt="" class="slide">
-                    </div>
-                </div>
             </div>
         </section>
+        <div class="slider">
+            <div class="slide-track">
+                <img src="../assets/images/chibi/slider/box.png" alt="" class="slide">
+                <img src="../assets/images/chibi/slider/box-1.png" alt="" class="slide">
+                <img src="../assets/images/chibi/slider/box-2.png" alt="" class="slide">
+                <img src="../assets/images/chibi/slider/box-3.png" alt="" class="slide">
+                <img src="../assets/images/chibi/slider/box-4.png" alt="" class="slide">
+                <!-- Дублируем изображения для бесконечного эффекта -->
+                <img src="../assets/images/chibi/slider/box.png" alt="" class="slide">
+                <img src="../assets/images/chibi/slider/box-1.png" alt="" class="slide">
+                <img src="../assets/images/chibi/slider/box-2.png" alt="" class="slide">
+                <img src="../assets/images/chibi/slider/box-3.png" alt="" class="slide">
+                <img src="../assets/images/chibi/slider/box-4.png" alt="" class="slide">
+            </div>
+        </div>
         <Navbar class=" fixed bottom-0" />
     </section>
 </template>
@@ -44,9 +45,9 @@ const { t } = useI18n()
 
 .slide-track {
     display: flex;
-    gap: 0.8rem;
+    gap: 1.4rem;
     animation: scroll 20s linear infinite;
-    width: calc(7rem * 10 + 0.8rem * 9);
+    width: calc(7rem * 10 + 1.4rem * 9);
 }
 
 .slide {
@@ -61,7 +62,7 @@ const { t } = useI18n()
     }
 
     100% {
-        transform: translateX(calc((7rem * 10 + 0.8rem * 9) / -2));
+        transform: translateX(calc((7rem * 10 + 1.4rem * 9) / -2));
     }
 }
 </style>

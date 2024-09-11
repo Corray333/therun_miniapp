@@ -6,10 +6,13 @@ import Navbar from '@/components/Navbar.vue'
 import CopyIcon from '@/components/icons/copy-icon.vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
+import 'primeicons/primeicons.css'
 
 const { t } = useI18n()
 
 const accStore = useAccountStore()
+
+const infoLoaded = ref<boolean>(false)
 
 const appUrl = import.meta.env.VITE_APP_URL
 
@@ -58,9 +61,10 @@ const getFriendsInfo = async () => {
     }
 }
 
-onBeforeMount(() => {
-    getFriends()
+onBeforeMount(async () => {
     getFriendsInfo()
+    await getFriends()
+    infoLoaded.value = true
 })
 
 const shareOnTelegram = () => {
@@ -73,7 +77,13 @@ const shareOnTelegram = () => {
 </script>
 
 <template>
-    <section>
+    <section class=" pb-20">
+        <Transition>
+            <section v-if="!infoLoaded"
+                class=" fixed z-20 top-0 left-0 w-full h-screen bg-white flex justify-center items-center">
+                <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+            </section>
+        </Transition>
         <section class=" flex flex-col p-4 gap-4 h-full w-full">
             <div class="info w-full bg-half_dark p-4 rounded-2xl flex flex-col gap-2">
                 <h1>{{ t("screens.friens.call") }}</h1>
@@ -87,10 +97,10 @@ const shareOnTelegram = () => {
                         <div :style="`width: ${Math.round((friendsInfo.count - friendsInfo.previousLevelCount) / (friendsInfo.nextLevelCount - friendsInfo.previousLevelCount) * 100)}%;`"
                             class="progress-bar relative z-10 bg-green h-full"></div>
                         <div class=" absolute top-0 left-0 w-full h-full flex justify-around">
-                            <span class=" h-full w-0.5 bg-half_dark z-20"></span>
-                            <span class=" h-full w-0.5 bg-half_dark z-20"></span>
-                            <span class=" h-full w-0.5 bg-half_dark z-20"></span>
-                            <span class=" h-full w-0.5 bg-half_dark z-20"></span>
+                            <span class=" h-full w-0.5 bg-half_dark z-10"></span>
+                            <span class=" h-full w-0.5 bg-half_dark z-10"></span>
+                            <span class=" h-full w-0.5 bg-half_dark z-10"></span>
+                            <span class=" h-full w-0.5 bg-half_dark z-10"></span>
                         </div>
                     </div>
                     <p class=" bg-white rounded-xl p-2 relative flex items-center">
@@ -110,7 +120,7 @@ const shareOnTelegram = () => {
                 </div>
             </div>
         </section>
-        <Navbar class=" fixed bottom-0" />
+        <Navbar class=" fixed z-30 bottom-0" />
     </section>
 </template>
 
@@ -124,5 +134,15 @@ const shareOnTelegram = () => {
 .friend-list>div:last-child {
     border-bottom-left-radius: 1rem;
     border-bottom-right-radius: 1rem;
+}
+
+.v-enter-active,
+.v-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
 }
 </style>
