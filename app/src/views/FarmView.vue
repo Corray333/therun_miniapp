@@ -5,22 +5,21 @@ import clock from '@/components/icons/clock-icon.vue'
 import bcoin from '@/components/icons/bcoin-icon.vue'
 import Navbar from '@/components/Navbar.vue'
 import { Vue3Lottie } from 'vue3-lottie'
+import { type AnimationItem } from 'lottie-web'
 import RunningJSON from '@/assets/animations/running.json'
 import { useAccountStore } from '@/stores/account'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 
 const { t } = useI18n()
-
-
 const accStore = useAccountStore()
 
-
-
-const remainingTime = ref<string>('');
+const runningAnimation = ref<AnimationItem | null>(null)
+const remainingTime = ref<string>('00:00:00');
 const currentPoints = ref<number>(0);
 
 const totalDuration = 7200
+let coinsGainInterval: number | null = null;
 
 const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
@@ -29,83 +28,99 @@ const formatTime = (seconds: number) => {
     return `${hours}:${minutes}:${secondsRemaining}`;
 };
 
-// Function to calculate remaining time and current points
 const calculateRemainingTimeAndPoints = () => {
-    const now = Math.floor(Date.now() / 1000); // Current time in seconds (Unix timestamp)
-    const secondsLeft = accStore.user.lastClaim + accStore.user.farmingTime - now;
+    const now = Math.floor(Date.now() / 1000);
+    let secondsLeft = accStore.user.farmingFrom + accStore.user.farmingTime - now;
+
+    if (accStore.user.farmingFrom <= accStore.user.lastClaim) {
+        stopAnimations();
+        remainingTime.value = '00:00:00';
+        currentPoints.value = 0;
+        return;
+    }
 
     if (secondsLeft <= 0) {
+        stopAnimations();
         remainingTime.value = '00:00:00';
-        currentPoints.value = accStore.user.maxPoints; // All points earned
-        clearInterval(coinsGainInterval.value)
+        currentPoints.value = accStore.user.maxPoints;
         return;
     }
 
     remainingTime.value = formatTime(secondsLeft);
-
     const elapsedTime = totalDuration - secondsLeft;
     currentPoints.value = Math.round((elapsedTime / totalDuration) * accStore.user.maxPoints * 100) / 100;
 };
 
-const coinsGainInterval = ref(0)
+const startAnimations = () => {
+    if (runningAnimation.value != null) runningAnimation.value.play();
+    coinsGainInterval = setInterval(createSmallCoin, 500);
+};
 
-onMounted(() => {
-    calculateRemainingTimeAndPoints(); // Initial calculation
-    const interval = setInterval(calculateRemainingTimeAndPoints, 1000); // Update every second
-
-    onUnmounted(() => {
-        clearInterval(interval); // Clear the interval when the component is unmounted
-    })
-
-    coinsGainInterval.value = setInterval(createSmallCoin, 500);
-
-})
+const stopAnimations = () => {
+    if (runningAnimation.value != null) runningAnimation.value.goToAndStop(4, true);
+    if (coinsGainInterval) clearInterval(coinsGainInterval);
+};
 
 const claim = async () => {
     try {
         const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/farming/claim`, {}, {
             withCredentials: true,
-            headers: {
-                Authorization: accStore.token
-            }
-        })
-        accStore.user.farmingTime = data.farmingTime
-        accStore.user.lastClaim = data.lastClaim
-        accStore.user.pointBalance = data.pointBalance
-        accStore.user.maxPoints
-        coinsGainInterval.value = setInterval(createSmallCoin, 500)
-        return true
+            headers: { Authorization: accStore.token }
+        });
+
+        accStore.user.farmingTime = data.farmingTime;
+        accStore.user.lastClaim = data.lastClaim;
+        accStore.user.pointBalance = data.pointBalance;
     } catch (error) {
-        console.error(error)
+        alert(error);
     }
-}
+};
 
-const coinsContainer = ref<HTMLDivElement>()
+const start = async () => {
+    try {
+        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/farming/start`, {}, {
+            withCredentials: true,
+            headers: { Authorization: accStore.token }
+        });
 
-function createSmallCoin() {
+        accStore.user.farmingFrom = data.farmingFrom;
+        startAnimations();
+    } catch (error) {
+        alert(error);
+    }
+};
+
+const coinsContainer = ref<HTMLDivElement | null>(null);
+
+const createSmallCoin = () => {
+    if (!coinsContainer.value) return;
+
     const smallCoin = document.createElement('div');
     smallCoin.classList.add('small-coin');
 
-    // Генерация случайного места появления монеты
     const startX = Math.random() * 200 - 50 + 'vw';
     const startY = Math.random() * 200 - 50 + 'vh';
 
     smallCoin.style.setProperty('--start-x', startX);
     smallCoin.style.setProperty('--start-y', startY);
+    smallCoin.style.animation = 'move-to-center 2s ease-out';
 
-    smallCoin.style.animation = 'move-to-center 2s ease-out infinite'
-
-    if (coinsContainer.value == null) return
     coinsContainer.value.appendChild(smallCoin);
 
-    // Удаляем монету после завершения анимации
-    setTimeout(() => {
-        smallCoin.remove();
-    }, 2000);
-}
+    setTimeout(() => smallCoin.remove(), 2000);
+};
 
+onMounted(() => {
+    calculateRemainingTimeAndPoints();
+    if (runningAnimation.value != null && accStore.user.farmingFrom < accStore.user.lastClaim) runningAnimation.value.play();
+    setInterval(calculateRemainingTimeAndPoints, 1000);
+});
 
+onUnmounted(() => {
+    stopAnimations();
+});
 </script>
+
 
 <template>
     <section class=" h-screen flex overflow-hidden flex-col">
@@ -118,9 +133,9 @@ function createSmallCoin() {
                 </div>
             </span>
             <span class=" relative mx-10">
-                <Vue3Lottie class=" absolute  duration-500 -top-8 left-0"
+                <Vue3Lottie class=" absolute  duration-500 -top-8 left-0" ref="runningAnimation"
                     :style="`margin-left: calc(${currentPoints / (accStore.user.maxPoints / 100)}% - 18px)`"
-                    :animationData="RunningJSON" :height="36" :width="36" />
+                    :animationData="RunningJSON" :height="36" :width="36"/>
                 <span
                     class=" relative overflow-hidden flex w-full justify-between text-white px-4 font-bold bg-half_dark rounded-full">
                     <span class=" absolute duration-500 bg-green-400 h-full left-0 top-0"
@@ -134,7 +149,7 @@ function createSmallCoin() {
                 <img id="coin" src="../components/coin-tap.png" class=" relative z-20" alt="">
             </section>
             <div class=" w-full flex justify-end">
-                <div class=" flex flex-col items-center w-32 bg-half_dark p-4 rounded-2xl">
+                <div class=" flex flex-col justify-center items-center w-36 bg-half_dark p-4 rounded-2xl">
                     <span class="flex gap-2">
                         <clock color="var(--primary)" />
                         <span class=" font-bold">{{ remainingTime }}</span>
@@ -142,13 +157,17 @@ function createSmallCoin() {
                     <p class=" text-dark text-sm text-center">{{ t('screens.bonuses.time') }}</p>
                 </div>
             </div>
-            <button class="flex items-center justify-center gap-2" @click="claim"
-                :disabled="accStore.user.lastClaim + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1">
+            <button v-if="accStore.user.farmingFrom > accStore.user.lastClaim" class="flex items-center justify-center gap-2" @click="claim"
+                :disabled="accStore.user.farmingFrom + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1">
                 Claim
                 <p class="flex items-center gap-1">
                     <bcoin />
                     {{ accStore.user.maxPoints }}
                 </p>
+            </button>
+            <button v-else class="flex items-center justify-center gap-2" @click="start"
+                :disabled="accStore.user.farmingFrom + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1">
+                Start
             </button>
         </section>
         <Navbar class="" />
@@ -164,8 +183,7 @@ function createSmallCoin() {
 
 #pulsing {
     animation: coin-breath 3s infinite;
-    opacity: 100%;
-    border: solid 2px red;
+    opacity: 75%;
     height: 17rem;
     width: 17rem;
 }
@@ -224,4 +242,3 @@ function createSmallCoin() {
     }
 }
 </style>
-@/stores/balance

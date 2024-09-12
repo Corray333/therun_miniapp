@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"runtime"
 	"strconv"
 	"sync"
 	"time"
@@ -70,6 +71,18 @@ func (h *Handler) Handle(ctx context.Context, r slog.Record) error {
 		return err
 	}
 
+	if r.Level == slog.LevelError {
+		// Skip three levels of slog functions calls
+		_, file, line, ok := runtime.Caller(3)
+		if !ok {
+			file = "unknown"
+			line = 0
+		}
+
+		attrs["file"] = file
+		attrs["line"] = line
+	}
+
 	bytes, err := json.MarshalIndent(attrs, "", "  ")
 	if err != nil {
 		return fmt.Errorf("error when marshaling attrs: %w", err)
@@ -129,10 +142,7 @@ func NewHandler(opts *slog.HandlerOptions) *Handler {
 	}
 }
 
-func (h *Handler) computeAttrs(
-	ctx context.Context,
-	r slog.Record,
-) (map[string]any, error) {
+func (h *Handler) computeAttrs(ctx context.Context, r slog.Record) (map[string]any, error) {
 	h.m.Lock()
 	defer func() {
 		h.b.Reset()

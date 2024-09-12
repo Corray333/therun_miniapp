@@ -8,10 +8,13 @@ import (
 )
 
 var (
-	ErrClaimTooEarly = errors.New("claim too early")
+	ErrClaimTooEarly         = errors.New("claim too early")
+	ErrFarmingAlreadyStarted = errors.New("farming already started")
 )
 
 type repository interface {
+	StartFarming(userID int64, startTime int64) error
+	Claim(userID int64, pointBalance int, lastClaim int64) error
 }
 
 type userService interface {
@@ -37,7 +40,7 @@ func (s *FarmingService) ClaimTokens(userID int64) (pointsGot, pointBalance, far
 		return
 	}
 
-	if user.LastClaim+int64(user.FarmingTime) > time.Now().Unix() {
+	if user.FarmingFrom+int64(user.FarmingTime) > time.Now().Unix() {
 		return 0, user.PointBalance, user.FarmingTime, user.MaxPoints, user.LastClaim, ErrClaimTooEarly
 	}
 
@@ -53,4 +56,23 @@ func (s *FarmingService) ClaimTokens(userID int64) (pointsGot, pointBalance, far
 
 func (s *FarmingService) GetUser(userID int64) (user *types.User, err error) {
 	return s.userService.GetUser(userID)
+}
+
+func (s *FarmingService) StartFarming(userID int64) (int64, error) {
+	user, err := s.userService.GetUser(userID)
+	if err != nil {
+		return 0, err
+	}
+
+	if user.FarmingFrom >= user.LastClaim {
+		return 0, ErrFarmingAlreadyStarted
+	}
+
+	user.FarmingFrom = time.Now().Unix()
+	if err := s.repo.StartFarming(userID, user.FarmingFrom); err != nil {
+		return 0, err
+	}
+
+	return user.FarmingFrom, nil
+
 }

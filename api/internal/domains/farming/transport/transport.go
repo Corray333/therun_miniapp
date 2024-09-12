@@ -18,6 +18,7 @@ type FarmingTransport struct {
 
 type service interface {
 	ClaimTokens(userID int64) (pointsGot, pointsBalnce, farmingTime, maxPoints int, farmingFrom int64, err error)
+	StartFarming(userID int64) (farmingFrom int64, err error)
 }
 
 func New(router *chi.Mux, service service) *FarmingTransport {
@@ -31,6 +32,7 @@ func (t *FarmingTransport) RegisterRoutes() {
 	t.router.Group(func(r chi.Router) {
 		r.Use(auth.NewAuthMiddleware())
 		r.Post("/api/farming/claim", t.claimTokens)
+		r.Post("/api/farming/start", t.startFarming)
 	})
 }
 
@@ -67,4 +69,31 @@ func (t *FarmingTransport) claimTokens(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
+}
+
+type startFarmingResponse struct {
+	FarmingFrom int64 `json:"farmingFrom"`
+}
+
+func (t *FarmingTransport) startFarming(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(types.ContextID).(int64)
+
+	if !ok {
+		http.Error(w, "failed to get user id from context", http.StatusInternalServerError)
+		slog.Error("failed to get user id from context")
+		return
+	}
+
+	farmingFrom, err := t.service.StartFarming(userID)
+	if err != nil {
+		slog.Error("failed to start farming" + err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	if err := json.NewEncoder(w).Encode(startFarmingResponse{
+		FarmingFrom: farmingFrom,
+	}); err != nil {
+		slog.Error("failed to encode response")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }

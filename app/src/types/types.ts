@@ -6,6 +6,7 @@ export class User {
     raceBalance: number=0;
     keyBalance: number=0;
     lastClaim: number=0;
+    farmingFrom: number=0;
     maxPoints: number=0;
     farmingTime: number=0;
     refCode: string="";

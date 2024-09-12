@@ -9,6 +9,7 @@ type User struct {
 	RaceBalance  int    `json:"raceBalance" db:"race_balance"`
 	KeyBalance   int    `json:"keyBalance" db:"key_balance"`
 	LastClaim    int64  `json:"lastClaim" db:"last_claim"`
+	FarmingFrom  int64  `json:"farmingFrom" db:"farming_from"`
 	MaxPoints    int    `json:"maxPoints" db:"max_points"`
 	FarmingTime  int    `json:"farmingTime" db:"farm_time"`
 	RefCode      string `json:"refCode,omitempty" db:"ref_code"`
