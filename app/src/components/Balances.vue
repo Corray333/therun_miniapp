@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import race from '@/components/icons/race-icon.vue'
 import bcoin from '@/components/icons/bcoin-icon.vue'
 import key from '@/components/icons/key-icon.vue'
@@ -13,6 +13,14 @@ const pick = ref<string>("race")
 const { t } = useI18n()
 const store = useAccountStore()
 const componentsStore = useComponentsStore()
+const bonusesLabel = ref<HTMLBaseElement>()
+
+onMounted(()=>{
+  if (bonusesLabel.value){
+    componentsStore.bonusesLabelPos[0] = bonusesLabel.value.offsetTop
+    componentsStore.bonusesLabelPos[1] = bonusesLabel.value.offsetLeft
+  }
+})
 
 </script>
 
@@ -27,17 +35,17 @@ const componentsStore = useComponentsStore()
             <div v-if="pick=='race'" class=" w-full text-center flex flex-col items-center gap-2">
               <h2 class=" header flex items-center gap-2"><race/>Race</h2>
               <p>{{ t('wallet.raceDescription') }}</p>
-              <button>{{ t('wallet.withdraw') }}</button>
+              <button disabled>{{ t('wallet.withdraw') }}</button>
             </div>
             <div v-else-if="pick=='bonuses'" class=" w-full text-center flex flex-col items-center gap-2">
               <h2 class=" header flex items-center gap-2"><bcoin/>{{ t('wallet.bonuses') }}</h2>
               <p>{{ t('wallet.bonusesDescription') }}</p>
-              <button>{{ t('wallet.withdraw') }}</button>
+              <button disabled>{{ t('wallet.withdraw') }}</button>
             </div>
             <div v-else class=" w-full text-center flex flex-col items-center gap-2">
               <h2 class=" header flex items-center gap-2"><key color="var(--primary)"/>{{ t('wallet.keys') }}</h2>
               <p>{{ t('wallet.keysDescription') }}</p>
-              <button>{{ t('wallet.withdraw') }}</button>
+              <button disabled>{{ t('wallet.withdraw') }}</button>
             </div>
           </section>
         </Transition>
@@ -54,7 +62,7 @@ const componentsStore = useComponentsStore()
     </div>
     <div @click="pick = 'bonuses'; showModal = true"
       class=" bg-half_dark p-4 rounded-2xl w-full flex flex-col justify-center items-center">
-      <span class=" flex gap-1">
+      <span class=" flex gap-1" ref="bonusesLabel">
         <bcoin />
         <p class=" text-left font-bold" :class="{'animate-bonuses':componentsStore.animateBonuses}">{{ store.user.pointBalance }}</p>
       </span>

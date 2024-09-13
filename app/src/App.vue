@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref, onMounted } from 'vue'
 import { RouterView, useRouter, useRoute } from 'vue-router'
 import { auth } from '@/utils/helpers'
 import { useAccountStore } from './stores/account'
@@ -12,6 +12,8 @@ const i18n = useI18n()
 
 const router = useRouter()
 const temp = ref<string>("")
+
+const showStart = ref<boolean>(true)
 
 const getUser = async (uid: number) => {
 	const store = useAccountStore()
@@ -30,12 +32,18 @@ const getUser = async (uid: number) => {
 	}
 }
 
+onMounted(() => {
+	setTimeout(() => {
+		showStart.value = false
+	}, 2000);
+})
+
 onBeforeMount(async () => {
 
 	const locale = localStorage.getItem('locale') || 'en'
 	i18n.locale.value = locale
 
-	
+
 	const tg = Telegram.WebApp
 	try {
 		tg.expand()
@@ -55,7 +63,21 @@ onBeforeMount(async () => {
 </script>
 
 <template>
+	<Transition>
+		<img v-show="showStart" class=" fixed w-screen h-screen object-cover z-50" src="./assets/images/start.png"
+			alt="">
+	</Transition>
 	<RouterView />
 </template>
 
-<style scoped></style>
+<style scoped>
+.v-enter-active,
+.v-leave-active {
+	transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+	opacity: 0;
+}
+</style>

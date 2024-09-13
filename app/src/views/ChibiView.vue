@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import Navbar from '@/components/Navbar.vue'
+import Balances from '@/components/Balances.vue';
 
 const { t } = useI18n()
 
@@ -9,7 +10,8 @@ const { t } = useI18n()
 
 <template>
     <section class=" pb-24">
-        <section class=" flex flex-col p-5 h-full w-full">
+        <section class=" flex flex-col p-4 h-full w-full">
+            <Balances />
             <div class="game text-center flex flex-col gap-4">
                 <h1 class=" font-bold text-2xl">{{ t("screens.chibi.game.header") }}</h1>
                 <p>{{ t("screens.chibi.game.subheader") }}</p>
@@ -47,7 +49,7 @@ const { t } = useI18n()
     display: flex;
     gap: 1.4rem;
     animation: scroll 20s linear infinite;
-    width: calc(7rem * 10 + 1.4rem * 9);
+    width: calc(7rem * 10 + 1.4rem * 10);
 }
 
 .slide {
@@ -62,7 +64,7 @@ const { t } = useI18n()
     }
 
     100% {
-        transform: translateX(calc((7rem * 10 + 1.4rem * 9) / -2));
+        transform: translateX(calc(calc(7rem * 10 + 1.4rem * 10) / -2));
     }
 }
 </style>

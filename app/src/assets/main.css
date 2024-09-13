@@ -9,7 +9,7 @@
 
     button:disabled,
     button[disabled] {
-        @apply bg-dark
+        @apply bg-primary_light
     }
 
     .label{

@@ -14,9 +14,17 @@
   font-weight: bold;
 }
 
+@font-face {
+  font-family: 'SF Pro';
+  src: url('../assets/sf-pro-display/SFPRODISPLAYBLACKITALIC.OTF');
+  font-weight: bold;
+  font-style: italic;
+}
+
 /* semantic color variables for this project */
 :root {
   --primary: #DA2F20;
+  --primary_light:#E87E75;
   --secondary: #FFCF23;
   --dark: #8A8A8F;
   --half-dark: #F2F2F7; 
