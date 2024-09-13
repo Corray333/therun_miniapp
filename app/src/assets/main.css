@@ -3,7 +3,7 @@
 
 @layer components {
     button {
-        @apply bg-primary p-4 text-white font-bold rounded-2xl
+        @apply bg-primary w-full p-4 text-white font-bold rounded-2xl
         duration-300 transition-all;
     }
 
@@ -18,5 +18,9 @@
 
     h1{
         @apply text-xl font-bold;
+    }
+
+    h2{
+        @apply text-lg font-bold;
     }
 }

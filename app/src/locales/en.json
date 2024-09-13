@@ -9,7 +9,12 @@
     },
     "wallet":{
         "balance":"Balance",
-        "keys":"Keys"
+        "keys":"Keys",
+        "bonuses":"Bonuses",
+        "keysDescription":"Keys are needed to open boxes. You can get them for tasks or bets.",
+        "bonusesDescription":"Bonuses are needed to improve your chibi. You can get them during farming.",
+        "raceDescription":"Race is a main currency in the game. You can get it for bets or tasks.",
+        "withdraw":"Withdraw"
     },
     "screens":{
         "bonuses":{

@@ -27,3 +27,5 @@ func (r *FarmingRepository) Claim(userID int64, pointBalance int, lastClaim int6
 	_, err := r.db.Exec("UPDATE users SET point_balance = $1, last_claim = $2 WHERE user_id = $3", pointBalance, lastClaim, userID)
 	return err
 }
+
+// func (r *FarmingRepository) FindAvailibleClaim(){}

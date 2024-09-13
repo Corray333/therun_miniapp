@@ -20,6 +20,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./app:/app
+      - .env:/app/.env
     working_dir: /app
 
   db:

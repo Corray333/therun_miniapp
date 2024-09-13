@@ -37,6 +37,12 @@ onBeforeMount(async () => {
 
 	
 	const tg = Telegram.WebApp
+	try {
+		tg.expand()
+		tg.disableVerticalSwipes()
+	} catch (error) {
+		alert(error)
+	}
 	temp.value = tg.initData
 	const uid = tg.initDataUnsafe.user.id
 	await auth()
