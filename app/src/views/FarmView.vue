@@ -1,13 +1,12 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import Balances from '@/components/Balances.vue';
-import clock from '@/components/icons/clock-icon.vue'
 import bcoinXL from '@/components/icons/bcoin-icon-xl.vue'
 import bcoin from '@/components/icons/bcoin-icon.vue'
 import Navbar from '@/components/Navbar.vue'
-import { Vue3Lottie } from 'vue3-lottie'
+// import { Vue3Lottie } from 'vue3-lottie'
 import { type AnimationItem } from 'lottie-web'
-import RunningJSON from '@/assets/animations/running.json'
+// import RunningJSON from '@/assets/animations/running.json'
 import { useAccountStore } from '@/stores/account'
 import { useComponentsStore } from '@/stores/components'
 import { useI18n } from 'vue-i18n'
@@ -16,7 +15,7 @@ import axios from 'axios'
 const { t } = useI18n()
 const accStore = useAccountStore()
 
-const runningAnimation = ref<AnimationItem | null>(null)
+// const runningAnimation = ref<AnimationItem | null>(null)
 const remainingTime = ref<string>('00:00:00');
 const currentPoints = ref<number>(0);
 
@@ -54,15 +53,12 @@ const calculateRemainingTimeAndPoints = () => {
 };
 
 const startAnimations = () => {
-    console.log("startAnimations");
-    console.log("startAnimations");
-    console.log("startAnimations");
-    if (runningAnimation.value != null) runningAnimation.value.play();
+    // if (runningAnimation.value != null) runningAnimation.value.play();
     coinsGainInterval = setInterval(createSmallCoin, 500);
 };
 
 const stopAnimations = () => {
-    if (runningAnimation.value != null) runningAnimation.value.goToAndStop(4, true);
+    // if (runningAnimation.value != null) runningAnimation.value.goToAndStop(4, true);
     if (coinsGainInterval) clearInterval(coinsGainInterval);
 };
 
@@ -78,7 +74,6 @@ const claim = async () => {
 
         const diff = data.pointBalance - accStore.user.pointBalance
         const piece = Math.floor(diff / 4)
-        alert(JSON.stringify([data.pointBalance, accStore.user.pointBalance, diff, piece]))
         claimAnimate()
         accStore.user.pointBalance += piece
         setTimeout(() => {
@@ -152,7 +147,7 @@ onMounted(() => {
     document.head.appendChild(style);
 
     calculateRemainingTimeAndPoints()
-    if (runningAnimation.value != null && accStore.user.farmingFrom > accStore.user.lastClaim) {
+    if (accStore.user.farmingFrom > accStore.user.lastClaim) {
         startAnimations()
     }
     setInterval(calculateRemainingTimeAndPoints, 1000)
