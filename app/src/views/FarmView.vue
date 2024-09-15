@@ -140,23 +140,9 @@ const createSmallCoin = () => {
     setTimeout(() => smallCoin.remove(), 2000);
 };
 
+let style: HTMLStyleElement
 onMounted(() => {
-    let x = 0
-    let y = 0
-    if (coinsFarmedEl.value) {
-        y = componentsStore.bonusesLabelPos[0] - coinsFarmedEl.value.offsetTop
-        x = componentsStore.bonusesLabelPos[1] - coinsFarmedEl.value.offsetLeft
-    }
-
-    let style = document.createElement('style');
-    let keyframes = `
-        @keyframes animate-coins {
-        0% {transform: translate(0px, 0px);}
-        100% { transform: translate(${x}px, ${y}px); }
-    }`;
-    style.innerHTML = keyframes;
-
-    // Append the style element to the head of the document
+    style = document.createElement('style');
     document.head.appendChild(style);
 
     calculateRemainingTimeAndPoints()
@@ -166,9 +152,27 @@ onMounted(() => {
     setInterval(calculateRemainingTimeAndPoints, 1000)
 });
 
+
+
+
 const claimAnimate = async () => {
     componentsStore.animateBonuses = true
     animateCoin.value = true
+
+    let x = 0
+    let y = 0
+    if (coinsFarmedEl.value) {
+        y = componentsStore.bonusesLabelPos[0] - coinsFarmedEl.value.offsetTop
+        x = componentsStore.bonusesLabelPos[1] - coinsFarmedEl.value.offsetLeft
+    }
+    let keyframes = `
+        @keyframes animate-coins {
+        0% {transform: translate(0px, 0px);}
+        100% { transform: translate(${x}px, ${y}px); }
+    }`;
+    style.innerHTML = keyframes;
+
+    // Append the style element to the head of the document
 
     setTimeout(() => {
         animateCoin.value = false
@@ -184,53 +188,51 @@ onUnmounted(() => {
 
 <template>
     <section class=" h-screen flex overflow-hidden flex-col">
-        <section class=" h-full flex flex-col p-4">
+        <section class=" h-full flex flex-col gap-4 p-4">
             <Balances />
-            <section class=" h-full flex flex-col pt-4 justify-between">
-                <div class="flex items-center relative">
-                    <h2 class=" ml-4 absolute italic font-bold text-[#523810]">Upgrade your Droid</h2>
-                    <img class="w-full" src="../assets/images/farming/upgrade-banner.png" alt="">
+            <div class="flex items-center relative">
+                <h2 class=" ml-4 absolute italic font-bold text-[#523810]">Upgrade your Droid</h2>
+                <img class="w-full" src="../assets/images/farming/upgrade-banner.png" alt="">
+            </div>
+            <span class=" flex justify-center">
+                <div ref="coinsFarmedEl" class=" flex gap-2 p-2 bg-white rounded-full items-center">
+                    <bcoinXL />
+                    <bcoinXL class="absolute anim-coin duration-500" id="anim-coin-1"
+                        :class="{ 'animate-coin': animateCoin }" />
+                    <p class=" text-left text-4xl italic font-bold w-24">{{ currentPoints }}</p>
                 </div>
-                <span class=" flex justify-center">
-                    <div ref="coinsFarmedEl" class=" flex gap-2 p-2 bg-white rounded-full items-center">
-                        <bcoinXL />
-                        <bcoinXL class="absolute anim-coin duration-500" id="anim-coin-1"
-                            :class="{ 'animate-coin': animateCoin }" />
-                        <p class=" text-left text-4xl italic font-bold w-24">{{ currentPoints }}</p>
-                    </div>
-                </span>
-                <section class=" coins-container flex h-full items-center justify-center" ref="coinsContainer">
-                    <img id="coin" src="../components/coin-tap.png" class=" h-full" alt="">
-                </section>
-                <section class=" flex flex-col gap-4">
-                    <button
-                        v-if="accStore.user.farmingFrom > accStore.user.lastClaim && accStore.user.farmingFrom + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1"
-                        class="flex items-center justify-between" @click="claim" disabled>
-                        <p class=" flex gap-2">
-                            Farming
-                        <p class="flex items-center gap-1">
-                            <bcoin />
-                            {{ Math.floor(currentPoints) }}/
-                            {{ accStore.user.maxPoints }}
-                        </p>
-                        </p>
-                        <p class=" text-left w-20">
-                            {{ remainingTime }}
-                        </p>
-                    </button>
-                    <button v-else-if="accStore.user.farmingFrom > accStore.user.lastClaim"
-                        class="flex items-center justify-center gap-2" @click="claim">
-                        Claim
-                        <p class="flex items-center gap-1">
-                            <bcoin />
-                            {{ accStore.user.maxPoints }}
-                        </p>
-                    </button>
-                    <button v-else class="flex items-center justify-center gap-2" @click="start"
-                        :disabled="accStore.user.farmingFrom + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1">
-                        Start
-                    </button>
-                </section>
+            </span>
+            <section class=" coins-container flex h-full items-center relative justify-center" ref="coinsContainer">
+                <img id="coin" src="../components/coin-tap.png" class=" h-full absolute" alt="">
+            </section>
+            <section class=" flex flex-col gap-4">
+                <button
+                    v-if="accStore.user.farmingFrom > accStore.user.lastClaim && accStore.user.farmingFrom + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1"
+                    class="flex items-center justify-between" @click="claim" disabled>
+                    <p class=" flex gap-2">
+                        Farming
+                    <p class="flex items-center gap-1">
+                        <bcoin />
+                        {{ Math.floor(currentPoints) }}/
+                        {{ accStore.user.maxPoints }}
+                    </p>
+                    </p>
+                    <p class=" text-left w-20">
+                        {{ remainingTime }}
+                    </p>
+                </button>
+                <button v-else-if="accStore.user.farmingFrom > accStore.user.lastClaim"
+                    class="flex items-center justify-center gap-2" @click="claim">
+                    Claim
+                    <p class="flex items-center gap-1">
+                        <bcoin />
+                        {{ accStore.user.maxPoints }}
+                    </p>
+                </button>
+                <button v-else class="flex items-center justify-center gap-2" @click="start"
+                    :disabled="accStore.user.farmingFrom + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1">
+                    Start
+                </button>
             </section>
         </section>
         <Navbar class="" />
@@ -240,8 +242,7 @@ onUnmounted(() => {
 <style>
 #coin {
     animation: coin-breath 5s infinite;
-    height: 17rem;
-    width: 17rem;
+    max-height: 17rem;
 }
 
 .animate-coin {
@@ -270,7 +271,7 @@ onUnmounted(() => {
     }
 
     50% {
-        transform: scale(1.1);
+        transform: scale(0.9);
     }
 
     100% {
