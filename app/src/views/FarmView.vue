@@ -4,18 +4,15 @@ import Balances from '@/components/Balances.vue';
 import bcoinXL from '@/components/icons/bcoin-icon-xl.vue'
 import bcoin from '@/components/icons/bcoin-icon.vue'
 import Navbar from '@/components/Navbar.vue'
-// import { Vue3Lottie } from 'vue3-lottie'
-import { type AnimationItem } from 'lottie-web'
-// import RunningJSON from '@/assets/animations/running.json'
 import { useAccountStore } from '@/stores/account'
 import { useComponentsStore } from '@/stores/components'
 import { useI18n } from 'vue-i18n'
-import axios from 'axios'
+import { auth } from '@/utils/helpers'
+import axios, { isAxiosError } from 'axios'
 
 const { t } = useI18n()
 const accStore = useAccountStore()
 
-// const runningAnimation = ref<AnimationItem | null>(null)
 const remainingTime = ref<string>('00:00:00');
 const currentPoints = ref<number>(0);
 
@@ -88,7 +85,15 @@ const claim = async () => {
         accStore.user.farmingTime = data.farmingTime
         accStore.user.lastClaim = data.lastClaim
     } catch (error) {
-        alert(error);
+        if (isAxiosError(error) && error.response?.status === 401) {
+            await auth()
+            try {
+                await claim()
+            } catch (error) {
+                alert(error)
+            }
+        }
+        console.log(error);
     }
 };
 
@@ -102,7 +107,15 @@ const start = async () => {
         accStore.user.farmingFrom = data.farmingFrom;
         startAnimations();
     } catch (error) {
-        alert(error);
+        if (isAxiosError(error) && error.response?.status === 401) {
+            await auth()
+            try {
+                await start
+            } catch (error) {
+                alert(error)
+            }
+        }
+        console.log(error);
     }
 };
 
@@ -178,7 +191,6 @@ onUnmounted(() => {
                     <h2 class=" ml-4 absolute italic font-bold text-[#523810]">Upgrade your Droid</h2>
                     <img class="w-full" src="../assets/images/farming/upgrade-banner.png" alt="">
                 </div>
-                <!-- <div class=" rounded-2xl bg-gray-500 w-full h-16"></div> -->
                 <span class=" flex justify-center">
                     <div ref="coinsFarmedEl" class=" flex gap-2 p-2 bg-white rounded-full items-center">
                         <bcoinXL />
@@ -187,32 +199,10 @@ onUnmounted(() => {
                         <p class=" text-left text-4xl italic font-bold w-24">{{ currentPoints }}</p>
                     </div>
                 </span>
-                <!-- <span class=" relative mx-10">
-                        <Vue3Lottie class=" absolute  duration-500 -top-8 left-0" ref="runningAnimation"
-                            :style="`margin-left: calc(${currentPoints / (accStore.user.maxPoints / 100)}% - 18px)`"
-                            :animationData="RunningJSON" :height="36" :width="36"/>
-                        <span
-                            class=" relative overflow-hidden flex w-full justify-between text-white px-4 font-bold bg-half_dark rounded-full">
-                            <span class=" absolute duration-500 bg-green-400 h-full left-0 top-0"
-                                :style="`width: ${currentPoints / (accStore.user.maxPoints / 100)}%`"></span>
-                            <p class=" text-green-800 relative z-10">0</p>
-                            <p class=" text-green-800 relative z-10">{{ accStore.user.maxPoints }}</p>
-                        </span>
-                    </span> -->
-                <section class=" coins=container flex relative items-center justify-center" ref="coinsContainer">
-                    <!-- <img id="pulsing" src="../assets/images/farming/pulsing.png" class=" absolute z-10" alt=""> -->
-                    <img id="coin" src="../components/coin-tap.png" class=" relative z-20" alt="">
+                <section class=" coins-container flex h-full items-center justify-center" ref="coinsContainer">
+                    <img id="coin" src="../components/coin-tap.png" class=" h-full" alt="">
                 </section>
                 <section class=" flex flex-col gap-4">
-                    <!-- <div class=" w-full flex justify-end">
-                        <div class=" flex flex-col justify-center items-center w-36 bg-half_dark p-4 rounded-2xl">
-                            <span class="flex w-full gap-2">
-                                <clock color="var(--primary)" />
-                                <span class=" w-full text-left font-bold">{{ remainingTime }}</span>
-                            </span>
-                            <p class=" text-dark text-sm text-center">{{ t('screens.bonuses.time') }}</p>
-                        </div>
-                    </div> -->
                     <button
                         v-if="accStore.user.farmingFrom > accStore.user.lastClaim && accStore.user.farmingFrom + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1"
                         class="flex items-center justify-between" @click="claim" disabled>
@@ -224,7 +214,7 @@ onUnmounted(() => {
                             {{ accStore.user.maxPoints }}
                         </p>
                         </p>
-                        <p>
+                        <p class=" text-left w-20">
                             {{ remainingTime }}
                         </p>
                     </button>
@@ -262,12 +252,7 @@ onUnmounted(() => {
     transition: all 0.5s;
 } */
 
-#pulsing {
-    animation: coin-breath 3s infinite;
-    opacity: 75%;
-    height: 24rem;
-    width: 24rem;
-}
+
 
 /* @keyframes animate-coins {
     0% {

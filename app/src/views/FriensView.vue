@@ -5,7 +5,8 @@ import { Referal } from '@/types/types'
 import Navbar from '@/components/Navbar.vue'
 import CopyIcon from '@/components/icons/copy-icon.vue'
 import { useI18n } from 'vue-i18n'
-import axios from 'axios'
+import axios, { isAxiosError } from 'axios'
+import { auth } from '@/utils/helpers'
 import 'primeicons/primeicons.css'
 
 const { t } = useI18n()
@@ -42,7 +43,14 @@ const getFriends = async () => {
         friends.value.push(...data)
         return true
     } catch (error) {
-        alert(error)
+        if(isAxiosError(error) && error.response?.status === 401) {
+            await auth()
+            try {
+                await getFriends()
+            } catch (error) {
+                alert(error)
+            }
+        }
     }
 }
 
@@ -57,7 +65,14 @@ const getFriendsInfo = async () => {
         friendsInfo.value = data
         return true
     } catch (error) {
-        alert(error)
+        if(isAxiosError(error) && error.response?.status === 401) {
+            await auth()
+            try {
+                await getFriendsInfo()
+            } catch (error) {
+                alert(error)
+            }
+        }
     }
 }
 
