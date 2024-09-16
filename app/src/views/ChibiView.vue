@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import Navbar from '@/components/Navbar.vue'
 import Balances from '@/components/Balances.vue';
+import key from '@/components/icons/key-icon.vue'
 
 const { t } = useI18n()
 
@@ -12,11 +13,32 @@ const { t } = useI18n()
     <section class=" pb-24">
         <section class=" flex flex-col p-4 h-full w-full">
             <Balances />
-            <div class="game text-center flex flex-col gap-4">
-                <h1 class=" font-bold text-2xl">{{ t("screens.chibi.game.header") }}</h1>
-                <p>{{ t("screens.chibi.game.subheader") }}</p>
+        </section>
+        <section class=" flex flex-col gap-6 pb-12 items-center p-4">
+            <span class="flex flex-col gap-1">
+                <h1>{{ t('screens.chibi.case.header') }}</h1>
+                <p>{{ t('screens.chibi.case.description') }}</p>
+            </span>
+            <img id="case" src="../assets/images/chibi/slider/box-3.png" alt="">
+            <div class="flex gap-2 p-4 rounded-full sm-shadow">
+                <key color="var(--dark)"/>
+                <key color="var(--dark)"/>
+                <key color="var(--dark)"/>
+            </div>
+            <button class=" bg-dark" disabled>{{ t('comingSoon') }}</button>
+        </section>
+        <section class=" info p-4 rounded-t-2xl bg-white ">
+            <div class="game text-center flex flex-col gap-6">
+                <span class=" flex flex-col gap-2">
+                    <h1 class=" font-bold text-2xl">{{ t("screens.chibi.game.header") }}</h1>
+                    <p>{{ t("screens.chibi.game.subheader") }}</p>
+                </span>
                 <img src="../assets/images/chibi/phones.png" alt="">
-                <p>{{ t("screens.chibi.game.description") }}</p>
+                <div class="flex w-full gap-4">
+                    <a href="https://play.google.com/store/apps/details?id=com.therun.app" target="_blank"><img src="../assets/images/chibi/google-play-btn.png" alt=""></a>
+                    <a href="https://apps.apple.com/us/app/therun/id1634366310" target="_blank"><img src="../assets/images/chibi/appstore-btn.png" alt=""></a>
+                </div>
+                <p class=" p-4 bg-half_dark rounded-2xl">{{ t("screens.chibi.game.description") }}</p>
             </div>
         </section>
         <div class="slider">
@@ -40,6 +62,20 @@ const { t } = useI18n()
 
 
 <style scoped>
+
+.sm-shadow{
+    box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
+}
+
+.info{
+    box-shadow: 0 -1rem 1rem 0 rgba(0, 0, 0, 0.1);
+}
+
+#case{
+    animation: case-breath 2s infinite;
+    max-width: 14rem;
+}
+
 .slider {
     overflow: hidden;
     width: 100%;
@@ -65,6 +101,20 @@ const { t } = useI18n()
 
     100% {
         transform: translateX(calc(calc(7rem * 10 + 1.4rem * 10) / -2));
+    }
+}
+
+@keyframes case-breath {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
     }
 }
 </style>

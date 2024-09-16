@@ -15,8 +15,8 @@ const store = useAccountStore()
 const componentsStore = useComponentsStore()
 const bonusesLabel = ref<HTMLBaseElement>()
 
-onMounted(()=>{
-  if (bonusesLabel.value){
+onMounted(() => {
+  if (bonusesLabel.value) {
     componentsStore.bonusesLabelPos[0] = bonusesLabel.value.offsetTop
     componentsStore.bonusesLabelPos[1] = bonusesLabel.value.offsetLeft
   }
@@ -32,52 +32,55 @@ onMounted(()=>{
         <Transition name="slide">
           <section v-if="showModal"
             class=" modal w-full rounded-t-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg">
-            <div v-if="pick=='race'" class=" w-full text-center flex flex-col items-center gap-2">
-              <h2 class=" header flex items-center gap-2"><race/>Race</h2>
+            <div v-if="pick == 'race'" class=" w-full text-center flex flex-col items-center gap-2">
+              <h2 class=" header flex items-center gap-2">
+                <race />Race
+              </h2>
               <p>{{ t('wallet.raceDescription') }}</p>
               <button disabled>{{ t('wallet.withdraw') }}</button>
             </div>
-            <div v-else-if="pick=='bonuses'" class=" w-full text-center flex flex-col items-center gap-2">
-              <h2 class=" header flex items-center gap-2"><bcoin/>{{ t('wallet.bonuses') }}</h2>
+            <div v-else-if="pick == 'bonuses'" class=" w-full text-center flex flex-col items-center gap-2">
+              <h2 class=" header flex items-center gap-2">
+                <bcoin />{{ t('wallet.bonuses') }}
+              </h2>
               <p>{{ t('wallet.bonusesDescription') }}</p>
-              <button disabled>{{ t('wallet.withdraw') }}</button>
-            </div>
-            <div v-else class=" w-full text-center flex flex-col items-center gap-2">
-              <h2 class=" header flex items-center gap-2"><key color="var(--primary)"/>{{ t('wallet.keys') }}</h2>
-              <p>{{ t('wallet.keysDescription') }}</p>
               <button disabled>{{ t('wallet.withdraw') }}</button>
             </div>
           </section>
         </Transition>
       </section>
     </Transition>
+
     <div @click="pick = 'race'; showModal = true"
-      class=" bg-half_dark p-4 rounded-2xl w-full flex flex-col justify-center items-center">
+      class=" bg-half_dark p-4 w-full rounded-2xl flex flex-col justify-center items-center">
       <span class=" flex gap-1">
-        <race />
+        <race color="var(--primary)" />
         <p class=" text-left font-bold">{{ store.user.raceBalance }}</p>
       </span>
-      <p class=" label flex items-center">{{ t('wallet.balance') }}<i class="pi pi-chevron-right"
+      <p class=" label flex items-center gap-1">{{ t('wallet.balance') }}<i class="pi pi-chevron-right text-dark"
           style="font-size: 0.75rem;"></i></p>
     </div>
+
     <div @click="pick = 'bonuses'; showModal = true"
-      class=" bg-half_dark p-4 rounded-2xl w-full flex flex-col justify-center items-center">
+      class=" bg-half_dark p-4 w-full rounded-2xl flex flex-col justify-center items-center">
       <span class=" flex gap-1" ref="bonusesLabel">
-        <bcoin />
-        <p class=" text-left font-bold" :class="{'animate-bonuses':componentsStore.animateBonuses}">{{ store.user.pointBalance }}</p>
+        <bcoin color="var(--primary)" />
+        <p class=" text-left font-bold">{{ store.user.pointBalance }}</p>
       </span>
-      <p class=" label flex items-center">{{ t('wallet.balance') }}<i class="pi pi-chevron-right"
+      <p class=" label flex items-center gap-1">{{ t('wallet.balance') }}<i class="pi pi-chevron-right text-dark"
           style="font-size: 0.75rem;"></i></p>
     </div>
-    <div @click="pick = 'key'; showModal = true"
-      class=" bg-half_dark p-4 rounded-2xl flex flex-col justify-center items-center">
-      <span class=" flex gap-1">
-        <key color="var(--primary)" />
-        <p class=" text-left font-bold">{{ store.user.keyBalance }}</p>
-      </span>
-      <p class=" label flex items-center">{{ t('wallet.keys') }}<i class="pi pi-chevron-right"
-          style="font-size: 0.75rem;"></i></p>
+
+    <div class=" bg-half_dark p-4 rounded-2xl flex justify-center items-center">
+      <div class="flex flex-col justify-center items-center">
+        <span class=" flex gap-1">
+          <key color="var(--primary)" />
+          <p class=" text-left font-bold">{{ store.user.keyBalance }}</p>
+        </span>
+        <p class=" label flex items-center">{{ t('wallet.keys') }}</p>
+      </div>
     </div>
+    
   </section>
 </template>
 
@@ -107,20 +110,21 @@ onMounted(()=>{
   opacity: 1;
 }
 
-.animate-bonuses{
+.animate-bonuses {
   animation: bonuses-animation 0.5s 4;
 }
 
 @keyframes bonuses-animation {
-  0%{
+  0% {
     transform: scale(1)
   }
-  50%{
+
+  50% {
     transform: scale(1.4)
   }
-  0%{
+
+  0% {
     transform: scale(1)
   }
 }
-
 </style>

@@ -1,4 +1,5 @@
 {
+    "comingSoon":"Coming soon",
     "menu":{
         "bonuses":"Bonuses",
         "chibi":"Chibiverse",
@@ -14,17 +15,32 @@
         "keysDescription":"Keys are needed to open boxes. You can get them for tasks or bets.",
         "bonusesDescription":"Bonuses are needed to improve your chibi. You can get them during farming.",
         "raceDescription":"Race is a main currency in the game. You can get it for bets or tasks.",
-        "withdraw":"Withdraw"
+        "withdraw":"Send to TheRun account"
     },
     "screens":{
-        "bonuses":{
-            "time":"Time left"
+        "farming":{
+            "banner":"Upgrade your Droid",
+            "button":{
+                "claim": "Claim",
+                "farming": "Farming",
+                "start":"Start farming"
+            },
+            "earning":{
+                "getMore":"Get more",
+                "upgrade":"Droid upgrade",
+                "ninja":"Spy Ninja"
+            }
         },
         "chibi":{
             "game":{
                 "header":"Radar game",
                 "subheader":"In Radar game you can get more boxes!",
                 "description":"In the Radar game you can find many useful and interesting things that will help you improve your chibi and find even more boxes"
+            },
+            "case":{
+                "header":"Open Red box and get RACE coins",
+                "description":"Get the keys for guessing the winner of the battles",
+                "openButton":"Open the Box"
             }
         },
         "friens":{

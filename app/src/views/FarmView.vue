@@ -27,8 +27,9 @@ const formatTime = (seconds: number) => {
 };
 
 const calculateRemainingTimeAndPoints = () => {
-    const now = Math.floor(Date.now() / 1000);
+    const now = Date.now() / 1000
     let secondsLeft = accStore.user.farmingFrom + accStore.user.farmingTime - now;
+
 
     if (accStore.user.farmingFrom <= accStore.user.lastClaim) {
         stopAnimations();
@@ -44,10 +45,10 @@ const calculateRemainingTimeAndPoints = () => {
         return;
     }
 
-    remainingTime.value = formatTime(secondsLeft);
+    remainingTime.value = formatTime(Math.floor(secondsLeft))
     const elapsedTime = totalDuration - secondsLeft;
     currentPoints.value = Math.round((elapsedTime / totalDuration) * accStore.user.maxPoints * 100) / 100;
-};
+}
 
 const startAnimations = () => {
     // if (runningAnimation.value != null) runningAnimation.value.play();
@@ -149,10 +150,8 @@ onMounted(() => {
     if (accStore.user.farmingFrom > accStore.user.lastClaim) {
         startAnimations()
     }
-    setInterval(calculateRemainingTimeAndPoints, 1000)
-});
-
-
+    setInterval(calculateRemainingTimeAndPoints, 500)
+})
 
 
 const claimAnimate = async () => {
@@ -172,12 +171,22 @@ const claimAnimate = async () => {
     }`;
     style.innerHTML = keyframes;
 
-    // Append the style element to the head of the document
 
     setTimeout(() => {
         animateCoin.value = false
         componentsStore.animateBonuses = false
     }, 510 * 4)
+}
+
+const tapCoin = ref<HTMLElement>()
+
+const tap = () => {
+    if (tapCoin.value) {
+        tapCoin.value.style.transform = 'scale(0.85)'
+        setTimeout(() => {
+            if (tapCoin.value) tapCoin.value.style.transform = ''
+        }, 100)
+    }
 }
 
 onUnmounted(() => {
@@ -190,27 +199,40 @@ onUnmounted(() => {
     <section class=" h-screen flex overflow-hidden flex-col">
         <section class=" h-full flex flex-col gap-4 p-4">
             <Balances />
-            <div class="flex items-center relative">
-                <h2 class=" ml-4 absolute italic font-bold text-[#523810]">Upgrade your Droid</h2>
-                <img class="w-full" src="../assets/images/farming/upgrade-banner.png" alt="">
-            </div>
+            <!-- <div class=" banner flex items-center bg-cover rounded-2xl h-28 w-full">
+                <h2 class=" ml-4 absolute italic font-bold text-[#523810]">{{ t('screens.farming.banner') }}</h2>
+            </div> -->
             <span class=" flex justify-center">
                 <div ref="coinsFarmedEl" class=" flex gap-2 p-2 bg-white rounded-full items-center">
                     <bcoinXL />
                     <bcoinXL class="absolute anim-coin duration-500" id="anim-coin-1"
                         :class="{ 'animate-coin': animateCoin }" />
-                    <p class=" text-left text-4xl italic font-bold w-24">{{ currentPoints }}</p>
+                    <p class=" text-left text-4xl font-bold w-24">{{ currentPoints }}</p>
                 </div>
             </span>
             <section class=" coins-container flex h-full items-center relative justify-center" ref="coinsContainer">
-                <img id="coin" src="../components/coin-tap.png" class=" h-full absolute" alt="">
+                <img ref="tapCoin" @click="tap" id="coin" src="../components/coin-tap.png" class=" h-full absolute" alt="">
             </section>
+            <div class="more-points grid grid-cols-3 gap-2">
+                <div class=" bg-half_dark rounded-2xl flex flex-col items-center">
+                    <p class=" mt-2">{{ t('screens.farming.earning.getMore') }}</p>
+                    <bcoin id="more-btn-coin" />
+                </div>
+                <div class=" bg-half_dark rounded-2xl flex flex-col items-center">
+                    <p class=" mt-2">{{ t('screens.farming.earning.upgrade') }}</p>
+                    <img class=" h-8 object-contain object-bottom" src="../assets/images/farming/robot.png" alt="">
+                </div>
+                <div class=" bg-full_dark rounded-2xl flex flex-col text-white text-bold items-center">
+                    <p class=" mt-2 font-bold">{{ t('screens.farming.earning.ninja') }}</p>
+                    <img class=" h-8 object-contain object-bottom" src="../assets/images/farming/spy.png" alt="">
+                </div>
+            </div>
             <section class=" flex flex-col gap-4">
                 <button
                     v-if="accStore.user.farmingFrom > accStore.user.lastClaim && accStore.user.farmingFrom + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1"
                     class="flex items-center justify-between" @click="claim" disabled>
                     <p class=" flex gap-2">
-                        Farming
+                        {{ t('screens.farming.button.farming') }}
                     <p class="flex items-center gap-1">
                         <bcoin />
                         {{ Math.floor(currentPoints) }}/
@@ -223,7 +245,7 @@ onUnmounted(() => {
                 </button>
                 <button v-else-if="accStore.user.farmingFrom > accStore.user.lastClaim"
                     class="flex items-center justify-center gap-2" @click="claim">
-                    Claim
+                    {{ t('screens.farming.button.claim') }}
                     <p class="flex items-center gap-1">
                         <bcoin />
                         {{ accStore.user.maxPoints }}
@@ -231,7 +253,7 @@ onUnmounted(() => {
                 </button>
                 <button v-else class="flex items-center justify-center gap-2" @click="start"
                     :disabled="accStore.user.farmingFrom + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1">
-                    Start
+                    {{ t('screens.farming.button.start') }}
                 </button>
             </section>
         </section>
@@ -240,8 +262,18 @@ onUnmounted(() => {
 </template>
 
 <style>
+
+.banner{
+    background-image:url(../assets/images/farming/upgrade-banner.png);
+}
+
+#more-btn-coin{
+    animation: rotate-coin 2s infinite;
+}
+
 #coin {
     animation: coin-breath 5s infinite;
+    transition: all 0.1s;
     max-height: 17rem;
 }
 
@@ -249,21 +281,6 @@ onUnmounted(() => {
     animation: animate-coins 0.5s 4;
 }
 
-/* .anim-coin {
-    transition: all 0.5s;
-} */
-
-
-
-/* @keyframes animate-coins {
-    0% {
-        transform: translate(0, 0);
-    }
-
-    100% {
-        transform: translate(80px, -175px);
-    }
-} */
 
 @keyframes coin-breath {
     0% {
@@ -291,21 +308,12 @@ onUnmounted(() => {
 
 }
 
-
-@keyframes glow-animation {
+@keyframes rotate-coin {
     0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
+        transform: rotateY(0deg);
     }
-
-    50% {
-        transform: translate(-50%, -50%) scale(1.2);
-        opacity: 0.8;
-    }
-
     100% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
+        transform: rotateY(360deg);
     }
 }
 

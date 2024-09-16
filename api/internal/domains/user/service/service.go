@@ -2,7 +2,6 @@ package service
 
 import (
 	"database/sql"
-	"fmt"
 	"log/slog"
 	"os"
 	"strings"
@@ -109,10 +108,8 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, er
 		if err != nil {
 			return "", err
 		}
-		fmt.Println("\nToken: ", token)
 
 		if err := s.repo.CreateUser(user); err == nil {
-			// TODO: maybe notify referer
 			return token, nil
 		} else {
 			slog.Error("error creating user: " + err.Error())
@@ -122,7 +119,6 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, er
 			return "", err
 		}
 	}
-
 }
 
 func (s *UserService) GenerateRefCode() (string, error) {
