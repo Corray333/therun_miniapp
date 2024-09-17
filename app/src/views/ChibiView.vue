@@ -63,9 +63,7 @@ const { t } = useI18n()
 
 <style scoped>
 
-.sm-shadow{
-    box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
-}
+
 
 .info{
     box-shadow: 0 -1rem 1rem 0 rgba(0, 0, 0, 0.1);

@@ -31,9 +31,14 @@ const router = createRouter({
       component: () => import('../views/TasksView.vue')
     },
     {
-      path: '/more',
-      name: 'more',
-      component: () => import('../views/MoreView.vue')
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/SettingsView.vue')
+    },
+    {
+      path: '/onboarding',
+      name: 'onboarding',
+      component: () => import('../views/OnboardingView.vue')
     }
   ]
 })

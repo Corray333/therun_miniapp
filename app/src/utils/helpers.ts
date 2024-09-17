@@ -4,7 +4,7 @@ declare const Telegram: any
 
 
 
-export const auth = async () => {
+export const auth = async ():Promise<boolean> => {
     const store = useAccountStore()
     let initData = ""
     let refCode = ""
@@ -31,9 +31,10 @@ export const auth = async () => {
             withCredentials: true
         })
         store.token = data.accessToken
-        return true
+        return data.isNew
     } catch (error) {
         console.log(error)
-        alert(error)
+        return false
     }
+    return false
 }

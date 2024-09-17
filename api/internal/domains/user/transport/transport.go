@@ -2,10 +2,10 @@ package transport
 
 import (
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
-	"fmt"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/user/types"
 	global_types "github.com/Corray333/therun_miniapp/internal/types"
@@ -20,7 +20,7 @@ type UserTransport struct {
 
 type service interface {
 	GetUser(userID int64) (*types.User, error)
-	AuthUser(initData, refCode string) (accessToken string, err error)
+	AuthUser(initData, refCode string) (accessToken string, isNew bool, err error)
 	ListReferals(userID int64) ([]types.Referal, error)
 	CountReferals(userID int64) (count, level, nextLevelCount, previousLevelCount int, err error)
 }
@@ -49,6 +49,7 @@ type authRequest struct {
 
 type authResponse struct {
 	AccessToken string `json:"accessToken"`
+	IsNew       bool   `json:"isNew"`
 }
 
 func (t *UserTransport) auth(w http.ResponseWriter, r *http.Request) {
@@ -58,14 +59,14 @@ func (t *UserTransport) auth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Printf("\nRequest: %+v\n", req)
-	token, err := t.service.AuthUser(req.InitData, req.RefCode)
+	token, isNew, err := t.service.AuthUser(req.InitData, req.RefCode)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		slog.Error(err.Error())
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(&authResponse{AccessToken: token}); err != nil {
+	if err := json.NewEncoder(w).Encode(&authResponse{AccessToken: token, IsNew: isNew}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

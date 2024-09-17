@@ -51,23 +51,23 @@ func (s *UserService) GetUser(userID int64) (*types.User, error) {
 	return s.repo.GetUser(userID)
 }
 
-func (s *UserService) AuthUser(initData, refCode string) (accessToken string, err error) {
+func (s *UserService) AuthUser(initData, refCode string) (accessToken string, isNew bool, err error) {
 	token, err := auth.CreateAccessToken(initData)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
 	creds, err := auth.ExtractCredentials(token)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
 	_, err = s.repo.GetUser(creds.ID)
 	if err != nil && err != sql.ErrNoRows {
-		return "", err
+		return "", false, err
 	}
 	if err == nil {
-		return token, nil
+		return token, false, nil
 	}
 
 	user := &types.User{
@@ -83,13 +83,13 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, er
 
 	avatar, err := s.external.GetAvatar(creds.ID)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
 	if avatar != nil {
 		filePath, err := s.fileManager.UploadImage(avatar, creds.Username)
 		if err != nil {
-			return "", err
+			return "", false, err
 		}
 		user.Avatar = strings.TrimPrefix(filePath, "..")
 	}
@@ -97,26 +97,28 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, er
 	if refCode != "" {
 		referer, err := s.repo.GetRefererID(refCode)
 		if err != nil && err != sql.ErrNoRows {
-			return "", err
+			return "", false, err
 		}
-		user.Referer = &referer
+		if referer != 0 {
+			user.Referer = &referer
+		}
 	}
 
 	numberOfRetries := 0
 	for {
 		user.RefCode, err = s.GenerateRefCode()
 		if err != nil {
-			return "", err
+			return "", false, err
 		}
 
 		if err := s.repo.CreateUser(user); err == nil {
-			return token, nil
+			return token, true, nil
 		} else {
 			slog.Error("error creating user: " + err.Error())
 		}
 		numberOfRetries++
 		if numberOfRetries > MaxNumberOfRetries {
-			return "", err
+			return "", false, err
 		}
 	}
 }

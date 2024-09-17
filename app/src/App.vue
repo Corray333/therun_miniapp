@@ -14,6 +14,7 @@ const router = useRouter()
 const temp = ref<string>("")
 
 const showStart = ref<boolean>(true)
+const loggingIn = ref<boolean>(true)
 
 const getUser = async (uid: number) => {
 	const store = useAccountStore()
@@ -53,8 +54,12 @@ onBeforeMount(async () => {
 	}
 	temp.value = tg.initData
 	const uid = tg.initDataUnsafe.user.id
-	await auth()
-	const user = await getUser(uid)
+	const isNew = await auth()
+	await getUser(uid)
+	loggingIn.value = false
+	if (isNew) {
+		router.push('/onboarding')
+	}
 
 	Telegram.WebApp.onEvent('backButtonClicked', function () {
 		router.back()
@@ -64,7 +69,7 @@ onBeforeMount(async () => {
 
 <template>
 	<Transition>
-		<img v-show="showStart" class=" fixed w-screen h-screen object-cover z-50" src="./assets/images/start.png"
+		<img v-show="showStart && loggingIn" class=" fixed w-screen h-screen object-cover z-50" src="./assets/images/start.png"
 			alt="">
 	</Transition>
 	<RouterView />
