@@ -51,6 +51,8 @@
             "shareLink":"Поделиться"
         },
         "onboarding":{
+            "nextButton":"Дальше",
+            "startButton":"Начать",
             "slide1":{
                 "title":"Приложение TheRun",
                 "description":"TheRun — это платформа с различными играми и сорвенованиями на базе геолокации юзеров"

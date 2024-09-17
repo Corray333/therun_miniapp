@@ -51,6 +51,8 @@
             "shareLink":"Share link"
         },
         "onboarding":{
+            "nextButton":"Next",
+            "startButton":"Start",
             "slide1":{
                 "title":"TheRun App",
                 "description":"TheRun is a platform (super-app) with various games and competitions based on geolocation of users"
