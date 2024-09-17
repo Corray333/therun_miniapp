@@ -39,7 +39,7 @@ func (t *External) GetAvatar(userID int64) ([]byte, error) {
 		fileURL, err := t.bot.GetFileDirectURL(photo.FileID)
 
 		if err != nil {
-			return nil, err
+			return nil, nil
 		}
 
 		response, err := http.Get(fileURL)
