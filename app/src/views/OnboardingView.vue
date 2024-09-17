@@ -52,7 +52,7 @@ const currentSlide = ref<number>(0)
                     <div class="info">
                         <h1>{{ t('screens.onboarding.slide5.title') }}</h1>
                         <p>{{ t('screens.onboarding.slide5.description') }}</p>
-                        <button @click="router.push('/farm')">{{ t('screens.onboarding.startButton') }}</button>
+                        <button @click="router.push('/')">{{ t('screens.onboarding.startButton') }}</button>
                     </div>
                 </div>
             </div>
