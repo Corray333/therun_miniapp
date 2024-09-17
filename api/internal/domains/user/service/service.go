@@ -175,7 +175,7 @@ func (s *UserService) CountReferals(userID int64) (count, level, nextLevelCount,
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
-	level = 1
+	level = 0
 	nextLevelCount = levels[0]
 
 	for i, l := range levels {

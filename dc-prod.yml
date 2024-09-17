@@ -23,7 +23,7 @@ services:
       - 5432:5432
 
   app:
-    image: node:14
+    image: node:latest
     volumes:
       - ./app:/app
     working_dir: /app

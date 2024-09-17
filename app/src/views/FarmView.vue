@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import Balances from '@/components/Balances.vue';
 import bcoinXL from '@/components/icons/bcoin-icon-xl.vue'
 import bcoin from '@/components/icons/bcoin-icon.vue'
@@ -51,17 +51,23 @@ const calculateRemainingTimeAndPoints = () => {
 }
 
 const startAnimations = () => {
-    // if (runningAnimation.value != null) runningAnimation.value.play();
     coinsGainInterval = setInterval(createSmallCoin, 500);
 };
 
 const stopAnimations = () => {
-    // if (runningAnimation.value != null) runningAnimation.value.goToAndStop(4, true);
     if (coinsGainInterval) clearInterval(coinsGainInterval);
 };
 
 const animateCoin = ref<boolean>(false)
 const componentsStore = useComponentsStore()
+
+watch(() => accStore.user.farmingFrom, () => {
+    if (accStore.user.farmingFrom > accStore.user.lastClaim) {
+        startAnimations()
+    } else {
+        stopAnimations()
+    }
+})
 
 const claim = async () => {
     try {
@@ -106,7 +112,7 @@ const start = async () => {
         });
 
         accStore.user.farmingFrom = data.farmingFrom;
-        startAnimations();
+        startAnimations()
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
             await auth()
@@ -122,6 +128,7 @@ const start = async () => {
 
 const coinsContainer = ref<HTMLDivElement>();
 const coinsFarmedEl = ref<HTMLElement>();
+
 
 const createSmallCoin = () => {
     if (!coinsContainer.value) return;
@@ -141,10 +148,15 @@ const createSmallCoin = () => {
     setTimeout(() => smallCoin.remove(), 2000);
 };
 
+let scale = 1
 let style: HTMLStyleElement
+let breathInterval: number | null = null
+
 onMounted(() => {
     style = document.createElement('style');
     document.head.appendChild(style);
+
+    startBreath()
 
     calculateRemainingTimeAndPoints()
     if (accStore.user.farmingFrom > accStore.user.lastClaim) {
@@ -152,6 +164,13 @@ onMounted(() => {
     }
     setInterval(calculateRemainingTimeAndPoints, 500)
 })
+
+const startBreath = ()=>{
+    breathInterval = setInterval(() => {
+        scale = scale === 1 ? 0.9 : 1
+        if (tapCoin.value) tapCoin.value.style.transform = `scale(${scale})`
+    }, 2500)
+}
 
 
 const claimAnimate = async () => {
@@ -182,10 +201,17 @@ const tapCoin = ref<HTMLElement>()
 
 const tap = () => {
     if (tapCoin.value) {
+        tapCoin.value.style.transition = 'all 0.2s'
         tapCoin.value.style.transform = 'scale(0.85)'
         setTimeout(() => {
-            if (tapCoin.value) tapCoin.value.style.transform = ''
-        }, 100)
+            if (tapCoin.value){
+                tapCoin.value.style.transition = 'all 2.5s'
+                tapCoin.value.style.transform = 'scale(1)'
+                scale = 1
+                if (breathInterval)clearInterval(breathInterval)
+                startBreath()
+            }
+        }, 200)
     }
 }
 
@@ -272,8 +298,8 @@ onUnmounted(() => {
 }
 
 #coin {
-    animation: coin-breath 5s infinite;
-    transition: all 0.1s;
+    /* animation: coin-breath 5s infinite; */
+    transition: all 2.5s;
     max-height: 17rem;
 }
 
@@ -293,6 +319,28 @@ onUnmounted(() => {
 
     100% {
         transform: scale(1);
+    }
+}
+
+@keyframes shaking {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-0.5rem);
+    }
+
+    50% {
+        transform: translateX(0);
+    }
+
+    75% {
+        transform: translateX(0.5rem);
+    }
+
+    100% {
+        transform: translateX(0);
     }
 }
 
