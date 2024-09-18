@@ -48,13 +48,13 @@
         },
         "chibi":{
             "game":{
-                "header":"Radar game",
-                "subheader":"In Radar game you can get more boxes!",
-                "description":"In the Radar game you can find many useful and interesting things that will help you improve your chibi and find even more boxes"
+                "header":"Play Radar game in Chibiverse",
+                "subheader":"In Radar game you can get more boxes and open them without keys later",
+                "description":"In Radar game you can find many useful and interesting artefacts that will help you to improve your chibis and to win in battles against other players"
             },
             "case":{
                 "header":"Open Red box and get RACE coins",
-                "description":"Get the keys for guessing the winner of the battles",
+                "description":"You can get the keys to open the box in Battles section or for completing tasks",
                 "openButton":"Open the Box"
             }
         },

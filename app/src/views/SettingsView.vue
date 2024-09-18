@@ -24,11 +24,10 @@ watch(language, (newLanguage) => {
 </script>
 
 <template>
-    <section>
+    <section class=" pb-20">
         <section class=" flex flex-col min-h-screen p-5 h-full w-full">
             <Select v-model="language" :options="languages" optionLabel="name" placeholder="Select a City" class="w-full bg-primary text-black" />
         </section>
-        <Navbar class=" fixed bottom-0" />
     </section>
 </template>
 

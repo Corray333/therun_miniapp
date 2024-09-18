@@ -10,12 +10,12 @@ const { t } = useI18n()
 
 
 <template>
-    <section class=" pb-24">
+    <section class=" pb-20">
         <section class=" flex flex-col p-4 h-full w-full">
             <Balances />
         </section>
         <section class=" flex flex-col gap-6 pb-12 items-center p-4">
-            <span class="flex flex-col gap-1">
+            <span class="flex flex-col gap-1 text-center">
                 <h1>{{ t('screens.chibi.case.header') }}</h1>
                 <p>{{ t('screens.chibi.case.description') }}</p>
             </span>
@@ -62,7 +62,6 @@ const { t } = useI18n()
                 <img src="../assets/images/chibi/slider/box-4.png" alt="" class="slide">
             </div>
         </div>
-        <Navbar class=" fixed bottom-0" />
     </section>
 </template>
 

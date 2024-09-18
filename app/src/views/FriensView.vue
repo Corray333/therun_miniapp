@@ -135,7 +135,6 @@ const shareOnTelegram = () => {
                 </div>
             </div>
         </section>
-        <Navbar class=" fixed z-30 bottom-0" />
     </section>
 </template>
 

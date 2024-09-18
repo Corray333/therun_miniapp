@@ -5,13 +5,18 @@ import { auth } from '@/utils/helpers'
 import { useAccountStore } from './stores/account'
 import axios from 'axios'
 import { useI18n } from 'vue-i18n'
+import Navbar from './components/Navbar.vue'
 declare const Telegram: any
 
 const i18n = useI18n()
 
 
 const router = useRouter()
+const route = useRoute()
+
 const temp = ref<string>("")
+
+const excludedRoutes = ['onboarding'];
 
 const showStart = ref<boolean>(true)
 const loggingIn = ref<boolean>(true)
@@ -36,7 +41,7 @@ const getUser = async (uid: number) => {
 onMounted(() => {
 	setTimeout(() => {
 		showStart.value = false
-	}, 2000);
+	}, 2000)
 })
 
 onBeforeMount(async () => {
@@ -69,10 +74,12 @@ onBeforeMount(async () => {
 
 <template>
 	<Transition>
-		<img v-show="showStart && loggingIn" class=" fixed w-screen h-screen object-cover z-50" src="./assets/images/start.png"
-			alt="">
+		<img v-show="showStart && loggingIn" class=" fixed w-screen h-screen object-cover z-50" src="./assets/images/start.png" alt="">
 	</Transition>
-	<RouterView />
+	<section>
+		<RouterView />
+		<Navbar v-show="!excludedRoutes.includes(String(route.name))" class=" fixed bottom-0 left-0" />
+	</section>
 </template>
 
 <style scoped>

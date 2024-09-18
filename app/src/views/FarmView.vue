@@ -47,7 +47,8 @@ const calculateRemainingTimeAndPoints = () => {
 
     remainingTime.value = formatTime(Math.floor(secondsLeft))
     const elapsedTime = totalDuration - secondsLeft;
-    currentPoints.value = Math.round((elapsedTime / totalDuration) * accStore.user.maxPoints * 100) / 100;
+    currentPoints.value = Math.round((elapsedTime / totalDuration) * accStore.user.maxPoints * 100) / 100
+    if (currentPoints.value < 0 ) currentPoints.value = 0
 }
 
 const startAnimations = () => {
@@ -226,7 +227,7 @@ const modalPick = ref<string>('keys')
 
 
 <template>
-    <section class=" h-screen flex overflow-hidden flex-col">
+    <section class=" h-screen flex overflow-hidden flex-col pb-20">
         <Transition name="delay">
             <section v-show="showModal" @click.self="showModal = false"
                 class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-end">
@@ -273,9 +274,6 @@ const modalPick = ref<string>('keys')
         </Transition>
         <section class=" h-full flex flex-col gap-4 p-4">
             <Balances />
-            <!-- <div class=" banner flex items-center bg-cover rounded-2xl h-28 w-full">
-                <h2 class=" ml-4 absolute italic font-bold text-[#523810]">{{ t('screens.farming.banner') }}</h2>
-            </div> -->
             <span class=" flex justify-center">
                 <div ref="coinsFarmedEl" class=" flex gap-2 p-2 bg-white rounded-full items-center">
                     <bcoinXL />
@@ -332,7 +330,6 @@ const modalPick = ref<string>('keys')
                 </button>
             </section>
         </section>
-        <Navbar class="" />
     </section>
 </template>
 

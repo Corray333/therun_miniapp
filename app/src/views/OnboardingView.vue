@@ -18,7 +18,7 @@ const currentSlide = ref<number>(0)
                 <div class="slide">
                     <div class="pic-container flex-col p-8 gap-4">
                         <div class="pic" id="onboarding-pic-1"></div>
-                        <div class="flex gap-4 w-4/5">
+                        <div class="flex gap-4">
                             <a href="https://play.google.com/store/apps/details?id=com.therun.app" target="_blank"><img src="../assets/images/onboarding/google-play-btn.png" alt=""></a>
                             <a href="https://apps.apple.com/us/app/therun/id1634366310" target="_blank"><img src="../assets/images/onboarding/appstore-btn.png" alt=""></a>
                         </div>
@@ -94,7 +94,6 @@ const currentSlide = ref<number>(0)
 .pic {
     height: 100%;
     width: 100%;
-    max-width: 80%;
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
