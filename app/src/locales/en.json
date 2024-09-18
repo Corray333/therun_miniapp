@@ -15,7 +15,8 @@
         "keysDescription":"Keys are needed to open boxes. You can get them for tasks or bets.",
         "bonusesDescription":"Bonuses are needed to improve your chibi. You can get them during farming.",
         "raceDescription":"Race is a main currency in the game. You can get it for bets or tasks.",
-        "withdraw":"Send to TheRun account"
+        "withdraw":"Send to TheRun account",
+        "use":"Use keys"
     },
     "screens":{
         "farming":{
@@ -29,6 +30,20 @@
                 "getMore":"Get more",
                 "upgrade":"Droid upgrade",
                 "ninja":"Spy Ninja"
+            },
+            "info":{
+                "points": {
+                    "title":"Get more Bonus Points",
+                    "description":"You can get much more bonus points when you play Explorer game or participate in Battles in Million Run game"
+                },
+                "droid": {
+                    "title":"Upgrade your Droid",
+                    "description":"You can upgrade the stage of your droid by getting miles in Million Run game in the main app"
+                },
+                "ninja": {
+                    "title":"Spy Ninja",
+                    "description":"Coming soon"
+                }
             }
         },
         "chibi":{
@@ -70,7 +85,7 @@
                 "description":"Just launch the game when you go out of your home, put your mobile in a pocket and get “miles” while moving on any transport"
             },
             "slide5":{
-                "title":"Use our Telegram mini-app and the main app TheRun",
+                "title":"Use our Telegram mini-app<br>and the main app TheRun",
                 "description":"You can use this Mini App and download TheRun from the Google Play market and App Store for the full gaming experience"
             }
         }

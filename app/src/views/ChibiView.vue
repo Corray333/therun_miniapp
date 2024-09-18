@@ -20,10 +20,16 @@ const { t } = useI18n()
                 <p>{{ t('screens.chibi.case.description') }}</p>
             </span>
             <img id="case" src="../assets/images/chibi/slider/box-3.png" alt="">
-            <div class="flex gap-2 p-4 rounded-full sm-shadow">
-                <key color="var(--dark)"/>
-                <key color="var(--dark)"/>
-                <key color="var(--dark)"/>
+            <div class="flex gap-2">
+                <span class="rounded-full p-4 sm-shadow">
+                    <key color="var(--dark)"/>
+                </span>
+                <span class="rounded-full p-4 sm-shadow">
+                    <key color="var(--dark)"/>
+                </span>
+                <span class="rounded-full p-4 sm-shadow">
+                    <key color="var(--dark)"/>
+                </span>
             </div>
             <button class=" bg-dark" disabled>{{ t('comingSoon') }}</button>
         </section>

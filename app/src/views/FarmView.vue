@@ -165,7 +165,7 @@ onMounted(() => {
     setInterval(calculateRemainingTimeAndPoints, 500)
 })
 
-const startBreath = ()=>{
+const startBreath = () => {
     breathInterval = setInterval(() => {
         scale = scale === 1 ? 0.9 : 1
         if (tapCoin.value) tapCoin.value.style.transform = `scale(${scale})`
@@ -204,11 +204,11 @@ const tap = () => {
         tapCoin.value.style.transition = 'all 0.2s'
         tapCoin.value.style.transform = 'scale(0.85)'
         setTimeout(() => {
-            if (tapCoin.value){
+            if (tapCoin.value) {
                 tapCoin.value.style.transition = 'all 2.5s'
                 tapCoin.value.style.transform = 'scale(1)'
                 scale = 1
-                if (breathInterval)clearInterval(breathInterval)
+                if (breathInterval) clearInterval(breathInterval)
                 startBreath()
             }
         }, 200)
@@ -217,12 +217,60 @@ const tap = () => {
 
 onUnmounted(() => {
     stopAnimations()
-});
+})
+
+const showModal = ref<boolean>(false)
+const modalPick = ref<string>('keys')
+
 </script>
 
 
 <template>
     <section class=" h-screen flex overflow-hidden flex-col">
+        <Transition name="delay">
+            <section v-show="showModal" @click.self="showModal = false"
+                class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-end">
+                <Transition name="slide">
+                    <section v-if="showModal"
+                        class=" modal w-full rounded-t-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg">
+                        <div v-if="modalPick == 'bonuses'" class="bonus-modal py-8  w-full text-center flex flex-col items-center gap-2">
+                            <h2 class=" header flex flex-col items-center gap-2">
+                                <div class="pic"></div>
+                                <p>{{ t('screens.farming.info.points.title') }}</p>
+                            </h2>
+                            <p>{{ t('screens.farming.info.points.description') }}</p>
+                            <div class=" flex justify-center w-full gap-4">
+                                <a class=" max-h-12" href="https://play.google.com/store/apps/details?id=com.therun.app"
+                                    target="_blank"><img src="../assets/images/chibi/google-play-btn.png" alt=""></a>
+                                <a class=" max-h-12" href="https://apps.apple.com/us/app/therun/id1634366310" target="_blank"><img
+                                        src="../assets/images/chibi/appstore-btn.png" alt=""></a>
+                            </div>
+                        </div>
+                        <div v-else-if="modalPick == 'droid'"
+                            class=" droid-modal py-8 w-full text-center flex flex-col items-center gap-2">
+                            <h2 class=" header flex flex-col items-center gap-2">
+                                <div class="pic"></div>
+                                <h2>{{ t('screens.farming.info.droid.title') }}</h2>
+                            </h2>
+                            <p>{{ t('screens.farming.info.droid.description') }}</p>
+                            <div class=" flex justify-center w-full gap-4">
+                                <a class=" max-h-12" href="https://play.google.com/store/apps/details?id=com.therun.app"
+                                    target="_blank"><img src="../assets/images/chibi/google-play-btn.png" alt=""></a>
+                                <a class=" max-h-12" href="https://apps.apple.com/us/app/therun/id1634366310" target="_blank"><img
+                                        src="../assets/images/chibi/appstore-btn.png" alt=""></a>
+                            </div>
+                        </div>
+                        <div v-else class=" ninja-modal py-8 w-full text-center flex flex-col items-center gap-2">
+                            <h2 class=" header flex flex-col items-center gap-2">
+                                <div class="pic"></div>
+                                <h2>{{ t('screens.farming.info.ninja.title') }}</h2>
+                            </h2>
+                            <p>{{ t('screens.farming.info.ninja.description') }}</p>
+                        </div>
+                    </section>
+                </Transition>
+            </section>
+        </Transition>
         <section class=" h-full flex flex-col gap-4 p-4">
             <Balances />
             <!-- <div class=" banner flex items-center bg-cover rounded-2xl h-28 w-full">
@@ -237,18 +285,19 @@ onUnmounted(() => {
                 </div>
             </span>
             <section class=" coins-container flex h-full items-center relative justify-center" ref="coinsContainer">
-                <img ref="tapCoin" @click="tap" id="coin" src="../components/coin-tap.png" class=" h-full absolute" alt="">
+                <img ref="tapCoin" @click="tap" id="coin" src="../components/coin-tap.png" class=" h-full absolute"
+                    alt="">
             </section>
             <div class="more-points grid grid-cols-3 gap-2">
-                <div class=" bg-half_dark rounded-2xl flex flex-col items-center">
+                <div @click="showModal = true; modalPick = 'bonuses'" class=" bg-half_dark rounded-2xl flex flex-col items-center">
                     <p class=" mt-2">{{ t('screens.farming.earning.getMore') }}</p>
                     <bcoin id="more-btn-coin" />
                 </div>
-                <div class=" bg-half_dark rounded-2xl flex flex-col items-center">
+                <div @click="showModal = true; modalPick = 'droid'" class=" bg-half_dark rounded-2xl flex flex-col items-center">
                     <p class=" mt-2">{{ t('screens.farming.earning.upgrade') }}</p>
                     <img class=" h-8 object-contain object-bottom" src="../assets/images/farming/robot.png" alt="">
                 </div>
-                <div class=" bg-full_dark rounded-2xl flex flex-col text-white text-bold items-center">
+                <div @click="showModal = true; modalPick = 'ninja'" class=" bg-full_dark rounded-2xl flex flex-col text-white text-bold items-center">
                     <p class=" mt-2 font-bold">{{ t('screens.farming.earning.ninja') }}</p>
                     <img class=" h-8 object-contain object-bottom" src="../assets/images/farming/spy.png" alt="">
                 </div>
@@ -288,12 +337,11 @@ onUnmounted(() => {
 </template>
 
 <style>
-
-.banner{
-    background-image:url(../assets/images/farming/upgrade-banner.png);
+.banner {
+    background-image: url(../assets/images/farming/upgrade-banner.png);
 }
 
-#more-btn-coin{
+#more-btn-coin {
     animation: rotate-coin 2s infinite;
 }
 
@@ -360,6 +408,7 @@ onUnmounted(() => {
     0% {
         transform: rotateY(0deg);
     }
+
     100% {
         transform: rotateY(360deg);
     }
@@ -374,4 +423,27 @@ onUnmounted(() => {
         transform: translate(0, 0);
     }
 }
+
+.modal .pic{
+    background-size: contain;
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    border-radius: 999px;
+    width: 7rem;
+    height: 7rem;
+    max-width: 120px;
+    max-height: 120px
+}
+
+.bonus-modal .pic{
+    background-image: url(../assets/images/farming/bcoin-modal-pic.png);
+}
+.droid-modal .pic{
+    background-image: url(../assets/images/farming/droid-modal-pic.png);
+}
+.ninja-modal .pic{
+    background-image: url(../assets/images/farming/ninja-modal-pic.png);
+}
+
+
 </style>

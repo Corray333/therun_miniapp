@@ -16,8 +16,12 @@ const currentSlide = ref<number>(0)
         <div class="slider">
             <div class="slide-track" :style="`transform:translateX(${-100*currentSlide}vw)`">
                 <div class="slide">
-                    <div class="pic-container">
+                    <div class="pic-container flex-col p-8 gap-4">
                         <div class="pic" id="onboarding-pic-1"></div>
+                        <div class="flex gap-4 w-4/5">
+                            <a href="https://play.google.com/store/apps/details?id=com.therun.app" target="_blank"><img src="../assets/images/onboarding/google-play-btn.png" alt=""></a>
+                            <a href="https://apps.apple.com/us/app/therun/id1634366310" target="_blank"><img src="../assets/images/onboarding/appstore-btn.png" alt=""></a>
+                        </div>
                     </div>
                     <div class="info">
                         <h1>{{ t('screens.onboarding.slide1.title') }}</h1>
@@ -37,7 +41,7 @@ const currentSlide = ref<number>(0)
                 </div>
                 <div class="slide">
                     <div class="pic-container">
-                        <div class="pic bg-bottom" id="onboarding-pic-4"></div>
+                        <div class="pic bottom-bg" id="onboarding-pic-4"></div>
                     </div>
                     <div class="info">
                         <h1>{{ t('screens.onboarding.slide4.title') }}</h1>
@@ -50,7 +54,7 @@ const currentSlide = ref<number>(0)
                         <div class="pic" id="onboarding-pic-5"></div>
                     </div>
                     <div class="info">
-                        <h1>{{ t('screens.onboarding.slide5.title') }}</h1>
+                        <h1 v-html="t('screens.onboarding.slide5.title')"></h1>
                         <p>{{ t('screens.onboarding.slide5.description') }}</p>
                         <button @click="router.push('/')">{{ t('screens.onboarding.startButton') }}</button>
                     </div>
@@ -95,6 +99,9 @@ const currentSlide = ref<number>(0)
     background-repeat: no-repeat;
     background-size: contain;
 }
+.bottom-bg{
+        background-position: bottom !important;
+    }
 
 .info {
     padding: 1rem;

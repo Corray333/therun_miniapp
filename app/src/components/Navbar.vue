@@ -21,7 +21,7 @@ const showMore = ref<boolean>(false)
     <nav class=" w-full bg-white">
         <ul class=" flex justify-around py-4 relative w-full list-none text-sm">
             <Transition name="resize">
-                <aside v-if="showMore" class=" absolute bottom-full mb-4 mr-4 right-0 p-4 rounded-2xl bg-white sm-shadow">
+                <aside v-if="showMore" class=" text-dark absolute bottom-full mb-4 mr-4 right-0 p-4 rounded-2xl bg-white sm-shadow">
                     <ul class=" flex flex-col">
                         <li class=" flex gap-2 p-2">
                             <router-link to="/settings">
@@ -77,10 +77,16 @@ const showMore = ref<boolean>(false)
 </template>
 
 
-<style scoped>
+<style>
 .router-link-active {
-    color: var(--primary)
+    color: var(--primary);
 }
+
+.router-link-active svg{
+    transform: scale(1.5);
+    transition: transform 0.25s ease;
+}
+
 
 nav {
     box-shadow: 0 -0.25rem 1rem 0 rgba(0, 0, 0, 0.1);
