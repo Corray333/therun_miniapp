@@ -24,13 +24,13 @@ const showMore = ref<boolean>(false)
                 <aside v-if="showMore" class=" text-dark absolute bottom-full mb-4 mr-4 right-0 p-4 rounded-2xl bg-white sm-shadow">
                     <ul class=" flex flex-col">
                         <li class=" flex gap-2 p-2">
-                            <router-link to="/settings">
-                                <i class="pi pi-cog"></i> Settings
+                            <router-link to="/settings" class=" flex items-center gap-2">
+                                <i class="pi pi-cog text-2xl"></i> Settings
                             </router-link>
                         </li>
                         <li class=" flex gap-2 p-2">
-                            <router-link to="/onboarding">
-                                <i class="pi pi-info-circle"></i> Info
+                            <router-link to="/onboarding" class=" flex items-center gap-2">
+                                <i class="pi pi-info-circle text-2xl"></i> Info
                             </router-link>
                         </li>
                     </ul>

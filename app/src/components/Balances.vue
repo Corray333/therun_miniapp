@@ -80,7 +80,7 @@ onMounted(() => {
 
     <div @click="pick = 'key'; showModal = true"
       class=" bg-half_dark p-4 w-full rounded-2xl flex flex-col justify-center items-center">
-      <span class=" flex gap-1" ref="bonusesLabel">
+      <span class=" flex gap-1" >
         <key color="var(--primary)" />
         <p class=" text-left font-bold">{{ store.user.keyBalance }}</p>
       </span>
