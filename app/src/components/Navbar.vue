@@ -22,15 +22,15 @@ const showMore = ref<boolean>(false)
         <ul class=" flex justify-around py-4 relative w-full list-none text-sm">
             <Transition name="resize">
                 <aside v-if="showMore" class=" text-dark absolute bottom-full mb-4 mr-4 right-0 p-4 rounded-2xl bg-white sm-shadow">
-                    <ul class=" flex flex-col">
+                    <ul class=" flex flex-col more-list">
                         <li class=" flex gap-2 p-2">
                             <router-link to="/settings" class=" flex items-center gap-2">
-                                <i class="pi pi-cog text-2xl"></i> Settings
+                                <i class="pi pi-cog" ></i> Settings
                             </router-link>
                         </li>
                         <li class=" flex gap-2 p-2">
                             <router-link to="/onboarding" class=" flex items-center gap-2">
-                                <i class="pi pi-info-circle text-2xl"></i> Info
+                                <i class="pi pi-info-circle" ></i> Info
                             </router-link>
                         </li>
                     </ul>
@@ -82,9 +82,16 @@ const showMore = ref<boolean>(false)
     color: var(--primary);
 }
 
+.more-list i{
+    font-size: 2rem;
+}
+
+a svg{
+    transition: transform 0.25s ease;
+}
+
 .router-link-active svg{
     transform: scale(1.5);
-    transition: transform 0.25s ease;
 }
 
 

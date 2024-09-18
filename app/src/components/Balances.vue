@@ -49,7 +49,7 @@ onMounted(() => {
             <div v-else class=" w-full text-center flex flex-col items-center gap-2">
               <h2 class=" header flex items-center gap-2"><key color="var(--primary)"/>{{ t('wallet.keys') }}</h2>
               <p>{{ t('wallet.keysDescription') }}</p>
-              <router-link to="/chibi">
+              <router-link to="/chibi" class=" w-full">
                 <button class=" w-full">{{ t('wallet.use') }}</button>
               </router-link>
             </div>
