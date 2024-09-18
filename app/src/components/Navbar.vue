@@ -82,7 +82,7 @@ const showMore = ref<boolean>(false)
 </template>
 
 
-<style>
+<style scoped>
 .router-link-active {
     color: var(--primary);
 }
