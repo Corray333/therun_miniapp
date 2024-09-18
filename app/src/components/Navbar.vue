@@ -83,7 +83,7 @@ const showMore = ref<boolean>(false)
 }
 
 .more-list i{
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
 
 a svg{
