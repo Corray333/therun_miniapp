@@ -78,7 +78,7 @@ onBeforeMount(async () => {
 	</Transition>
 	<section>
 		<RouterView />
-		<Navbar v-show="!excludedRoutes.includes(String(route.name))" class=" fixed bottom-0 left-0" />
+		<Navbar v-show="!excludedRoutes.includes(String(route.name))" class=" fixed bottom-0 left-0 z-50" />
 	</section>
 </template>
 
