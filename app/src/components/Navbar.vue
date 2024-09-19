@@ -99,6 +99,10 @@ const showMore = ref<boolean>(false)
     transform: scale(1.5);
 }
 
+.router-link-active svg#friens {
+    transform: scale(1.75);
+}
+
 
 nav {
     box-shadow: 0 -0.25rem 1rem 0 rgba(0, 0, 0, 0.1);
