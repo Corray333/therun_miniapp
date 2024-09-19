@@ -333,7 +333,7 @@ const modalPick = ref<string>('keys')
     </section>
 </template>
 
-<style>
+<style scoped>
 .banner {
     background-image: url(../assets/images/farming/upgrade-banner.png);
 }

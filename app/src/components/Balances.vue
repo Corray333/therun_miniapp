@@ -25,7 +25,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class=" flex w-full gap-2 z-10">
+  <section class=" flex w-full gap-2 z-50">
     <Transition name="delay">
       <section v-show="showModal" @click.self="showModal = false"
         class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-end">

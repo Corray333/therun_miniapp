@@ -24,6 +24,10 @@
         @apply text-xl font-bold;
     }
 
+    .z-60{
+        z-index: 60;
+    }
+
     h2{
         @apply text-lg font-bold;
     }

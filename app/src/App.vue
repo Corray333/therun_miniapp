@@ -74,11 +74,11 @@ onBeforeMount(async () => {
 
 <template>
 	<Transition>
-		<img v-show="showStart && loggingIn" class=" fixed w-screen h-screen object-cover z-50" src="./assets/images/start.png" alt="">
+		<img v-show="showStart && loggingIn" class=" fixed w-screen h-screen object-cover z-60" src="./assets/images/start.png" alt="">
 	</Transition>
 	<section>
 		<RouterView />
-		<Navbar v-show="!excludedRoutes.includes(String(route.name))" class=" fixed bottom-0 left-0 z-50" />
+		<Navbar v-show="!excludedRoutes.includes(String(route.name))" class=" fixed bottom-0 left-0 z-40" />
 	</section>
 </template>
 
