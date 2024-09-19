@@ -12,7 +12,7 @@
         "balance":"Balance",
         "keys":"Keys",
         "bonuses":"Bonuses",
-        "keysDescription":"Keys are needed to open boxes. You can get them for tasks or bets.",
+        "keysDescription":"You need keys to open boxes, you can get them for completing tasks or in Battles section",
         "bonusesDescription":"Bonuses are needed to improve your chibi. You can get them during farming.",
         "raceDescription":"Race is a main currency in the game. You can get it for bets or tasks.",
         "withdraw":"Send to TheRun account",
@@ -42,7 +42,7 @@
                 },
                 "ninja": {
                     "title":"Spy Ninja",
-                    "description":"Coming soon"
+                    "description":"Soon you will be able to send your Ninja to other users to steal keys for boxes"
                 }
             }
         },
@@ -67,7 +67,7 @@
         },
         "onboarding":{
             "nextButton":"Next",
-            "startButton":"Start",
+            "startButton":"Play!",
             "slide1":{
                 "title":"TheRun App",
                 "description":"TheRun is a platform (super-app) with various games and competitions based on geolocation of users"

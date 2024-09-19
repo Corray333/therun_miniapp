@@ -25,15 +25,3 @@ type Task struct {
 	RaceReward   int             `json:"race_reward" db:"race_reward"`
 	Data         json.RawMessage `json:"data" db:"data"`
 }
-
-var example1 = Task{
-	ID:           1,
-	Description:  "Subscribe to HAPI telegram channel",
-	Type:         TaskTypeTg,
-	Link:         "https://t.me/hapi_ann",
-	ExpireAt:     1610000000,
-	PointsReward: 500,
-	KeysReward:   0,
-	RaceReward:   0,
-	Data:         json.RawMessage(`{"tg_channel_id": 1610000000}`),
-}

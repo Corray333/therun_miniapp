@@ -16,7 +16,7 @@ const currentSlide = ref<number>(0)
         <div class="slider">
             <div class="slide-track" :style="`transform:translateX(${-100*currentSlide}vw)`">
                 <div class="slide">
-                    <div class="pic-container flex-col p-8 gap-4">
+                    <div class="pic-container flex-col p-8 gap-4 p-4">
                         <div class="pic" id="onboarding-pic-1"></div>
                         <div class="flex gap-4">
                             <a href="https://play.google.com/store/apps/details?id=com.therun.app" target="_blank"><img src="../assets/images/onboarding/google-play-btn.png" alt=""></a>
@@ -30,7 +30,7 @@ const currentSlide = ref<number>(0)
                     </div>
                 </div>
                 <div class="slide">
-                    <div class="pic-container">
+                    <div class="pic-container p-4">
                         <div class="pic" id="onboarding-pic-3"></div>
                     </div>
                     <div class="info">
@@ -40,7 +40,7 @@ const currentSlide = ref<number>(0)
                     </div>
                 </div>
                 <div class="slide">
-                    <div class="pic-container">
+                    <div class="pic-container pt-4 px-4">
                         <div class="pic bottom-bg" id="onboarding-pic-4"></div>
                     </div>
                     <div class="info">
@@ -50,7 +50,7 @@ const currentSlide = ref<number>(0)
                     </div>
                 </div>
                 <div class="slide">
-                    <div class="pic-container">
+                    <div class="pic-container p-4">
                         <div class="pic" id="onboarding-pic-5"></div>
                     </div>
                     <div class="info">
@@ -103,7 +103,7 @@ const currentSlide = ref<number>(0)
     }
 
 .info {
-    padding: 1rem;
+    padding: 2rem 1rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;

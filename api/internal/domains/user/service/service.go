@@ -194,3 +194,49 @@ func (s *UserService) CountReferals(userID int64) (count, level, nextLevelCount,
 
 	return count, level + 1, nextLevelCount, previousLevelCount, nil
 }
+
+const DayTime = 86400
+
+var dayliCheckRewards = map[int]int{
+	1: 100,
+	2: 200,
+	3: 300,
+	4: 400,
+	5: 500,
+	6: 800,
+	7: 1000,
+}
+
+func (s *UserService) DailyCheck(userID int64) (dailyCheckStreak int, dailyCheckLast int64, err error) {
+	user, err := s.repo.GetUser(userID)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	now := time.Now().UTC()
+	lastCheckTime := time.Unix(user.DailyCheckLast, 0).UTC()
+
+	// Check if last daily check was until 00:00 UTC today
+	yesterday := now.AddDate(0, 0, -1)
+
+	// Compare the date part of the given time with yesterday's date
+	if lastCheckTime.Year() == yesterday.Year() && lastCheckTime.YearDay() == yesterday.YearDay() {
+		user.DailyCheckStreak++
+		if user.DailyCheckStreak > 7 {
+			user.PointBalance += dayliCheckRewards[7]
+		} else {
+			user.PointBalance += dayliCheckRewards[user.DailyCheckStreak]
+		}
+	} else {
+		user.DailyCheckStreak = 1
+		user.PointBalance += dayliCheckRewards[1]
+	}
+
+	user.DailyCheckLast = now.Unix()
+
+	if err := s.repo.UpdateUser(user); err != nil {
+		return 0, 0, err
+	}
+
+	return user.DailyCheckStreak, user.DailyCheckLast, nil
+}
