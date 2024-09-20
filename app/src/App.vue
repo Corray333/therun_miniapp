@@ -6,6 +6,7 @@ import { useAccountStore } from './stores/account'
 import axios from 'axios'
 import { useI18n } from 'vue-i18n'
 import Navbar from './components/Navbar.vue'
+import Errors from './components/Errors.vue'
 declare const Telegram: any
 
 const i18n = useI18n()
@@ -77,6 +78,7 @@ onBeforeMount(async () => {
 		<img v-show="showStart && loggingIn" class=" fixed w-screen h-screen object-cover z-60" src="./assets/images/start.png" alt="">
 	</Transition>
 	<section>
+		<Errors class=" fixed top-0 left-0" />
 		<RouterView />
 		<Navbar v-show="!excludedRoutes.includes(String(route.name))" class=" fixed bottom-0 left-0 z-40" />
 	</section>

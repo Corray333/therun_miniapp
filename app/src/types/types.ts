@@ -17,3 +17,16 @@ export class Referal {
     avatar: string="";
     username: string="";
 }
+
+export class Task {
+    id: number = 0;
+    description: string = '';
+    type: string = '';
+    link: string = '';
+    expireAt: number = 0;
+    pointsReward: number = 0;
+    keysReward: number = 0;
+    raceReward: number = 0;
+    data: any = null;
+    icon: string = '';
+}

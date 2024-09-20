@@ -12,6 +12,10 @@
         @apply bg-primary_light
     }
 
+    button.btn-type-2{
+        @apply w-full p-4 font-bold rounded-2xl bg-transparent text-primary border-primary border-2
+    }
+
     .label{
         @apply text-dark text-sm;
     }

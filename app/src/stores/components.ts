@@ -6,5 +6,5 @@ export const useComponentsStore = defineStore('components', () => {
     const bonusesLabelPos = ref([0,0])
     const errors = ref<string[]>([])
 
-    return { animateBonuses, bonusesLabelPos }
+    return { animateBonuses, bonusesLabelPos, errors }
 })

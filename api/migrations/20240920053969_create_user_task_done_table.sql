@@ -9,5 +9,5 @@ CREATE TABLE IF NOT EXISTS user_task_done (
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+DROP TABLE IF EXISTS user_task_done;
 -- +goose StatementEnd

@@ -8,6 +8,7 @@ import (
 	_ "github.com/Corray333/therun_miniapp/docs"
 	"github.com/Corray333/therun_miniapp/internal/config"
 	"github.com/Corray333/therun_miniapp/internal/domains/farming"
+	"github.com/Corray333/therun_miniapp/internal/domains/task"
 	"github.com/Corray333/therun_miniapp/internal/domains/user"
 	"github.com/Corray333/therun_miniapp/internal/files"
 	"github.com/Corray333/therun_miniapp/internal/storage"
@@ -73,6 +74,9 @@ func New() *App {
 
 	farmingController := farming.NewFarmingController(router, store, userController.GetService())
 	app.AddController(farmingController)
+
+	taskController := task.NewTaskController(router, store)
+	app.AddController(taskController)
 
 	return app
 }

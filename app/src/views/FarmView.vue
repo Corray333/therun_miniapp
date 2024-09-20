@@ -3,7 +3,6 @@ import { ref, onMounted, onUnmounted, watch } from 'vue'
 import Balances from '@/components/Balances.vue';
 import bcoinXL from '@/components/icons/bcoin-icon-xl.vue'
 import bcoin from '@/components/icons/bcoin-icon.vue'
-import Navbar from '@/components/Navbar.vue'
 import { useAccountStore } from '@/stores/account'
 import { useComponentsStore } from '@/stores/components'
 import { useI18n } from 'vue-i18n'
@@ -201,6 +200,11 @@ const claimAnimate = async () => {
 const tapCoin = ref<HTMLElement>()
 
 const tap = () => {
+    componentsStore.errors.push("New error")
+    setInterval(() => {
+        componentsStore.errors.pop()
+    }, 3000)
+
     if (tapCoin.value) {
         tapCoin.value.style.transition = 'all 0.2s'
         tapCoin.value.style.transform = 'scale(0.85)'
@@ -338,6 +342,7 @@ const modalPick = ref<string>('keys')
 </template>
 
 <style scoped>
+
 .delay-enter-active,
 .delay-leave-active {
     transition: opacity 0.5s ease;

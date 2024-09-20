@@ -110,7 +110,9 @@
                     "description":"Find combo to earn bonus rewards"
                 },
                 "header": "Tasks list"
-            }
+            },
+            "startBtn": "Start",
+            "checkBtn": "Check completion"
         }
     }
 }

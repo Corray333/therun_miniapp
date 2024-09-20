@@ -1,4 +1,4 @@
-package farming
+package task
 
 import (
 	"github.com/Corray333/therun_miniapp/internal/domains/task/repository"

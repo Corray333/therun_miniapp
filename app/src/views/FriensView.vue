@@ -138,7 +138,7 @@ const showInfo = ref<boolean>(false)
                     <bcoinXL />{{ friendsInfo.rewardsAvailible }}
                 </div>
                 <p class="label">{{ t('screens.friens.availibleForClaim') }}</p>
-                <button class=" bg-transparent text-primary border-primary border-2">{{ t('screens.friens.claimBtn') }}</button>
+                <button v-show="friendsInfo.rewardsAvailible>0" class=" btn-type-2">{{ t('screens.friens.claimBtn') }}</button>
             </div>
             <div class="friends flex flex-col gap-2">
                 <p class=" w-full flex justify-between px-2">
