@@ -2,12 +2,13 @@
 import { ref, onBeforeMount } from 'vue'
 import { useAccountStore } from '@/stores/account'
 import { Referal } from '@/types/types'
-import Navbar from '@/components/Navbar.vue'
+import bcoinXL from '@/components/icons/bcoin-icon-xl.vue'
 import CopyIcon from '@/components/icons/copy-icon.vue'
 import { useI18n } from 'vue-i18n'
 import axios, { isAxiosError } from 'axios'
 import { auth } from '@/utils/helpers'
-import 'primeicons/primeicons.css'
+import SlideUpDown from 'vue-slide-up-down'
+
 
 const { t } = useI18n()
 
@@ -21,10 +22,10 @@ const friends = ref<Referal[]>([
 ])
 
 const friendsInfo = ref({
-    count: 0,
-    level: 1,
-    nextLevelCount: 3,
-    previousLevelCount: 0
+    rewardsFrozen: 3000,
+    rewardsAvailible: 1000,
+    refsActivated: 16,
+    refsFrozen: 10,
 })
 
 const copyRefUrl = () => {
@@ -43,7 +44,7 @@ const getFriends = async () => {
         friends.value.push(...data)
         return true
     } catch (error) {
-        if(isAxiosError(error) && error.response?.status === 401) {
+        if (isAxiosError(error) && error.response?.status === 401) {
             await auth()
             try {
                 await getFriends()
@@ -65,7 +66,7 @@ const getFriendsInfo = async () => {
         friendsInfo.value = data
         return true
     } catch (error) {
-        if(isAxiosError(error) && error.response?.status === 401) {
+        if (isAxiosError(error) && error.response?.status === 401) {
             await auth()
             try {
                 await getFriendsInfo()
@@ -89,6 +90,8 @@ const shareOnTelegram = () => {
     window.open(telegramUrl, '_blank');
 }
 
+const showInfo = ref<boolean>(false)
+
 </script>
 
 <template>
@@ -100,39 +103,66 @@ const shareOnTelegram = () => {
             </section>
         </Transition>
         <section class=" flex flex-col p-4 gap-4 h-full w-full">
-            <div class="info w-full bg-half_dark p-4 rounded-2xl flex flex-col gap-2">
-                <h1>{{ t("screens.friens.call") }}</h1>
-                <div class="level flex flex-col gap-2">
-                    <div class="flex justify-between">
-                        <p>{{ t("screens.friens.levelLabel") }} {{ friendsInfo.level }}</p>
-                        <p>{{ t("screens.friens.friendsLabel") }} {{ friendsInfo.count }}/{{ friendsInfo.nextLevelCount
-                            }}</p>
-                    </div>
-                    <div class="progress relative h-6 rounded-full w-full bg-white overflow-hidden">
-                        <div :style="`width: ${Math.round((friendsInfo.count - friendsInfo.previousLevelCount) / (friendsInfo.nextLevelCount - friendsInfo.previousLevelCount) * 100)}%;`"
-                            class="progress-bar relative z-10 bg-green-400 h-full"></div>
-                        <div class=" absolute top-0 left-0 w-full h-full flex justify-around">
-                            <span class=" h-full w-0.5 bg-half_dark z-10"></span>
-                            <span class=" h-full w-0.5 bg-half_dark z-10"></span>
-                            <span class=" h-full w-0.5 bg-half_dark z-10"></span>
-                            <span class=" h-full w-0.5 bg-half_dark z-10"></span>
+            <h1>{{ t("screens.friens.call") }}</h1>
+            <div class="frozen bg-half_dark p-4 rounded-2xl flex flex-col items-center gap-2">
+                <div class="flex  items-center gap-2 text-2xl font-bold">
+                    <bcoinXL />{{ friendsInfo.rewardsFrozen }}
+                </div>
+                <p class="label">{{ t('screens.friens.frozen') }}</p>
+            </div>
+            <div class=" bg-half_dark rounded-2xl">
+                <button @click="showInfo = !showInfo"
+                    class=" bg-half_dark text-black flex items-center justify-start gap-2"><i :style="{transform: showInfo ? 'rotate(180deg)' : 'rotate(0deg)'}"
+                        class=" text-dark pi pi-angle-down duration-300"></i>{{ t('screens.friens.info.title') }}</button>
+                <SlideUpDown :active="showInfo">
+                    <div class="info p-4 pt-0 flex flex-col gap-2">
+                        <div class="flex gap-4">
+                            <span class=" w-2 h-2 bg-primary rounded-full mt-2"></span>
+                            <div class="flex flex-col">
+                                <p>{{ t('screens.friens.info.shareTitle') }}</p>
+                                <p class="label">{{ t('screens.friens.info.shareDescription') }}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class=" w-2 h-2 bg-primary rounded-full mt-2"></span>
+                            <div class="flex flex-col">
+                                <p>{{ t('screens.friens.info.activateTitle') }}</p>
+                                <p class="label">{{ t('screens.friens.info.activateDescription') }}</p>
+                            </div>
                         </div>
                     </div>
-                    <p class=" bg-white rounded-xl p-2 relative flex items-center">
-                    <p>{{ appUrl }}?startapp={{ accStore.user.refCode }}</p>
-                    <CopyIcon @click="copyRefUrl" class=" absolute right-0 mr-2 bg-white" />
-                    </p>
-                    <button @click="shareOnTelegram">{{ t("screens.friens.shareLink") }}</button>
-                </div>
+                </SlideUpDown>
             </div>
-            <div class="friends w-full flex flex-col gap-2">
-                <h1>{{ t("screens.friens.header") }}</h1>
-                <div class="friend-list flex flex-col gap-1">
-                    <div v-for="(friend, i) of friends" :key="i" class=" flex p-2 bg-half_dark gap-2 items-center">
-                        <img :src="friend.avatar" alt="avatar" class=" w-12 h-12 rounded-full object-cover">
-                        <p>{{ friend.username }}</p>
-                    </div>
+            <div class="frozen bg-half_dark p-4 rounded-2xl flex flex-col items-center gap-2">
+                <div class="flex  items-center gap-2 text-2xl font-bold">
+                    <bcoinXL />{{ friendsInfo.rewardsAvailible }}
                 </div>
+                <p class="label">{{ t('screens.friens.availibleForClaim') }}</p>
+                <button class=" bg-transparent text-primary border-primary border-2">{{ t('screens.friens.claimBtn') }}</button>
+            </div>
+            <div class="friends flex flex-col gap-2">
+                <p class=" w-full flex justify-between px-2">
+                    <h1>{{ t('screens.friens.listHeader') }}</h1>
+                    <p class=" text-dark font-bold">{{ friendsInfo.refsActivated+friendsInfo.refsFrozen }}</p>
+                </p>
+                <button class=" bg-half_dark text-black flex justify-between font-medium items-center">
+                    <p>{{ t('screens.friens.activated') }}</p>
+                    <p class="flex items-center">
+                        <p class=" text-green-400 font-bold">{{ friendsInfo.refsActivated }}</p>
+                        <i class="pi pi-angle-right text-dark" style="font-size: 1.25rem;"></i>
+                    </p>
+                </button>
+                <button class=" bg-half_dark text-black flex justify-between font-medium items-center">
+                    <p>{{ t('screens.friens.waitingForActivation') }}</p>
+                    <p class="flex items-center">
+                        <p class=" text-orange-400 font-bold">{{ friendsInfo.refsFrozen }}</p>
+                        <i class="pi pi-angle-right text-dark" style="font-size: 1.25rem;"></i>
+                    </p>
+                </button>
+            </div>
+            <div class="flex gap-2">
+                <button @click="shareOnTelegram">{{ t('screens.friens.inviteBtn') }}</button>
+                <button @click="copyRefUrl" class=" w-fit aspect-square"><CopyIcon color="white" /></button>
             </div>
         </section>
     </section>
@@ -158,5 +188,16 @@ const shareOnTelegram = () => {
 .v-enter-from,
 .v-leave-to {
     opacity: 0;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+    transition: all .5s ease;
+}
+
+.slide-up-enter,
+.slide-up-leave-to {
+    height: 0;
+    overflow: hidden;
 }
 </style>

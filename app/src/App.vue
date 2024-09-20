@@ -41,7 +41,7 @@ const getUser = async (uid: number) => {
 onMounted(() => {
 	setTimeout(() => {
 		showStart.value = false
-	}, 2000)
+	}, 100)
 })
 
 onBeforeMount(async () => {

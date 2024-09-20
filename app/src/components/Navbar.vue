@@ -49,31 +49,31 @@ const showMore = ref<boolean>(false)
             </li>
             <li>
                 <router-link to="/chibi" class=" flex flex-col gap-1 text-dark items-center router-link">
-                    <chibi :color="route.path == '/chibi' ? 'var(--primary)' : 'var(--dark)'" />
+                    <chibi :color="route.path.includes('/chibi') ? 'var(--primary)' : 'var(--dark)'" />
                     <p>{{ t('menu.chibi') }}</p>
                 </router-link>
             </li>
             <li>
                 <router-link to="/battles" class=" flex flex-col gap-1 text-dark items-center router-link">
-                    <battles :color="route.path == '/battles' ? 'var(--primary)' : 'var(--dark)'" />
+                    <battles :color="route.path.includes('/battles') ? 'var(--primary)' : 'var(--dark)'" />
                     <p>{{ t('menu.battles') }}</p>
                 </router-link>
             </li>
             <li>
                 <router-link to="/friens" class=" flex flex-col gap-1 text-dark items-center router-link">
-                    <friens :color="route.path == '/friens' ? 'var(--primary)' : 'var(--dark)'" />
+                    <friens :color="route.path.includes('/friens') ? 'var(--primary)' : 'var(--dark)'" />
                     <p>{{ t('menu.friens') }}</p>
                 </router-link>
             </li>
             <li>
-                <router-link to="/tasks" class=" flex flex-col gap-1 text-dark items-center router-link">
-                    <tasks :color="route.path == '/tasks' ? 'var(--primary)' : 'var(--dark)'" />
+                <router-link to="/tasks/tasks" class=" flex flex-col gap-1 text-dark items-center router-link">
+                    <tasks :color="route.path.includes('/tasks') ? 'var(--primary)' : 'var(--dark)'" />
                     <p>{{ t('menu.tasks') }}</p>
                 </router-link>
             </li>
             <li>
                 <p @click="showMore = true" class=" flex flex-col gap-1 text-dark items-center">
-                    <more :color="route.path == '/more' ? 'var(--primary)' : 'var(--dark)'" />
+                    <more :color="route.path.includes('/more') ? 'var(--primary)' : 'var(--dark)'" />
                 <p>{{ t('menu.more') }}</p>
                 </p>
             </li>
@@ -95,11 +95,11 @@ const showMore = ref<boolean>(false)
     transition: all 0.25s ease;
 }
 
-.router-link-active svg {
+.router-link-active>svg {
     transform: scale(1.5);
 }
 
-.router-link-active svg#friens {
+.router-link-active>svg#friens {
     transform: scale(1.75);
 }
 

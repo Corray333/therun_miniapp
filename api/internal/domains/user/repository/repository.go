@@ -23,7 +23,21 @@ func (r *UserRepository) GetUser(userID int64) (*types.User, error) {
 }
 
 func (r *UserRepository) UpdateUser(user *types.User) error {
-	_, err := r.db.NamedExec("UPDATE users SET point_balance = :point_balance, last_claim = :last_claim WHERE user_id = :user_id", user)
+	_, err := r.db.NamedExec(`
+    UPDATE users 
+    SET
+        in_app_id = :in_app_id, 
+        point_balance = :point_balance, 
+        race_balance = :race_balance, 
+        key_balance = :key_balance, 
+        last_claim = :last_claim, 
+        farming_from = :farming_from, 
+        max_points = :max_points, 
+        farm_time = :farm_time, 
+        daily_check_streak = :daily_check_streak, 
+        daily_check_last = :daily_check_last 
+    WHERE user_id = :user_id
+`, user)
 	return err
 }
 
@@ -51,8 +65,12 @@ func (r *UserRepository) ListReferals(userID int64) ([]types.Referal, error) {
 	return referals, err
 }
 
-func (r *UserRepository) CountReferals(userID int64) (int, error) {
-	var count int
-	err := r.db.Get(&count, "SELECT COUNT(*) FROM users WHERE referer = $1", userID)
-	return count, err
+func (r *UserRepository) CountReferals(userID int64) (refsActivated, refsFrozen, refsClaimed int, err error) {
+	row := r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1", userID)
+	row.Scan(&refsFrozen)
+
+	row = r.db.QueryRow("SELECT refs_claimed FROM users WHERE user_id = $1", userID)
+	row.Scan(&refsClaimed)
+
+	return refsActivated, refsFrozen, refsClaimed, nil
 }

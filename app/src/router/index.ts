@@ -8,7 +8,6 @@ const router = createRouter({
       path: '/',
       name: 'farm',
       component: () => import('../views/FarmView.vue'),
-      alias:['/']
     },
     {
       path: '/chibi',
@@ -28,7 +27,21 @@ const router = createRouter({
     {
       path: '/tasks',
       name: 'tasks',
-      component: () => import('../views/TasksView.vue')
+      component: () => import('../views/TasksView.vue'),
+      children: [
+        {
+          path: 'tasks',
+          component: () => import('../views/tasks/TasksView.vue')
+        },
+        {
+          path: 'quests',
+          component: () => import('../views/tasks/QuestsView.vue')
+        },
+        {
+          path: 'special',
+          component: () => import('../views/tasks/SpecialView.vue')
+        }
+      ]
     },
     {
       path: '/settings',

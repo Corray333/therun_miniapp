@@ -31,22 +31,32 @@ const currentSlide = ref<number>(0)
                 </div>
                 <div class="slide">
                     <div class="pic-container p-4">
+                        <div class="pic" id="onboarding-pic-2"></div>
+                    </div>
+                    <div class="info">
+                        <h1>{{ t('screens.onboarding.slide2.title') }}</h1>
+                        <p>{{ t('screens.onboarding.slide2.description') }}</p>
+                        <button @click="currentSlide = 2">{{ t('screens.onboarding.nextButton') }}</button>
+                    </div>
+                </div>
+                <div class="slide">
+                    <div class="pic-container p-4">
                         <div class="pic" id="onboarding-pic-3"></div>
                     </div>
                     <div class="info">
                         <h1>{{ t('screens.onboarding.slide3.title') }}</h1>
                         <p>{{ t('screens.onboarding.slide3.description') }}</p>
-                        <button @click="currentSlide = 2">{{ t('screens.onboarding.nextButton') }}</button>
+                        <button @click="currentSlide = 3">{{ t('screens.onboarding.nextButton') }}</button>
                     </div>
                 </div>
                 <div class="slide">
                     <div class="pic-container pt-4 px-4">
-                        <div class="pic bottom-bg" id="onboarding-pic-4"></div>
+                        <div class="pic" id="onboarding-pic-4"></div>
                     </div>
                     <div class="info">
                         <h1>{{ t('screens.onboarding.slide4.title') }}</h1>
                         <p>{{ t('screens.onboarding.slide4.description') }}</p>
-                        <button @click="currentSlide = 3">{{ t('screens.onboarding.nextButton') }}</button>
+                        <button @click="currentSlide = 4">{{ t('screens.onboarding.nextButton') }}</button>
                     </div>
                 </div>
                 <div class="slide">
@@ -98,9 +108,6 @@ const currentSlide = ref<number>(0)
     background-repeat: no-repeat;
     background-size: contain;
 }
-.bottom-bg{
-        background-position: bottom !important;
-    }
 
 .info {
     padding: 2rem 1rem;

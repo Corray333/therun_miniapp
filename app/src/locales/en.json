@@ -13,8 +13,8 @@
         "keys":"Keys",
         "bonuses":"Bonuses",
         "keysDescription":"You need keys to open boxes, you can get them for completing tasks or in Battles section",
-        "bonusesDescription":"Bonuses are needed to improve your chibi. You can get them during farming.",
-        "raceDescription":"Race is a main currency in the game. You can get it for bets or tasks.",
+        "bonusesDescription":"Bonus points are used in all activities in the app, you can farm them or get for playing games",
+        "raceDescription":"RACE coin is the main token in the app that will be listed on CEX exchanges",
         "withdraw":"Send to TheRun account",
         "use":"Use keys"
     },
@@ -38,7 +38,7 @@
                 },
                 "droid": {
                     "title":"Upgrade your Droid",
-                    "description":"You can upgrade the stage of your droid by getting miles in Million Run game in the main app"
+                    "description":"You can upgrade the stage of your droid by getting miles in Million Run game in the main app. Higher droid stage will give you more benefits and bonuses in games."
                 },
                 "ninja": {
                     "title":"Spy Ninja",
@@ -59,11 +59,21 @@
             }
         },
         "friens":{
-            "header":"My friends",
             "call": "Invite your friends and get bonuses",
-            "levelLabel":"Level",
-            "friendsLabel": "Friends",
-            "shareLink":"Share link"
+            "frozen":"Frozen rewards",
+            "info":{
+                "title":"How to get bonuses",
+                "shareTitle":"Share your referal link",
+                "shareDescription":"Invite your friends to the app",
+                "activateTitle":"Your friends join the app",
+                "activateDescription":"And get a key for guessing the winner in  «Battles»"
+            },
+            "availibleForClaim":"Available for claim",
+            "claimBtn":"Claim",
+            "listHeader":"My friends",
+            "activated":"Activated",
+            "waitingForActivation":"Waiting for activation",
+            "inviteBtn":"Invite a friend"
         },
         "onboarding":{
             "nextButton":"Next",
@@ -87,6 +97,19 @@
             "slide5":{
                 "title":"Use our Telegram mini-app<br>and the main app TheRun",
                 "description":"You can use this Mini App and download TheRun from the Google Play market and App Store for the full gaming experience"
+            }
+        },
+        "tasks":{
+            "tasks":{
+                "dailyCheck":{
+                    "header":"Daily reward",
+                    "description":"Get more bonus points by completing daily tasks"
+                },
+                "dailyCombo":{
+                    "header":"Daily combo",
+                    "description":"Find combo to earn bonus rewards"
+                },
+                "header": "Tasks list"
             }
         }
     }

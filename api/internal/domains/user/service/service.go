@@ -2,6 +2,7 @@ package service
 
 import (
 	"database/sql"
+	"fmt"
 	"log/slog"
 	"os"
 	"strings"
@@ -23,7 +24,7 @@ type repository interface {
 	CheckIfRefCodeExists(refCode string) (bool, error)
 	GetRefererID(refCode string) (int64, error)
 	ListReferals(userID int64) ([]types.Referal, error)
-	CountReferals(userID int64) (int, error)
+	CountReferals(userID int64) (refsActivated, refsFrozen, refsClaimed int, err error)
 }
 type external interface {
 	GetAvatar(userID int64) ([]byte, error)
@@ -158,41 +159,15 @@ func (s *UserService) ListReferals(userID int64) ([]types.Referal, error) {
 	return refs, nil
 }
 
-const (
-	Level1Referals = 3
-	Level2Referals = 5
-	Level3Referals = 10
-	Level4Referals = 20
-	Level5Referals = 50
-	Level6Referals = 100
-	Level7Referals = 200
-	Level8Referals = 500
-	Level9Referals = 1000
-)
+const refReward = 500
 
-var levels = [9]int{3, 5, 10, 20, 50, 100, 200, 500, 1000}
-
-func (s *UserService) CountReferals(userID int64) (count, level, nextLevelCount, previousLevelCount int, err error) {
-	count, err = s.repo.CountReferals(userID)
+func (s *UserService) CountReferals(userID int64) (refsActivated, refsFrozen, rewardsFrozen, rewardsAvailible int, err error) {
+	refsActivated, refsFrozen, refsClaimed, err := s.repo.CountReferals(userID)
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
-	level = 0
-	nextLevelCount = levels[0]
 
-	for i, l := range levels {
-		if count >= l {
-			level = i + 1
-			if i == len(levels)-1 {
-				nextLevelCount = 1000000
-			} else {
-				nextLevelCount = levels[i+1]
-				previousLevelCount = levels[i]
-			}
-		}
-	}
-
-	return count, level + 1, nextLevelCount, previousLevelCount, nil
+	return refsActivated, refsFrozen, refsFrozen * refReward, (refsActivated - refsClaimed) * refReward, nil
 }
 
 const DayTime = 86400
@@ -221,13 +196,14 @@ func (s *UserService) DailyCheck(userID int64) (dailyCheckStreak int, dailyCheck
 
 	// Compare the date part of the given time with yesterday's date
 	if lastCheckTime.Year() == yesterday.Year() && lastCheckTime.YearDay() == yesterday.YearDay() {
+		fmt.Println("Yeasterday")
 		user.DailyCheckStreak++
 		if user.DailyCheckStreak > 7 {
 			user.PointBalance += dayliCheckRewards[7]
 		} else {
 			user.PointBalance += dayliCheckRewards[user.DailyCheckStreak]
 		}
-	} else {
+	} else if !(lastCheckTime.Year() == yesterday.Year() && lastCheckTime.YearDay() == now.YearDay()) {
 		user.DailyCheckStreak = 1
 		user.PointBalance += dayliCheckRewards[1]
 	}
