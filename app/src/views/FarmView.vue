@@ -48,7 +48,7 @@ const calculateRemainingTimeAndPoints = () => {
     remainingTime.value = formatTime(Math.floor(secondsLeft))
     const elapsedTime = totalDuration - secondsLeft;
     currentPoints.value = Math.round((elapsedTime / totalDuration) * accStore.user.maxPoints * 100) / 100
-    if (currentPoints.value < 0 ) currentPoints.value = 0
+    if (currentPoints.value < 0) currentPoints.value = 0
 }
 
 const startAnimations = () => {
@@ -231,10 +231,11 @@ const modalPick = ref<string>('keys')
         <Transition name="delay">
             <section v-show="showModal" @click.self="showModal = false"
                 class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-end">
-                <Transition name="slide">
+                <Transition name="slide-down">
                     <section v-if="showModal"
                         class=" modal w-full rounded-t-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg">
-                        <div v-if="modalPick == 'bonuses'" class="bonus-modal py-8  w-full text-center flex flex-col items-center gap-2">
+                        <div v-if="modalPick == 'bonuses'"
+                            class="bonus-modal py-8  w-full text-center flex flex-col items-center gap-2">
                             <h2 class=" header flex flex-col items-center gap-2">
                                 <div class="pic"></div>
                                 <p>{{ t('screens.farming.info.points.title') }}</p>
@@ -243,8 +244,8 @@ const modalPick = ref<string>('keys')
                             <div class=" flex justify-center w-full gap-4">
                                 <a class=" max-h-12" href="https://play.google.com/store/apps/details?id=com.therun.app"
                                     target="_blank"><img src="../assets/images/chibi/google-play-btn.png" alt=""></a>
-                                <a class=" max-h-12" href="https://apps.apple.com/us/app/therun/id1634366310" target="_blank"><img
-                                        src="../assets/images/chibi/appstore-btn.png" alt=""></a>
+                                <a class=" max-h-12" href="https://apps.apple.com/us/app/therun/id1634366310"
+                                    target="_blank"><img src="../assets/images/chibi/appstore-btn.png" alt=""></a>
                             </div>
                         </div>
                         <div v-else-if="modalPick == 'droid'"
@@ -257,8 +258,8 @@ const modalPick = ref<string>('keys')
                             <div class=" flex justify-center w-full gap-4">
                                 <a class=" max-h-12" href="https://play.google.com/store/apps/details?id=com.therun.app"
                                     target="_blank"><img src="../assets/images/chibi/google-play-btn.png" alt=""></a>
-                                <a class=" max-h-12" href="https://apps.apple.com/us/app/therun/id1634366310" target="_blank"><img
-                                        src="../assets/images/chibi/appstore-btn.png" alt=""></a>
+                                <a class=" max-h-12" href="https://apps.apple.com/us/app/therun/id1634366310"
+                                    target="_blank"><img src="../assets/images/chibi/appstore-btn.png" alt=""></a>
                             </div>
                         </div>
                         <div v-else class=" ninja-modal py-8 w-full text-center flex flex-col items-center gap-2">
@@ -287,15 +288,18 @@ const modalPick = ref<string>('keys')
                     alt="">
             </section>
             <div class="more-points grid grid-cols-3 gap-2">
-                <div @click="showModal = true; modalPick = 'bonuses'" class=" bg-half_dark rounded-2xl flex flex-col items-center">
+                <div @click="showModal = true; modalPick = 'bonuses'"
+                    class=" bg-half_dark rounded-2xl flex flex-col items-center">
                     <p class=" mt-2">{{ t('screens.farming.earning.getMore') }}</p>
                     <bcoin id="more-btn-coin" />
                 </div>
-                <div @click="showModal = true; modalPick = 'droid'" class=" bg-half_dark rounded-2xl flex flex-col items-center">
+                <div @click="showModal = true; modalPick = 'droid'"
+                    class=" bg-half_dark rounded-2xl flex flex-col items-center">
                     <p class=" mt-2">{{ t('screens.farming.earning.upgrade') }}</p>
                     <img class=" h-8 object-contain object-bottom" src="../assets/images/farming/robot.png" alt="">
                 </div>
-                <div @click="showModal = true; modalPick = 'ninja'" class=" bg-full_dark rounded-2xl flex flex-col text-white text-bold items-center">
+                <div @click="showModal = true; modalPick = 'ninja'"
+                    class=" bg-full_dark rounded-2xl flex flex-col text-white text-bold items-center">
                     <p class=" mt-2 font-bold">{{ t('screens.farming.earning.ninja') }}</p>
                     <img class=" h-8 object-contain object-bottom" src="../assets/images/farming/spy.png" alt="">
                 </div>
@@ -334,6 +338,30 @@ const modalPick = ref<string>('keys')
 </template>
 
 <style scoped>
+.delay-enter-active,
+.delay-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.delay-enter-from,
+.delay-leave-to {
+    opacity: 1;
+}
+
+.slide-down-enter-active,
+.slide-down-leave-active {
+    transition: transform 0.5s ease;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+    transform: translateY(100%);
+}
+
+.modal{
+    box-shadow: 0 -0.25rem 1rem 0 rgba(0, 0, 0, 0.1);
+}
+
 .banner {
     background-image: url(../assets/images/farming/upgrade-banner.png);
 }
@@ -421,7 +449,7 @@ const modalPick = ref<string>('keys')
     }
 }
 
-.modal .pic{
+.modal .pic {
     background-size: contain;
     background-position: bottom center;
     background-repeat: no-repeat;
@@ -432,15 +460,15 @@ const modalPick = ref<string>('keys')
     max-height: 120px
 }
 
-.bonus-modal .pic{
+.bonus-modal .pic {
     background-image: url(../assets/images/farming/bcoin-modal-pic.png);
 }
-.droid-modal .pic{
+
+.droid-modal .pic {
     background-image: url(../assets/images/farming/droid-modal-pic.png);
 }
-.ninja-modal .pic{
+
+.ninja-modal .pic {
     background-image: url(../assets/images/farming/ninja-modal-pic.png);
 }
-
-
 </style>

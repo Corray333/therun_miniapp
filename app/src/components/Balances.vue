@@ -29,7 +29,7 @@ onMounted(() => {
     <Transition name="delay">
       <section v-show="showModal" @click.self="showModal = false"
         class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-end">
-        <Transition name="slide">
+        <Transition name="slide-down">
           <section v-if="showModal"
             class=" modal w-full rounded-t-2xl bg-white p-4 py-8 flex flex-col justify-center items-center shadow-lg">
             <div v-if="pick == 'race'" class=" w-full text-center flex flex-col items-center gap-2">
@@ -91,18 +91,18 @@ onMounted(() => {
 </template>
 
 
-<style>
+<style scoped>
 .modal {
   box-shadow: 0 -0.25rem 1rem 0 rgba(0, 0, 0, 0.1);
 }
 
-.slide-enter-active,
-.slide-leave-active {
+.slide-down-enter-active,
+.slide-down-leave-active {
   transition: transform 0.5s ease;
 }
 
-.slide-enter-from,
-.slide-leave-to {
+.slide-down-enter-from,
+.slide-down-leave-to {
   transform: translateY(100%);
 }
 
