@@ -200,10 +200,7 @@ const claimAnimate = async () => {
 const tapCoin = ref<HTMLElement>()
 
 const tap = () => {
-    componentsStore.errors.push("New error")
-    setInterval(() => {
-        componentsStore.errors.pop()
-    }, 3000)
+
 
     if (tapCoin.value) {
         tapCoin.value.style.transition = 'all 0.2s'
