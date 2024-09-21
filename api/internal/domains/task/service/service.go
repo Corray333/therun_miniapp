@@ -1,6 +1,8 @@
 package service
 
-import "github.com/Corray333/therun_miniapp/internal/domains/task/types"
+import (
+	"github.com/Corray333/therun_miniapp/internal/domains/task/types"
+)
 
 // Errors
 var ()
@@ -9,13 +11,18 @@ type repository interface {
 	GetTasks(userID int64, lang string) ([]*types.Task, error)
 }
 
-type TaskService struct {
-	repo repository
+type external interface {
 }
 
-func New(repo repository) *TaskService {
+type TaskService struct {
+	repo     repository
+	external external
+}
+
+func New(repo repository, ext external) *TaskService {
 	return &TaskService{
-		repo: repo,
+		repo:     repo,
+		external: ext,
 	}
 }
 

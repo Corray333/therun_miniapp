@@ -75,7 +75,7 @@ func New() *App {
 	farmingController := farming.NewFarmingController(router, store, userController.GetService())
 	app.AddController(farmingController)
 
-	taskController := task.NewTaskController(router, store)
+	taskController := task.NewTaskController(router, store, telegramClient)
 	app.AddController(taskController)
 
 	return app

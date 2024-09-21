@@ -20,7 +20,7 @@ const temp = ref<string>("")
 const excludedRoutes = ['onboarding'];
 
 const showStart = ref<boolean>(true)
-const loggingIn = ref<boolean>(true)
+const loggingIn = ref<boolean>(false)
 
 const getUser = async (uid: number) => {
 	const store = useAccountStore()
@@ -36,13 +36,14 @@ const getUser = async (uid: number) => {
 		return true
 	} catch (error) {
 		console.log(error)
+		return false
 	}
 }
 
 onMounted(() => {
 	setTimeout(() => {
 		showStart.value = false
-	}, 100)
+	}, 2000)
 })
 
 onBeforeMount(async () => {
@@ -61,8 +62,8 @@ onBeforeMount(async () => {
 	temp.value = tg.initData
 	const uid = tg.initDataUnsafe.user.id
 	const isNew = await auth()
-	await getUser(uid)
-	loggingIn.value = false
+	const logged = await getUser(uid)
+	if (logged) loggingIn.value = false
 	if (isNew) {
 		router.push('/onboarding')
 	}
@@ -75,7 +76,7 @@ onBeforeMount(async () => {
 
 <template>
 	<Transition>
-		<img v-show="showStart && loggingIn" class=" fixed w-screen h-screen object-cover z-60" src="./assets/images/start.png" alt="">
+		<img v-show="showStart || loggingIn" class=" fixed w-screen h-screen object-cover z-60" src="./assets/images/start.png" alt="">
 	</Transition>
 	<section>
 		<Errors class=" fixed top-0 left-0" />
