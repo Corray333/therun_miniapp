@@ -21,7 +21,8 @@ defineProps({
                 <p v-if="task?.pointsReward != 0" class=" flex gap-2"><bcoin/>{{ task?.pointsReward }}</p>
             </span>
         </div>
-        <i class="pi pi-chevron-right text-dark" style="font-size:1.25rem"></i>
+        <i v-if="!task?.claimed" class="pi pi-chevron-right text-dark" style="font-size:1.25rem"></i>
+        <i v-else  class="pi pi-check-circle text-dark text-green-600" style="font-size:1.25rem"></i>
     </div>
 </template>
 

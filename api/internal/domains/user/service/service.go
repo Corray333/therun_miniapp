@@ -25,6 +25,11 @@ type repository interface {
 	GetRefererID(refCode string) (int64, error)
 	ListReferals(userID int64) ([]types.Referal, error)
 	CountReferals(userID int64) (refsActivated, refsFrozen, refsClaimed int, err error)
+
+	ChangeKeyBalance(userID int64, amount int) (int, error)
+	ChangePointBalance(userID int64, amount int) (int, error)
+	ChangeRaceBalance(userID int64, amount int) (int, error)
+	ChangeBalances(userID int64, pointsAmount, raceAmount, keyAmount int) (int, int, int, error)
 }
 type external interface {
 	GetAvatar(userID int64) ([]byte, error)
@@ -215,4 +220,20 @@ func (s *UserService) DailyCheck(userID int64) (dailyCheckStreak int, dailyCheck
 	}
 
 	return user.DailyCheckStreak, user.DailyCheckLast, nil
+}
+
+func (s *UserService) ChangePointBalance(userID int64, amount int) (int, error) {
+	return s.repo.ChangePointBalance(userID, amount)
+}
+
+func (s *UserService) ChangeKeyBalance(userID int64, amount int) (int, error) {
+	return s.repo.ChangeKeyBalance(userID, amount)
+}
+
+func (s *UserService) ChangeRaceBalance(userID int64, amount int) (int, error) {
+	return s.repo.ChangeRaceBalance(userID, amount)
+}
+
+func (s *UserService) ChangeBalances(userID int64, pointsAmount, raceAmount, keyAmount int) (int, int, int, error) {
+	return s.repo.ChangeBalances(userID, pointsAmount, raceAmount, keyAmount)
 }

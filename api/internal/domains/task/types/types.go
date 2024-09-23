@@ -26,3 +26,7 @@ type Task struct {
 	Data         json.RawMessage `json:"data" db:"data"`
 	Icon         string          `json:"icon" db:"icon"`
 }
+
+type TaskDataTG struct {
+	ChatID int64 `json:"chatID"`
+}

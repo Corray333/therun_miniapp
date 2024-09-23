@@ -1,8 +1,8 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS user_task_done (
-    user_id INT NOT NULL REFERENCES users(user_id),
-    task_id INT NOT NULL REFERENCES tasks(task_id),
+    user_id BIGINT NOT NULL REFERENCES users(user_id),
+    task_id BIGINT NOT NULL REFERENCES tasks(task_id),
     PRIMARY KEY (user_id, task_id)
 );
 -- +goose StatementEnd

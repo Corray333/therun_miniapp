@@ -112,7 +112,10 @@
                 "header": "Tasks list"
             },
             "startBtn": "Start",
-            "checkBtn": "Check completion"
+            "checkBtn": "Check completion",
+            "claimBtn":"Claim",
+            "done":"Done",
+            "noNewTasks":"You have done all the tasks🥳"
         }
     }
 }

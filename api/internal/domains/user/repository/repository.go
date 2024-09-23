@@ -74,3 +74,75 @@ func (r *UserRepository) CountReferals(userID int64) (refsActivated, refsFrozen,
 
 	return refsActivated, refsFrozen, refsClaimed, nil
 }
+
+func (r *UserRepository) ChangeRaceBalance(userID int64, amount int) (int, error) {
+	rows, err := r.db.Query("UPDATE users SET race_balance = race_balance + $1 WHERE user_id = $2 RETURNING race_balance", amount, userID)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	var balance int
+	for rows.Next() {
+		err = rows.Scan(&balance)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return balance, err
+}
+
+func (r *UserRepository) ChangePointBalance(userID int64, amount int) (int, error) {
+	rows, err := r.db.Query("UPDATE users SET point_balance = point_balance + $1 WHERE user_id = $2 RETURNING point_balance", amount, userID)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	var balance int
+	for rows.Next() {
+		err = rows.Scan(&balance)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return balance, err
+}
+
+func (r *UserRepository) ChangeKeyBalance(userID int64, amount int) (int, error) {
+	rows, err := r.db.Query("UPDATE users SET key_balance = key_balance + $1 WHERE user_id = $2 RETURNING key_balance", amount, userID)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	var balance int
+	for rows.Next() {
+		err = rows.Scan(&balance)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return balance, err
+}
+
+func (r *UserRepository) ChangeBalances(userID int64, pointsAmount, raceAmount, keyAmount int) (int, int, int, error) {
+	rows, err := r.db.Query("UPDATE users SET point_balance = point_balance + $1, race_balance = race_balance + $2, key_balance = key_balance + $3 WHERE user_id = $4 RETURNING point_balance, race_balance, key_balance", pointsAmount, raceAmount, keyAmount, userID)
+	if err != nil {
+		return 0, 0, 0, err
+	}
+	defer rows.Close()
+
+	var pointBalance, raceBalance, keyBalance int
+	for rows.Next() {
+		err = rows.Scan(&pointBalance, &raceBalance, &keyBalance)
+		if err != nil {
+			return 0, 0, 0, err
+		}
+	}
+
+	return pointBalance, raceBalance, keyBalance, nil
+}

@@ -66,7 +66,7 @@ const showMore = ref<boolean>(false)
                 </router-link>
             </li>
             <li>
-                <router-link to="/tasks/tasks" class=" flex flex-col gap-1 text-dark items-center router-link">
+                <router-link to="/tasks/tasks" :class="route.path.includes('/tasks') ? 'router-link-active' : ''"  class=" flex flex-col gap-1 text-dark items-center router-link">
                     <tasks :color="route.path.includes('/tasks') ? 'var(--primary)' : 'var(--dark)'" />
                     <p>{{ t('menu.tasks') }}</p>
                 </router-link>

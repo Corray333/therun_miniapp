@@ -29,4 +29,6 @@ export class Task {
     raceReward: number = 0;
     data: any = null;
     icon: string = '';
+    done: boolean = false;
+    claimed: boolean = false;
 }

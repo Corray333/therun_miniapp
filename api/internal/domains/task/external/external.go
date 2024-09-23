@@ -29,7 +29,7 @@ func (e *External) IsUserInChat(chatID, userID int64) (bool, error) {
 		return false, err
 	}
 
-	if member.IsMember || member.IsCreator() || member.IsAdministrator() {
+	if member.Status == "member" || member.IsCreator() || member.IsAdministrator() {
 		return true, nil
 	}
 

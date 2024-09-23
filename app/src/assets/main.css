@@ -16,6 +16,10 @@
         @apply w-full p-4 font-bold rounded-2xl bg-transparent text-primary border-primary border-2
     }
 
+    button.btn-type-3 {
+        @apply w-full p-4 font-bold rounded-2xl bg-green-600 text-white
+    }
+
     .label{
         @apply text-dark text-sm;
     }

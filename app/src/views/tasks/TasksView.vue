@@ -27,7 +27,9 @@ const tasks = ref<Task[]>([
         "keysReward": 0,
         "raceReward": 0,
         "data": {},
-        "icon": "https://store-images.s-microsoft.com/image/apps.55245.13537716651231321.3067a421-6c2f-48a9-b77c-1e38e19146e6.10e2aa49-52ca-4e79-9a61-b6422978afb9?h=210"
+        "icon": "https://store-images.s-microsoft.com/image/apps.55245.13537716651231321.3067a421-6c2f-48a9-b77c-1e38e19146e6.10e2aa49-52ca-4e79-9a61-b6422978afb9?h=210",
+        "done": false,
+        "claimed":false,
     }
 ])
 
@@ -51,6 +53,73 @@ const getTasks = async () => {
                     componentsStore.addError(error.message)
                 }
             }
+        } else{
+            if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
+        }
+    }
+}
+
+const checkTask = async ()=>{
+    if (!pickedTask.value) return 
+    try {
+        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/tasks/${pickedTask.value?.id}/check`,{}, {
+            withCredentials: true,
+            headers: {
+                Authorization: accStore.token
+            }
+        })
+        pickedTask.value.done = data.done
+    } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 401) {
+            await auth()
+            try {
+                await getTasks()
+            } catch (error) {
+                if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
+            }
+        } else {
+            if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
+        }
+    }
+}
+
+const claimTask = async ()=>{
+    if (!pickedTask.value) return 
+    try {
+        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/tasks/${pickedTask.value?.id}/claim`,{}, {
+            withCredentials: true,
+            headers: {
+                Authorization: accStore.token
+            }
+        })
+        accStore.user.pointBalance = data.pointBalance
+        accStore.user.keyBalance = data.keyBalance
+        accStore.user.raceBalance = data.raceBalance
+        pickedTask.value.done = true
+        pickedTask.value.claimed = true
+        setInterval(()=>{
+            pickedTask.value = undefined
+        }, 1000)
+    } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 401) {
+            await auth()
+            try {
+                await getTasks()
+            } catch (error) {
+                if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
+            }
+        } else {
+            if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
         }
     }
 }
@@ -59,14 +128,14 @@ onBeforeMount(async () => {
     await getTasks()
 })
 
-const pickedTask = ref<Task | null>(null)
+const pickedTask = ref<Task>()
 
 </script>
 
 <template>
     <section class=" flex flex-col gap-4 py-4">
         <Transition name="delay">
-            <section v-show="pickedTask" @click.self="pickedTask = null"
+            <section v-show="pickedTask" @click.self="pickedTask = undefined"
                 class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-end">
                 <Transition name="slide-down">
                     <section v-if="pickedTask"
@@ -74,12 +143,16 @@ const pickedTask = ref<Task | null>(null)
                         <img :src="pickedTask?.icon" class=" w-16 h-16 rounded-full" alt="icon">
                         <p class=" font-bold text-center">{{ pickedTask?.description }}</p>
                         <span class="flex gap-4">
-                            <p v-if="pickedTask?.raceReward != 0" class=" flex gap-2 font-bold items-center"><i class="pi pi-plus"></i><race/>{{ pickedTask?.raceReward }}</p>
-                            <p v-if="pickedTask?.keysReward != 0" class=" flex gap-2 font-bold items-center"><i class="pi pi-plus"></i><key color="var(--primary)"/>{{ pickedTask?.keysReward }}</p>
-                            <p v-if="pickedTask?.pointsReward != 0" class=" flex gap-2 font-bold items-center"><i class="pi pi-plus"></i><bcoin/>{{ pickedTask?.pointsReward }}</p>
+                            <p v-if="pickedTask?.raceReward != 0" class=" flex gap-2 font-bold items-center text-xl"><race/><i class="pi pi-plus font-bold"></i>{{ pickedTask?.raceReward }}</p>
+                            <p v-if="pickedTask?.keysReward != 0" class=" flex gap-2 font-bold items-center text-xl"><key color="var(--primary)"/><i class="pi pi-plus font-bold"></i>{{ pickedTask?.keysReward }}</p>
+                            <p v-if="pickedTask?.pointsReward != 0" class=" flex gap-2 font-bold items-center text-xl"><bcoin/><i class="pi pi-plus font-bold"></i>{{ pickedTask?.pointsReward }}</p>
                         </span>
-                        <a target="_blank":href="pickedTask?.link" class="w-full"><button>{{ t('screens.tasks.startBtn') }}</button></a>
-                        <button class=" btn-type-2">{{ t('screens.tasks.checkBtn') }}</button>
+                        <div v-if="!pickedTask.done" class="flex flex-col gap-4 w-full">
+                            <a target="_blank":href="pickedTask?.link" class="w-full"><button>{{ t('screens.tasks.startBtn') }}</button></a>
+                            <button @click="checkTask" class=" btn-type-2">{{ t('screens.tasks.checkBtn') }}</button>
+                        </div>
+                        <button v-else-if="!pickedTask?.claimed" @click="claimTask" class=" btn-type-2">{{ t('screens.tasks.claimBtn') }}</button>
+                        <button v-else class=" btn-type-3">{{ t('screens.tasks.done') }}</button>
                     </section>
                 </Transition>
             </section>
@@ -103,7 +176,8 @@ const pickedTask = ref<Task | null>(null)
             </div>
         </div>
         <h1 class=" mt-4">{{ t('screens.tasks.tasks.header') }}</h1>
-        <TaskCard v-for="task in tasks" :task="task" :key="task.id" @click="pickedTask = task" />
+        <p v-if="tasks.length == 0">{{ t('screens.tasks.noNewTasks') }}</p>
+        <TaskCard v-for="task in tasks" :task="task" :key="task.id" @click="if(!task.claimed) pickedTask = task;" />
     </section>
 </template>
 
