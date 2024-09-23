@@ -8,6 +8,9 @@ import { useI18n } from 'vue-i18n'
 import axios, { isAxiosError } from 'axios'
 import { auth } from '@/utils/helpers'
 import SlideUpDown from 'vue-slide-up-down'
+import { useComponentsStore } from '@/stores/components'
+
+const componentsStore = useComponentsStore()
 
 
 const { t } = useI18n()
@@ -49,7 +52,9 @@ const getFriends = async () => {
             try {
                 await getFriends()
             } catch (error) {
-                alert(error)
+                if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
             }
         }
     }
@@ -71,7 +76,9 @@ const getFriendsInfo = async () => {
             try {
                 await getFriendsInfo()
             } catch (error) {
-                alert(error)
+                if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
             }
         }
     }

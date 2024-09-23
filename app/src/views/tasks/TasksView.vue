@@ -5,6 +5,7 @@ import { Task } from '@/types/types'
 import { useAccountStore } from '@/stores/account'
 import { auth } from '@/utils/helpers'
 import axios, { isAxiosError } from 'axios'
+import { useComponentsStore } from '@/stores/components'
 
 import TaskCard from '@/components/Task.vue'
 import race from '@/components/icons/race-icon.vue'
@@ -13,6 +14,7 @@ import key from '@/components/icons/key-icon.vue'
 
 const { t } = useI18n()
 const accStore = useAccountStore()
+const componentsStore = useComponentsStore()
 
 const tasks = ref<Task[]>([
     {
@@ -45,7 +47,9 @@ const getTasks = async () => {
             try {
                 await getTasks()
             } catch (error) {
-                alert(error)
+                if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
             }
         }
     }

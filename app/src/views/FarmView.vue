@@ -7,7 +7,7 @@ import { useAccountStore } from '@/stores/account'
 import { useComponentsStore } from '@/stores/components'
 import { useI18n } from 'vue-i18n'
 import { auth } from '@/utils/helpers'
-import axios, { isAxiosError } from 'axios'
+import axios, { AxiosError, isAxiosError } from 'axios'
 
 const { t } = useI18n()
 const accStore = useAccountStore()
@@ -52,9 +52,11 @@ const calculateRemainingTimeAndPoints = () => {
 
 const startAnimations = () => {
     coinsGainInterval = setInterval(createSmallCoin, 500);
+    console.log(coinsGainInterval)
 };
 
 const stopAnimations = () => {
+    console.log("Stop")
     if (coinsGainInterval) clearInterval(coinsGainInterval);
 };
 
@@ -97,7 +99,9 @@ const claim = async () => {
             try {
                 await claim()
             } catch (error) {
-                alert(error)
+                if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
             }
         }
         console.log(error);
@@ -119,7 +123,9 @@ const start = async () => {
             try {
                 await start
             } catch (error) {
-                alert(error)
+                if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
             }
         }
         console.log(error);
@@ -131,6 +137,7 @@ const coinsFarmedEl = ref<HTMLElement>();
 
 
 const createSmallCoin = () => {
+    console.log("Spawn", coinsContainer.value)
     if (!coinsContainer.value) return;
 
     const smallCoin = document.createElement('div');
@@ -200,8 +207,7 @@ const claimAnimate = async () => {
 const tapCoin = ref<HTMLElement>()
 
 const tap = () => {
-
-
+    
     if (tapCoin.value) {
         tapCoin.value.style.transition = 'all 0.2s'
         tapCoin.value.style.transform = 'scale(0.85)'
@@ -338,7 +344,18 @@ const modalPick = ref<string>('keys')
     </section>
 </template>
 
-<style scoped>
+<style>
+
+.small-coin {
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    background-image: url(../components/icons/bcoin.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    z-index: -10;
+}
 
 .delay-enter-active,
 .delay-leave-active {
@@ -419,17 +436,7 @@ const modalPick = ref<string>('keys')
     }
 }
 
-.small-coin {
-    position: absolute;
-    width: 2rem;
-    height: 2rem;
-    background-image: url(../components/icons/bcoin.svg);
-    background-size: contain;
-    background-repeat: no-repeat;
-    border-radius: 50%;
-    z-index: -10;
 
-}
 
 @keyframes rotate-coin {
     0% {

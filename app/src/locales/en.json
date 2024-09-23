@@ -11,7 +11,7 @@
     "wallet":{
         "balance":"Balance",
         "keys":"Keys",
-        "bonuses":"Bonuses",
+        "bonuses":"Bonus points",
         "keysDescription":"You need keys to open boxes, you can get them for completing tasks or in Battles section",
         "bonusesDescription":"Bonus points are used in all activities in the app, you can farm them or get for playing games",
         "raceDescription":"RACE coin is the main token in the app that will be listed on CEX exchanges",
@@ -96,7 +96,7 @@
             },
             "slide5":{
                 "title":"Use our Telegram mini-app<br>and the main app TheRun",
-                "description":"You can use this Mini App and download TheRun from the Google Play market and App Store for the full gaming experience"
+                "description":"You can use this Mini App and download TheRun from the Google Play market or App Store for the full gaming experience"
             }
         },
         "tasks":{
