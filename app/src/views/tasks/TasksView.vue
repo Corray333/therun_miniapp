@@ -43,6 +43,10 @@ const getTasks = async () => {
             }
         })
         tasks.value = data
+        for (let i = 0; i < tasks.value.length; i++) {
+            tasks.value[i].claimed = false
+            tasks.value[i].done = false
+        }
         return true
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
@@ -128,7 +132,7 @@ const claimTask = async () => {
             }
         }
     } finally {
-        setInterval(() => {
+        setTimeout(() => {
             pickedTask.value = undefined
         }, 2000)
         pickedTaskLoading.value = false
