@@ -52,11 +52,9 @@ const calculateRemainingTimeAndPoints = () => {
 
 const startAnimations = () => {
     coinsGainInterval = setInterval(createSmallCoin, 500);
-    console.log(coinsGainInterval)
 };
 
 const stopAnimations = () => {
-    console.log("Stop")
     if (coinsGainInterval) clearInterval(coinsGainInterval);
 };
 
@@ -137,7 +135,6 @@ const coinsFarmedEl = ref<HTMLElement>();
 
 
 const createSmallCoin = () => {
-    console.log("Spawn", coinsContainer.value)
     if (!coinsContainer.value) return;
 
     const smallCoin = document.createElement('div');

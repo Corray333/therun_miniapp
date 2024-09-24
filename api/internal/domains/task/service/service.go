@@ -66,6 +66,8 @@ func (s *TaskService) CheckTask(userID, taskID int64) (done bool, err error) {
 			return false, err
 		}
 		return done, nil
+	case types.TaskTypeUncheckable:
+		return true, nil
 	default:
 		return false, nil
 	}
@@ -96,6 +98,8 @@ func (s *TaskService) Claim(userID, taskID int64) (done bool, pointsBalance, rac
 		if err != nil {
 			return false, 0, 0, 0, err
 		}
+	case types.TaskTypeUncheckable:
+		done = true
 
 	}
 

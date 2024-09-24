@@ -6,6 +6,7 @@ import { useAccountStore } from '@/stores/account'
 import { auth } from '@/utils/helpers'
 import axios, { isAxiosError } from 'axios'
 import { useComponentsStore } from '@/stores/components'
+import SlideUpDown from 'vue-slide-up-down'
 
 import TaskCard from '@/components/Task.vue'
 import race from '@/components/icons/race-icon.vue'
@@ -29,7 +30,7 @@ const tasks = ref<Task[]>([
         "data": {},
         "icon": "https://store-images.s-microsoft.com/image/apps.55245.13537716651231321.3067a421-6c2f-48a9-b77c-1e38e19146e6.10e2aa49-52ca-4e79-9a61-b6422978afb9?h=210",
         "done": false,
-        "claimed":false,
+        "claimed": false,
     }
 ])
 
@@ -53,18 +54,21 @@ const getTasks = async () => {
                     componentsStore.addError(error.message)
                 }
             }
-        } else{
+        } else {
             if (isAxiosError(error)) {
-                    componentsStore.addError(error.message)
-                }
+                componentsStore.addError(error.message)
+            }
         }
     }
 }
 
-const checkTask = async ()=>{
-    if (!pickedTask.value) return 
+const checkTask = async () => {
+    if (!pickedTask.value) return
+
+    pickedTaskLoading.value = true
+
     try {
-        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/tasks/${pickedTask.value?.id}/check`,{}, {
+        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/tasks/${pickedTask.value?.id}/check`, {}, {
             withCredentials: true,
             headers: {
                 Authorization: accStore.token
@@ -83,16 +87,21 @@ const checkTask = async ()=>{
             }
         } else {
             if (isAxiosError(error)) {
-                    componentsStore.addError(error.message)
-                }
+                componentsStore.addError(error.message)
+            }
         }
+    } finally {
+        pickedTaskLoading.value = false
     }
 }
 
-const claimTask = async ()=>{
-    if (!pickedTask.value) return 
+const claimTask = async () => {
+    if (!pickedTask.value) return
+
+    pickedTaskLoading.value = true
+
     try {
-        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/tasks/${pickedTask.value?.id}/claim`,{}, {
+        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/tasks/${pickedTask.value?.id}/claim`, {}, {
             withCredentials: true,
             headers: {
                 Authorization: accStore.token
@@ -103,9 +112,9 @@ const claimTask = async ()=>{
         accStore.user.raceBalance = data.raceBalance
         pickedTask.value.done = true
         pickedTask.value.claimed = true
-        setInterval(()=>{
+        setInterval(() => {
             pickedTask.value = undefined
-        }, 1000)
+        }, 2000)
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
             await auth()
@@ -118,9 +127,11 @@ const claimTask = async ()=>{
             }
         } else {
             if (isAxiosError(error)) {
-                    componentsStore.addError(error.message)
-                }
+                componentsStore.addError(error.message)
+            }
         }
+    } finally {
+        pickedTaskLoading.value = false
     }
 }
 
@@ -129,6 +140,7 @@ onBeforeMount(async () => {
 })
 
 const pickedTask = ref<Task>()
+const pickedTaskLoading = ref<boolean>(false)
 
 </script>
 
@@ -142,17 +154,37 @@ const pickedTask = ref<Task>()
                         class=" modal w-full rounded-t-2xl bg-white p-4 py-8 flex flex-col justify-center items-center shadow-lg gap-4">
                         <img :src="pickedTask?.icon" class=" w-16 h-16 rounded-full" alt="icon">
                         <p class=" font-bold text-center">{{ pickedTask?.description }}</p>
-                        <span class="flex gap-4">
-                            <p v-if="pickedTask?.raceReward != 0" class=" flex gap-2 font-bold items-center text-xl"><race/><i class="pi pi-plus font-bold"></i>{{ pickedTask?.raceReward }}</p>
-                            <p v-if="pickedTask?.keysReward != 0" class=" flex gap-2 font-bold items-center text-xl"><key color="var(--primary)"/><i class="pi pi-plus font-bold"></i>{{ pickedTask?.keysReward }}</p>
-                            <p v-if="pickedTask?.pointsReward != 0" class=" flex gap-2 font-bold items-center text-xl"><bcoin/><i class="pi pi-plus font-bold"></i>{{ pickedTask?.pointsReward }}</p>
+                        <span class="flex gap-4 text-2xl">
+                            <p v-if="pickedTask?.raceReward != 0" class=" flex gap-2 font-bold items-center">
+                                <race />+{{ pickedTask?.raceReward }}
+                            </p>
+                            <p v-if="pickedTask?.keysReward != 0" class=" flex gap-2 font-bold items-center">
+                                <key color="var(--primary)" />+{{ pickedTask?.keysReward }}
+                            </p>
+                            <p v-if="pickedTask?.pointsReward != 0" class=" flex gap-2 font-bold items-center">
+                                <bcoin />+{{ pickedTask?.pointsReward }}
+                            </p>
                         </span>
-                        <div v-if="!pickedTask.done" class="flex flex-col gap-4 w-full">
-                            <a target="_blank":href="pickedTask?.link" class="w-full"><button>{{ t('screens.tasks.startBtn') }}</button></a>
-                            <button @click="checkTask" class=" btn-type-2">{{ t('screens.tasks.checkBtn') }}</button>
-                        </div>
-                        <button v-else-if="!pickedTask?.claimed" @click="claimTask" class=" btn-type-2">{{ t('screens.tasks.claimBtn') }}</button>
-                        <button v-else class=" btn-type-3">{{ t('screens.tasks.done') }}</button>
+
+                        <SlideUpDown :active="!pickedTask.done" class="w-full">
+                            <div class="flex flex-col gap-4 w-full">
+                                <a target="_blank" :href="pickedTask?.link" class="w-full"><button>{{ t('screens.tasks.startBtn') }}</button></a>
+                                <button @click="checkTask" class=" btn-type-2">
+                                    <p v-if="!pickedTaskLoading">{{ t('screens.tasks.checkBtn') }}</p>
+                                    <i v-else class="pi pi-spin pi-spinner"></i>
+                                </button>
+                            </div>
+                        </SlideUpDown>
+                        <SlideUpDown :active="pickedTask.done && !pickedTask?.claimed" class="w-full">
+                            <button @click="claimTask" class=" btn-type-2">
+                                <p v-if="!pickedTaskLoading">{{ t('screens.tasks.claimBtn') }}</p>
+                                <i v-else class="pi pi-spin pi-spinner"></i>
+                            </button>
+                        </SlideUpDown>
+                        <SlideUpDown :active="pickedTask?.claimed" class="w-full">
+                            <button class=" btn-type-3 gap-1">{{ t('screens.tasks.done') }}<i
+                                    class="pi pi-check"></i></button>
+                        </SlideUpDown>
                     </section>
                 </Transition>
             </section>
@@ -177,13 +209,12 @@ const pickedTask = ref<Task>()
         </div>
         <h1 class=" mt-4">{{ t('screens.tasks.tasks.header') }}</h1>
         <p v-if="tasks.length == 0">{{ t('screens.tasks.noNewTasks') }}</p>
-        <TaskCard v-for="task in tasks" :task="task" :key="task.id" @click="if(!task.claimed) pickedTask = task;" />
+        <TaskCard v-for="task in tasks" :task="task" :key="task.id" @click="if (!task.claimed) pickedTask = task;" />
     </section>
 </template>
 
 
 <style scoped>
-
 .delay-enter-active,
 .delay-leave-active {
     transition: opacity 0.5s ease;
@@ -204,8 +235,7 @@ const pickedTask = ref<Task>()
     transform: translateY(100%);
 }
 
-.modal{
+.modal {
     box-shadow: 0 -0.25rem 1rem 0 rgba(0, 0, 0, 0.1);
 }
-
 </style>
