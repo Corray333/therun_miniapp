@@ -161,7 +161,7 @@ const pickedTaskLoading = ref<boolean>(false)
                     <section v-if="pickedTask"
                         class=" modal w-full rounded-t-2xl bg-white p-4 py-8 flex flex-col justify-center items-center shadow-lg gap-4">
                         <img :src="pickedTask?.icon" class=" w-16 h-16 rounded-full" alt="icon">
-                        <p class=" font-bold text-center">{{ pickedTask?.description }}</p>
+                        <p class=" font-bold text-center text-2xl">{{ pickedTask?.description }}</p>
                         <span class="flex gap-4 text-2xl">
                             <p v-if="pickedTask?.raceReward != 0" class=" flex gap-2 font-bold items-center">
                                 <race />+{{ pickedTask?.raceReward }}
