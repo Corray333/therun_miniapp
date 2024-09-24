@@ -115,7 +115,8 @@
             "checkBtn": "Check completion",
             "claimBtn":"Claim",
             "done":"Done",
-            "noNewTasks":"You have done all the tasks🥳"
+            "noNewTasks":"You have done all the tasks🥳",
+            "checkError":"You have not completed the task yet"
         }
     }
 }

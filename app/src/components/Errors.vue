@@ -13,7 +13,7 @@ const componentsStore = useComponentsStore()
                 <TransitionGroup name="slide-down">
                     <p v-for="(error, i) of componentsStore.errors" :key="i"
                         class=" w-full text-center p-4 bg-white border-primary border-2 rounded-2xl shadow-lg absolute">
-                        Error: {{ error }}
+                        {{ error }}
                     </p>
                 </TransitionGroup>
             </div>

@@ -80,6 +80,9 @@ const checkTask = async () => {
             }
         })
         pickedTask.value.done = data.done
+        if (!data.done){
+            componentsStore.addError(t('screens.tasks.checkError'))
+        }
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
             await auth()
@@ -174,7 +177,7 @@ const pickedTaskLoading = ref<boolean>(false)
                         <SlideUpDown :active="!pickedTask.done" class="w-full">
                             <div class="flex flex-col gap-4 w-full">
                                 <a @click="pickedTask.clicked = true" target="_blank" :href="pickedTask?.link" class="w-full"><button>{{ t('screens.tasks.startBtn') }}</button></a>
-                                <button :disabled="pickedTask.clicked" @click="checkTask" class=" btn-type-2">
+                                <button :disabled="!pickedTask.clicked" @click="checkTask" class=" btn-type-2">
                                     <p v-if="!pickedTaskLoading">{{ t('screens.tasks.checkBtn') }}</p>
                                     <i v-else class="pi pi-spin pi-spinner"></i>
                                 </button>
@@ -187,7 +190,7 @@ const pickedTaskLoading = ref<boolean>(false)
                             </button>
                         </SlideUpDown>
                         <SlideUpDown :active="pickedTask?.claimed" class="w-full">
-                            <button class=" btn-type-3 gap-1">{{ t('screens.tasks.done') }}<i
+                            <button class=" btn-type-3 gap-2">{{ t('screens.tasks.done') }}<i
                                     class="pi pi-check"></i></button>
                         </SlideUpDown>
                     </section>
