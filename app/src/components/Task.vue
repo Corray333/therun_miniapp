@@ -13,7 +13,7 @@ defineProps({
 <template>
     <div class=" p-4 flex items-center justify-between gap-4 rounded-2xl bg-half_dark w-full">
         <img :src="task?.icon" class=" w-16 h-16 rounded-full" alt="icon">
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col w-full gap-2">
             <p class=" line-clamp-2">{{ task?.description }}</p>
             <span class="flex gap-4">
                 <p v-if="task?.raceReward != 0" class=" flex gap-1 items-center font-bold"><race/>+{{ task?.raceReward }}</p>

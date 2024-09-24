@@ -112,9 +112,6 @@ const claimTask = async () => {
         accStore.user.raceBalance = data.raceBalance
         pickedTask.value.done = true
         pickedTask.value.claimed = true
-        setInterval(() => {
-            pickedTask.value = undefined
-        }, 2000)
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
             await auth()
@@ -131,6 +128,9 @@ const claimTask = async () => {
             }
         }
     } finally {
+        setInterval(() => {
+            pickedTask.value = undefined
+        }, 2000)
         pickedTaskLoading.value = false
     }
 }
