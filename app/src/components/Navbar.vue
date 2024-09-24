@@ -60,7 +60,7 @@ const showMore = ref<boolean>(false)
                 </router-link>
             </li>
             <li>
-                <router-link to="/friens" class=" flex flex-col gap-1 text-dark items-center router-link">
+                <router-link to="/friens"  :class="route.path.includes('/friens') ? 'router-link-active' : ''" class=" flex flex-col gap-1 text-dark items-center router-link">
                     <friens :color="route.path.includes('/friens') ? 'var(--primary)' : 'var(--dark)'" />
                     <p>{{ t('menu.friens') }}</p>
                 </router-link>

@@ -20,6 +20,16 @@ const router = createRouter({
       component: () => import('../views/BattlesView.vue')
     },
     {
+      path: '/friens/activated',
+      name: 'activated',
+      component: () => import('../views/friens/ActivatedView.vue')
+    },
+    {
+      path: '/friens/not-activated',
+      name: 'not-activated',
+      component: () => import('../views/friens/NotActivatedView.vue')
+    },
+    {
       path: '/friens',
       name: 'friens',
       component: () => import('../views/FriensView.vue')

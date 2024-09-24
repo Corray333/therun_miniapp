@@ -64,15 +64,27 @@
             "info":{
                 "title":"How to get bonuses",
                 "shareTitle":"Share your referal link",
-                "shareDescription":"Invite your friends to the app",
-                "activateTitle":"Your friends join the app",
-                "activateDescription":"And get a key for guessing the winner in  «Battles»"
+                "shareDescription":"Share your referral link with your friends",
+                "tellYourFriendTitle":"Tell your friends",
+                "tellYourFriendDescription":"Tell your friends about the simple actions they need to do to get you bonuses",
+                "activate1Title":"Activating a Friend – Step 1",
+                "activate1Description":"Your friend needs to start farming and get the first bonus points",
+                "activate2Title":"Activating a Friend – Step 2",
+                "activate2Description":"Getting a bonus for inviting a friend is available after your friend receives 1 key for guessing the winner in any battle in the Battle section"
+            },
+            "invite":{
+                "commonInviteHeader":"Invite your friends",
+                "commonInviteDescription":"1000 for you and your friend",
+                "premiumInviteHeader":"Invite your friends with Telegram Premium",
+                "premiumInviteDescription":"2000 for you and your friend"
             },
             "availibleForClaim":"Available for claim",
             "claimBtn":"Claim",
             "listHeader":"My friends",
             "activated":"Activated",
             "waitingForActivation":"Waiting for activation",
+            "activatedFriends":"Activated friends",
+            "waitingForActivationFriends":"Waiting for activation friends",
             "inviteBtn":"Invite a friend"
         },
         "onboarding":{

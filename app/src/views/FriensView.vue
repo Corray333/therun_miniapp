@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, onBeforeMount } from 'vue'
 import { useAccountStore } from '@/stores/account'
-import { Referal } from '@/types/types'
+import bcoin from '@/components/icons/bcoin-icon.vue'
 import bcoinXL from '@/components/icons/bcoin-icon-xl.vue'
 import CopyIcon from '@/components/icons/copy-icon.vue'
 import { useI18n } from 'vue-i18n'
@@ -21,8 +21,7 @@ const infoLoaded = ref<boolean>(false)
 
 const appUrl = import.meta.env.VITE_APP_URL
 
-const friends = ref<Referal[]>([
-])
+
 
 const friendsInfo = ref({
     rewardsFrozen: 3000,
@@ -36,29 +35,7 @@ const copyRefUrl = () => {
 }
 
 
-const getFriends = async () => {
-    try {
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/users/0/referals`, {
-            withCredentials: true,
-            headers: {
-                Authorization: accStore.token
-            }
-        })
-        friends.value.push(...data)
-        return true
-    } catch (error) {
-        if (isAxiosError(error) && error.response?.status === 401) {
-            await auth()
-            try {
-                await getFriends()
-            } catch (error) {
-                if (isAxiosError(error)) {
-                    componentsStore.addError(error.message)
-                }
-            }
-        }
-    }
-}
+
 
 const getFriendsInfo = async () => {
     try {
@@ -86,7 +63,6 @@ const getFriendsInfo = async () => {
 
 onBeforeMount(async () => {
     getFriendsInfo()
-    await getFriends()
     infoLoaded.value = true
 })
 
@@ -117,24 +93,68 @@ const showInfo = ref<boolean>(false)
                 </div>
                 <p class="label">{{ t('screens.friens.frozen') }}</p>
             </div>
+
+            <div class="flex flex-col w-full p-4 bg-half_dark rounded-2xl gap-4">
+                <div class="flex gap-4 items-center">
+                    <img class="h-16" src="../assets/images/friends/tg-logo.png" alt="">
+                    <div>
+                        <p class="font-bold">{{ t('screens.friens.invite.commonInviteHeader') }}</p>
+                        <p class="flex items-center gap-2">
+                            <bcoin />{{ t('screens.friens.invite.commonInviteDescription') }}
+                        </p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-center">
+                    <img class="h-16" src="../assets/images/friends/premium-star.gif" alt="">
+                    <div>
+                        <p class="font-bold">{{ t('screens.friens.invite.premiumInviteHeader') }}</p>
+                        <p class="flex items-center gap-2">
+                            <bcoin />{{ t('screens.friens.invite.premiumInviteDescription') }}
+                        </p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button @click="shareOnTelegram">{{ t('screens.friens.inviteBtn') }}</button>
+                    <button @click="copyRefUrl" class=" w-fit aspect-square">
+                        <CopyIcon color="white" />
+                    </button>
+                </div>
+            </div>
+
             <div class=" bg-half_dark rounded-2xl">
                 <button @click="showInfo = !showInfo"
-                    class=" bg-half_dark text-black flex items-center justify-start gap-2"><i :style="{transform: showInfo ? 'rotate(180deg)' : 'rotate(0deg)'}"
-                        class=" text-dark pi pi-angle-down duration-300"></i>{{ t('screens.friens.info.title') }}</button>
+                    class=" bg-half_dark text-black flex items-center justify-start gap-2"><i
+                        :style="{ transform: showInfo ? 'rotate(180deg)' : 'rotate(0deg)' }"
+                        class=" text-dark pi pi-angle-down duration-300"></i>{{ t('screens.friens.info.title')
+                    }}</button>
                 <SlideUpDown :active="showInfo">
                     <div class="info p-4 pt-0 flex flex-col gap-2">
                         <div class="flex gap-4">
-                            <span class=" w-2 h-2 bg-primary rounded-full mt-2"></span>
+                            <span class=" w-2 h-2 bg-primary rounded-full mt-2 aspect-square"></span>
                             <div class="flex flex-col">
                                 <p>{{ t('screens.friens.info.shareTitle') }}</p>
                                 <p class="label">{{ t('screens.friens.info.shareDescription') }}</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
-                            <span class=" w-2 h-2 bg-primary rounded-full mt-2"></span>
+                            <span class=" w-2 h-2 bg-primary rounded-full mt-2 aspect-square"></span>
                             <div class="flex flex-col">
-                                <p>{{ t('screens.friens.info.activateTitle') }}</p>
-                                <p class="label">{{ t('screens.friens.info.activateDescription') }}</p>
+                                <p>{{ t('screens.friens.info.tellTitle') }}</p>
+                                <p class="label">{{ t('screens.friens.info.tellDescription') }}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class=" w-2 h-2 bg-primary rounded-full mt-2 aspect-square"></span>
+                            <div class="flex flex-col">
+                                <p>{{ t('screens.friens.info.activate1Title') }}</p>
+                                <p class="label">{{ t('screens.friens.info.activate1Description') }}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class=" w-2 h-2 bg-primary rounded-full mt-2 aspect-square"></span>
+                            <div class="flex flex-col">
+                                <p>{{ t('screens.friens.info.activate2Title') }}</p>
+                                <p class="label">{{ t('screens.friens.info.activate2Description') }}</p>
                             </div>
                         </div>
                     </div>
@@ -145,31 +165,33 @@ const showInfo = ref<boolean>(false)
                     <bcoinXL />{{ friendsInfo.rewardsAvailible }}
                 </div>
                 <p class="label">{{ t('screens.friens.availibleForClaim') }}</p>
-                <button v-show="friendsInfo.rewardsAvailible>0" class=" btn-type-2">{{ t('screens.friens.claimBtn') }}</button>
+                <button v-show="friendsInfo.rewardsAvailible > 0" class=" btn-type-2">{{
+                t('screens.friens.claimBtn') }}</button>
             </div>
             <div class="friends flex flex-col gap-2">
                 <p class=" w-full flex justify-between px-2">
-                    <h1>{{ t('screens.friens.listHeader') }}</h1>
-                    <p class=" text-dark font-bold">{{ friendsInfo.refsActivated+friendsInfo.refsFrozen }}</p>
+                <h1>{{ t('screens.friens.listHeader') }}</h1>
+                <p class=" text-dark font-bold">{{ friendsInfo.refsActivated + friendsInfo.refsFrozen }}</p>
                 </p>
-                <button class=" bg-half_dark text-black flex justify-between font-medium items-center">
-                    <p>{{ t('screens.friens.activated') }}</p>
-                    <p class="flex items-center">
+                <router-link to="/friens/activated">
+                    <button class=" bg-half_dark text-black flex justify-between font-medium items-center">
+                        <p>{{ t('screens.friens.activated') }}</p>
+                        <p class="flex items-center">
                         <p class=" text-green-400 font-bold">{{ friendsInfo.refsActivated }}</p>
                         <i class="pi pi-angle-right text-dark" style="font-size: 1.25rem;"></i>
-                    </p>
-                </button>
-                <button class=" bg-half_dark text-black flex justify-between font-medium items-center">
-                    <p>{{ t('screens.friens.waitingForActivation') }}</p>
-                    <p class="flex items-center">
+                        </p>
+                    </button>
+                </router-link>
+
+                <router-link to="/friens/not-activated">
+                    <button class=" bg-half_dark text-black flex justify-between font-medium items-center">
+                        <p>{{ t('screens.friens.waitingForActivation') }}</p>
+                        <p class="flex items-center">
                         <p class=" text-orange-400 font-bold">{{ friendsInfo.refsFrozen }}</p>
                         <i class="pi pi-angle-right text-dark" style="font-size: 1.25rem;"></i>
-                    </p>
-                </button>
-            </div>
-            <div class="flex gap-2">
-                <button @click="shareOnTelegram">{{ t('screens.friens.inviteBtn') }}</button>
-                <button @click="copyRefUrl" class=" w-fit aspect-square"><CopyIcon color="white" /></button>
+                        </p>
+                    </button>
+                </router-link>
             </div>
         </section>
     </section>

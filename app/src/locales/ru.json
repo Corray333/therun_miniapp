@@ -63,16 +63,28 @@
             "frozen":"Замороженный доход",
             "info":{
                 "title":"Как получить бонусы",
-                "shareTitle":"Поделитесь своей реферальной ссылкой",
-                "shareDescription":"Приглашайте друзей в TheRun",
-                "activateTitle":"Ваши друзья присоединяются к TheRun",
-                "activateDescription":"И получают ключ за угадывание победителя во вкладке «Battles»"
+                "shareTitle":"Поделись своей реферальной ссылкой",
+                "shareDescription":"Делитесь с друзьями вашей реферальной ссылкой",
+                "tellYourFriendTitle":"Расскажите друзьям",
+                "tellYourFriendDescription":"Расскажите друзьям про простые действия, которые им нужно сделать, чтобы вы получили бонусы",
+                "activate1Title":"Активация друга – Шаг 1",
+                "activate1Description":"Вашему другу необходимо запустить фарминг и получить первые бонусные поинты",
+                "activate2Title":"Активация друга – Шаг 2",
+                "activate2Description":"Получение бонуса за приглашение друга доступно после того, как ваш друг получит 1 ключ за угадывание победителя в любой битве в разделе Битвы"
+            },
+            "invite":{
+                "commonInviteHeader":"Приглашайте друзей",
+                "commonInviteDescription":"1000 для вас и вашего друга",
+                "premiumInviteHeader":"Приглашайте друзей с Telegram Premium",
+                "premiumInviteDescription":"2000 для вас и вашего друга"
             },
             "availibleForClaim":"Доступно для сбора",
             "claimBtn":"Собрать",
             "listHeader":"Мои друзья",
             "activated":"Активированы",
             "waitingForActivation":"Ждут активации",
+            "activatedFriends":"Активированные друзья",
+            "waitingForActivationFriends":"Друзья, которые ждут активации",
             "inviteBtn":"Пригласить друга"
         },
         "onboarding":{

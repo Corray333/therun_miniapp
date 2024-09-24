@@ -17,23 +17,7 @@ const { t } = useI18n()
 const accStore = useAccountStore()
 const componentsStore = useComponentsStore()
 
-const tasks = ref<Task[]>([
-    {
-        "id": 1,
-        "description": "Subscribe to Jun so Soon channel",
-        "type": "tg",
-        "link": "https://t.me/jun_so_soon",
-        "expireAt": 1727596313,
-        "pointsReward": 200,
-        "keysReward": 0,
-        "raceReward": 0,
-        "data": {},
-        "icon": "https://store-images.s-microsoft.com/image/apps.55245.13537716651231321.3067a421-6c2f-48a9-b77c-1e38e19146e6.10e2aa49-52ca-4e79-9a61-b6422978afb9?h=210",
-        "done": false,
-        "claimed": false,
-        "clicked": false,
-    }
-])
+const tasks = ref<Task[]>([])
 
 const getTasks = async () => {
     try {
