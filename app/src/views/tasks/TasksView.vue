@@ -197,24 +197,24 @@ const pickedTaskLoading = ref<boolean>(false)
                 </Transition>
             </section>
         </Transition>
+
         <div class="daily flex flex-col gap-4">
-            <div class="daily-check daily p-4 rounded-2xl flex border-2 border-primary   gap-4 items-center">
-                <img src="../../assets/images/tasks/gift-icon.png" class=" w-16 h-16" alt="">
-                <div class="flex flex-col">
+            <div id="daily-check" class="daily-check daily p-4 rounded-2xl flex gap-4 items-center bg-cover">
+                <div class="flex flex-col pl-24 text-white">
                     <h2>{{ t('screens.tasks.tasks.dailyCheck.header') }}</h2>
-                    <p class="label">{{ t('screens.tasks.tasks.dailyCheck.description') }}</p>
+                    <p class=" text-sm min-h-10">{{ t('screens.tasks.tasks.dailyCheck.description') }}</p>
                 </div>
                 <i class="pi pi-chevron-right text-dark" style="font-size:1.25rem"></i>
             </div>
-            <div class="daily-combo daily p-4 rounded-2xl flex border-2 border-primary   gap-4 items-center">
-                <img src="../../assets/images/tasks/calendar-icon.png" class=" w-16 h-16" alt="">
-                <div class="flex flex-col">
+            <div id="daily-combo" class="daily-combo daily p-4 rounded-2xl flex gap-4 items-center bg-cover">
+                <div class="flex flex-col pl-24 text-white">
                     <h2>{{ t('screens.tasks.tasks.dailyCombo.header') }}</h2>
-                    <p class="label">{{ t('screens.tasks.tasks.dailyCombo.description') }}</p>
+                    <p class=" text-sm min-h-10">{{ t('screens.tasks.tasks.dailyCombo.description') }}</p>
                 </div>
                 <i class="pi pi-chevron-right text-dark" style="font-size:1.25rem"></i>
             </div>
         </div>
+
         <h1 class=" mt-4">{{ t('screens.tasks.tasks.header') }}</h1>
         <p v-if="tasks.length == 0">{{ t('screens.tasks.noNewTasks') }}</p>
         <TaskCard v-for="task in tasks" :task="task" :key="task.id" @click="if (!task.claimed) pickedTask = task;" />
@@ -223,6 +223,7 @@ const pickedTaskLoading = ref<boolean>(false)
 
 
 <style scoped>
+
 .delay-enter-active,
 .delay-leave-active {
     transition: opacity 0.5s ease;
@@ -246,4 +247,13 @@ const pickedTaskLoading = ref<boolean>(false)
 .modal {
     box-shadow: 0 -0.25rem 1rem 0 rgba(0, 0, 0, 0.1);
 }
+
+#daily-check{
+    background-image: url(../../assets/images/tasks/daily-check.png);
+}
+
+#daily-combo{
+    background-image: url(../../assets/images/tasks/daily-combo.png);
+}
+
 </style>
