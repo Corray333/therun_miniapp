@@ -31,4 +31,5 @@ export class Task {
     icon: string = '';
     done: boolean = false;
     claimed: boolean = false;
+    clicked: boolean = false;
 }

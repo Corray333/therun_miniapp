@@ -31,6 +31,7 @@ const tasks = ref<Task[]>([
         "icon": "https://store-images.s-microsoft.com/image/apps.55245.13537716651231321.3067a421-6c2f-48a9-b77c-1e38e19146e6.10e2aa49-52ca-4e79-9a61-b6422978afb9?h=210",
         "done": false,
         "claimed": false,
+        "clicked": false,
     }
 ])
 
@@ -172,8 +173,8 @@ const pickedTaskLoading = ref<boolean>(false)
 
                         <SlideUpDown :active="!pickedTask.done" class="w-full">
                             <div class="flex flex-col gap-4 w-full">
-                                <a target="_blank" :href="pickedTask?.link" class="w-full"><button>{{ t('screens.tasks.startBtn') }}</button></a>
-                                <button @click="checkTask" class=" btn-type-2">
+                                <a @click="pickedTask.clicked = true" target="_blank" :href="pickedTask?.link" class="w-full"><button>{{ t('screens.tasks.startBtn') }}</button></a>
+                                <button :disabled="pickedTask.clicked" @click="checkTask" class=" btn-type-2">
                                     <p v-if="!pickedTaskLoading">{{ t('screens.tasks.checkBtn') }}</p>
                                     <i v-else class="pi pi-spin pi-spinner"></i>
                                 </button>
