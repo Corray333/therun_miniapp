@@ -65,7 +65,7 @@ onBeforeMount(async () => {
             <h1>{{ t('screens.friens.activatedFriends') }}</h1>
             <div class=" friends-list flex flex-col gap-1">
                 <div class="flex w-full gap-4 items-center bg-half_dark p-2" v-for="(friend, i) of friends" :key="i">
-                    <img :src="friend.avatar" class="w-12 h-12 rounded-full" alt="">
+                    <img :src="friend.avatar? friend.avatar : 'https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg'" class="w-12 h-12 rounded-full" alt="">
                     <div class=" w-full">
                         <p class=" font-bold">{{ friend.username }}</p>
                     </div>
