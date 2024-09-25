@@ -20,10 +20,14 @@ type UserTransport struct {
 
 type service interface {
 	GetUser(userID int64) (*types.User, error)
-	AuthUser(initData, refCode string) (accessToken string, isNew bool, err error)
-	ListReferals(userID int64) ([]types.Referal, error)
+	AuthUser(initData, refCode string) (accessToken string, isNew bool, isPremium bool, err error)
+	ListActivatedReferals(userID int64) ([]types.Referal, error)
+	ListNotActivatedReferals(userID int64) ([]types.Referal, error)
 	CountReferals(userID int64) (refsActivated, refsFrozen, rewardsFrozen, rewardsAvailible int, err error)
 	DailyCheck(userID int64) (dailyCheckStreak int, dailyCheckLast int64, err error)
+	ClaimRefs(userID int64) (rewardsGot int, err error)
+
+	SetPremium(userID int64, isPremium bool) error
 }
 
 func New(router *chi.Mux, service service) *UserTransport {
@@ -40,13 +44,15 @@ func (t *UserTransport) RegisterRoutes() {
 		r.Get("/api/users/{userID}", t.getUser)
 		r.Get("/api/users/{userID}/referals", t.listReferals)
 		r.Get("/api/users/{userID}/referals/info", t.countReferals)
-		r.Post("/api/users/{userID}/daily_check", t.dailyCheck)
+		// r.Post("/api/users/{userID}/daily_check", t.dailyCheck)
+		r.Post("/api/users/{userID}/referals/claim", t.claimRefs)
 	})
 }
 
 type authRequest struct {
-	InitData string `json:"initData"`
-	RefCode  string `json:"refCode"`
+	InitData  string `json:"initData"`
+	RefCode   string `json:"refCode"`
+	IsPremium bool   `json:"isPremium"`
 }
 
 type authResponse struct {
@@ -61,10 +67,25 @@ func (t *UserTransport) auth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Printf("\nRequest: %+v\n", req)
-	token, isNew, err := t.service.AuthUser(req.InitData, req.RefCode)
+
+	// TODO: Put isPremium in token payload
+	token, isNew, isPremium, err := t.service.AuthUser(req.InitData, req.RefCode)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		slog.Error(err.Error())
+		return
+	}
+
+	creds, err := auth.ExtractCredentials(token)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("failed to extract credentials: " + err.Error())
+		return
+	}
+
+	if err := t.service.SetPremium(creds.ID, isPremium); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("failed to set premium: " + err.Error())
 		return
 	}
 
@@ -102,11 +123,27 @@ func (t *UserTransport) listReferals(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	referals, err := t.service.ListReferals(userID)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		slog.Error("failed to list referals" + err.Error())
-		return
+	isActivated := r.URL.Query().Get("activated")
+
+	var referals []types.Referal
+	var err error
+
+	fmt.Println("isActivated: ", isActivated)
+
+	if isActivated == "true" {
+		referals, err = t.service.ListActivatedReferals(userID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			slog.Error("failed to list referals" + err.Error())
+			return
+		}
+	} else {
+		referals, err = t.service.ListNotActivatedReferals(userID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			slog.Error("failed to list referals" + err.Error())
+			return
+		}
 	}
 
 	if err := json.NewEncoder(w).Encode(referals); err != nil {
@@ -180,6 +217,36 @@ func (t *UserTransport) dailyCheck(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		slog.Error("failed to encode daily check: " + err.Error())
+		return
+	}
+}
+
+type claimRefsResponse struct {
+	RewardsGot int `json:"rewardsGot"`
+}
+
+func (t *UserTransport) claimRefs(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(global_types.ContextID).(int64)
+	if !ok {
+		http.Error(w, "user id not found in context", http.StatusInternalServerError)
+		slog.Error("user id not found in context")
+		return
+	}
+
+	rewardsGot, err := t.service.ClaimRefs(userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("failed to claim referals" + err.Error())
+		return
+	}
+
+	resp := &claimRefsResponse{
+		RewardsGot: rewardsGot,
+	}
+
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("failed to encode referals" + err.Error())
 		return
 	}
 }

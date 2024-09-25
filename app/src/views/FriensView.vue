@@ -9,6 +9,7 @@ import axios, { isAxiosError } from 'axios'
 import { auth } from '@/utils/helpers'
 import SlideUpDown from 'vue-slide-up-down'
 import { useComponentsStore } from '@/stores/components'
+import { onMounted } from 'vue'
 
 const componentsStore = useComponentsStore()
 
@@ -24,17 +25,15 @@ const appUrl = import.meta.env.VITE_APP_URL
 
 
 const friendsInfo = ref({
-    rewardsFrozen: 3000,
-    rewardsAvailible: 1000,
-    refsActivated: 16,
-    refsFrozen: 10,
+    rewardsFrozen: 0,
+    rewardsAvailible: 0,
+    refsActivated: 0,
+    refsFrozen: 0,
 })
 
 const copyRefUrl = () => {
     navigator.clipboard.writeText(`${appUrl}?startapp=${accStore.user.refCode}`)
 }
-
-
 
 
 const getFriendsInfo = async () => {
@@ -62,8 +61,15 @@ const getFriendsInfo = async () => {
 }
 
 onBeforeMount(async () => {
-    getFriendsInfo()
+    await getFriendsInfo()
     infoLoaded.value = true
+})
+
+let style: HTMLStyleElement
+
+onMounted(()=>{
+    style = document.createElement('style')
+    document.head.appendChild(style)
 })
 
 const shareOnTelegram = () => {
@@ -74,6 +80,32 @@ const shareOnTelegram = () => {
 }
 
 const showInfo = ref<boolean>(false)
+
+
+const claimRewards = async () => {
+    try {
+        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/users/0/referals/claim`,{}, {
+            withCredentials: true,
+            headers: {
+                Authorization: accStore.token
+            }
+        })
+        friendsInfo.value.rewardsAvailible = 0
+        alert(`+${data.rewardsGot}`)
+        return true
+    } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 401) {
+            await auth()
+            try {
+                await getFriendsInfo()
+            } catch (error) {
+                if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
+            }
+        }
+    }
+}
 
 </script>
 
@@ -139,8 +171,8 @@ const showInfo = ref<boolean>(false)
                         <div class="flex gap-4">
                             <span class=" w-2 h-2 bg-primary rounded-full mt-2 aspect-square"></span>
                             <div class="flex flex-col">
-                                <p>{{ t('screens.friens.info.tellTitle') }}</p>
-                                <p class="label">{{ t('screens.friens.info.tellDescription') }}</p>
+                                <p>{{ t('screens.friens.info.tellYourFriendTitle') }}</p>
+                                <p class="label">{{ t('screens.friens.info.tellYourFriendDescription') }}</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
@@ -165,7 +197,7 @@ const showInfo = ref<boolean>(false)
                     <bcoinXL />{{ friendsInfo.rewardsAvailible }}
                 </div>
                 <p class="label">{{ t('screens.friens.availibleForClaim') }}</p>
-                <button v-show="friendsInfo.rewardsAvailible > 0" class=" btn-type-2">{{
+                <button @click="claimRewards" v-show="friendsInfo.rewardsAvailible > 0" class=" btn-type-2">{{
                 t('screens.friens.claimBtn') }}</button>
             </div>
             <div class="friends flex flex-col gap-2">

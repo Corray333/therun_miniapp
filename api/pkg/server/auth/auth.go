@@ -18,15 +18,16 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func CheckTelegramAuth(initData string) (int64, string, bool) {
+func CheckTelegramAuth(initData string) (int64, string, bool, bool) {
 
 	parsedData, _ := url.QueryUnescape(initData)
 	chunks := strings.Split(parsedData, "&")
 	var dataPairs [][]string
 	hash := ""
 	user := &struct {
-		ID       int64  `json:"id"`
-		Username string `json:"username"`
+		ID        int64  `json:"id"`
+		Username  string `json:"username"`
+		IsPremium bool   `json:"isPremium"`
 	}{}
 
 	// Filter and split the chunks
@@ -35,7 +36,7 @@ func CheckTelegramAuth(initData string) (int64, string, bool) {
 			parsedData = strings.TrimPrefix(chunk, "user=")
 			if err := json.Unmarshal([]byte(parsedData), user); err != nil {
 				slog.Error("Failed to unmarshal user data: " + err.Error())
-				return 0, "", false
+				return 0, "", false, false
 			}
 		}
 		if strings.HasPrefix(chunk, "hash=") {
@@ -67,7 +68,7 @@ func CheckTelegramAuth(initData string) (int64, string, bool) {
 	h.Write([]byte(initData))
 	dataCheck := h.Sum(nil)
 
-	return user.ID, user.Username, fmt.Sprintf("%x", dataCheck) == hash
+	return user.ID, user.Username, user.IsPremium, fmt.Sprintf("%x", dataCheck) == hash
 }
 
 const (
@@ -189,17 +190,17 @@ func ExtractCredentials(tokenString string) (*Credentials, error) {
 	return &credentials, nil
 }
 
-func CreateAccessToken(initData string) (string, error) {
+func CreateAccessToken(initData string) (string, bool, error) {
 
-	id, username, ok := CheckTelegramAuth(initData)
+	id, username, isPremium, ok := CheckTelegramAuth(initData)
 	if !ok {
-		return "", fmt.Errorf("failed to check telegram auth")
+		return "", false, fmt.Errorf("failed to check telegram auth")
 	}
 
 	newAccess, err := CreateToken(id, username, AccessTokenLifeTime)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
-	return newAccess, nil
+	return newAccess, isPremium, nil
 
 }

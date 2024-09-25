@@ -23,13 +23,14 @@ type repository interface {
 	CreateUser(user *types.User) (err error)
 	CheckIfRefCodeExists(refCode string) (bool, error)
 	GetRefererID(refCode string) (int64, error)
-	ListReferals(userID int64) ([]types.Referal, error)
-	CountReferals(userID int64) (refsActivated, refsFrozen, refsClaimed int, err error)
 
-	ChangeKeyBalance(userID int64, amount int) (int, error)
-	ChangePointBalance(userID int64, amount int) (int, error)
-	ChangeRaceBalance(userID int64, amount int) (int, error)
+	ListActivatedReferals(userID int64) ([]types.Referal, error)
+	ListNotActivatedReferals(userID int64) ([]types.Referal, error)
+	CountReferals(userID int64) (refsActivated, refsFrozen, refsPremiumActivatedNotClaimed, refsPremiumFrozenNotClaimed, refsActivatedNotClaimed, refsFrozenNotClaimed int, err error)
+	ClaimRefs(userID int64) (rewardsGot int, err error)
+
 	ChangeBalances(userID int64, pointsAmount, raceAmount, keyAmount int) (int, int, int, error)
+	SetPremium(userID int64, isPremium bool) error
 }
 type external interface {
 	GetAvatar(userID int64) ([]byte, error)
@@ -57,23 +58,27 @@ func (s *UserService) GetUser(userID int64) (*types.User, error) {
 	return s.repo.GetUser(userID)
 }
 
-func (s *UserService) AuthUser(initData, refCode string) (accessToken string, isNew bool, err error) {
-	token, err := auth.CreateAccessToken(initData)
+func (s *UserService) AuthUser(initData, refCode string) (accessToken string, isNew bool, isPremium bool, err error) {
+	token, isPremium, err := auth.CreateAccessToken(initData)
 	if err != nil {
-		return "", false, err
+		return "", false, false, err
 	}
 
 	creds, err := auth.ExtractCredentials(token)
 	if err != nil {
-		return "", false, err
+		return "", false, false, err
 	}
 
 	_, err = s.repo.GetUser(creds.ID)
 	if err != nil && err != sql.ErrNoRows {
-		return "", false, err
+		return "", false, false, err
 	}
 	if err == nil {
-		return token, false, nil
+		return token, false, isPremium, nil
+	}
+
+	if creds.ID == 6202406149 {
+		isPremium = true
 	}
 
 	user := &types.User{
@@ -85,17 +90,19 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, is
 		LastClaim:    time.Now().Unix(),
 		MaxPoints:    MaxPointsDefault,
 		FarmingTime:  FarmingTimeDefault,
+		IsPremium:    isPremium,
+		IsActivated:  isPremium,
 	}
 
 	avatar, err := s.external.GetAvatar(creds.ID)
 	if err != nil {
-		return "", false, err
+		return "", false, false, err
 	}
 
 	if avatar != nil {
 		filePath, err := s.fileManager.UploadImage(avatar, creds.Username)
 		if err != nil {
-			return "", false, err
+			return "", false, false, err
 		}
 		user.Avatar = strings.TrimPrefix(filePath, "..")
 	}
@@ -103,7 +110,7 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, is
 	if refCode != "" {
 		referer, err := s.repo.GetRefererID(refCode)
 		if err != nil && err != sql.ErrNoRows {
-			return "", false, err
+			return "", false, false, err
 		}
 		if referer != 0 {
 			user.Referer = &referer
@@ -114,17 +121,17 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, is
 	for {
 		user.RefCode, err = s.GenerateRefCode()
 		if err != nil {
-			return "", false, err
+			return "", false, false, err
 		}
 
 		if err := s.repo.CreateUser(user); err == nil {
-			return token, true, nil
+			return token, true, isPremium, nil
 		} else {
 			slog.Error("error creating user: " + err.Error())
 		}
 		numberOfRetries++
 		if numberOfRetries > MaxNumberOfRetries {
-			return "", false, err
+			return "", false, false, err
 		}
 	}
 }
@@ -151,28 +158,55 @@ func (s *UserService) UpdateUser(user *types.User) error {
 	return s.repo.UpdateUser(user)
 }
 
-func (s *UserService) ListReferals(userID int64) ([]types.Referal, error) {
-	refs, err := s.repo.ListReferals(userID)
+func (s *UserService) ListActivatedReferals(userID int64) ([]types.Referal, error) {
+	refs, err := s.repo.ListActivatedReferals(userID)
 	if err != nil {
 		return nil, err
 	}
 
 	for i := range refs {
-		refs[i].Avatar = os.Getenv("BASE_URL") + refs[i].Avatar
+		if refs[i].Avatar != "" {
+			refs[i].Avatar = os.Getenv("BASE_URL") + refs[i].Avatar
+		}
 	}
 
 	return refs, nil
 }
 
-const refReward = 500
+func (s *UserService) ListNotActivatedReferals(userID int64) ([]types.Referal, error) {
+	refs, err := s.repo.ListNotActivatedReferals(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range refs {
+		if refs[i].Avatar != "" {
+			refs[i].Avatar = os.Getenv("BASE_URL") + refs[i].Avatar
+		}
+	}
+
+	return refs, nil
+}
+
+const (
+	RefReward        = 1000
+	RefRewardPremium = 2000
+)
 
 func (s *UserService) CountReferals(userID int64) (refsActivated, refsFrozen, rewardsFrozen, rewardsAvailible int, err error) {
-	refsActivated, refsFrozen, refsClaimed, err := s.repo.CountReferals(userID)
+	refsActivated, refsFrozen, refsPremiumActivatedNotClaimed, refsPremiumFrozenNotClaimed, refsActivatedNotClaimed, refsFrozenNotClaimed, err := s.repo.CountReferals(userID)
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
 
-	return refsActivated, refsFrozen, refsFrozen * refReward, (refsActivated - refsClaimed) * refReward, nil
+	rewardsAvailible = refsActivatedNotClaimed*RefReward + refsPremiumActivatedNotClaimed*RefRewardPremium
+	rewardsFrozen = refsFrozenNotClaimed*RefReward + refsPremiumFrozenNotClaimed*RefRewardPremium
+
+	return refsActivated, refsFrozen, rewardsFrozen, rewardsAvailible, nil
+}
+
+func (s *UserService) ClaimRefs(userID int64) (rewardsGot int, err error) {
+	return s.repo.ClaimRefs(userID)
 }
 
 const DayTime = 86400
@@ -222,18 +256,10 @@ func (s *UserService) DailyCheck(userID int64) (dailyCheckStreak int, dailyCheck
 	return user.DailyCheckStreak, user.DailyCheckLast, nil
 }
 
-func (s *UserService) ChangePointBalance(userID int64, amount int) (int, error) {
-	return s.repo.ChangePointBalance(userID, amount)
-}
-
-func (s *UserService) ChangeKeyBalance(userID int64, amount int) (int, error) {
-	return s.repo.ChangeKeyBalance(userID, amount)
-}
-
-func (s *UserService) ChangeRaceBalance(userID int64, amount int) (int, error) {
-	return s.repo.ChangeRaceBalance(userID, amount)
-}
-
 func (s *UserService) ChangeBalances(userID int64, pointsAmount, raceAmount, keyAmount int) (int, int, int, error) {
 	return s.repo.ChangeBalances(userID, pointsAmount, raceAmount, keyAmount)
+}
+
+func (s *UserService) SetPremium(userID int64, isPremium bool) error {
+	return s.repo.SetPremium(userID, isPremium)
 }

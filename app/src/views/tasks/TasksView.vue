@@ -17,7 +17,7 @@ const { t } = useI18n()
 const accStore = useAccountStore()
 const componentsStore = useComponentsStore()
 
-const tasks = ref<Task[]>([])
+const tasks = ref<Task[] | null>(null)
 
 const getTasks = async () => {
     try {
@@ -28,10 +28,6 @@ const getTasks = async () => {
             }
         })
         tasks.value = data
-        for (let i = 0; i < tasks.value.length; i++) {
-            tasks.value[i].claimed = false
-            tasks.value[i].done = false
-        }
         return true
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
@@ -138,6 +134,12 @@ const pickedTaskLoading = ref<boolean>(false)
 
 <template>
     <section class=" flex flex-col gap-4 py-4">
+        <Transition>
+            <section v-if="tasks == null"
+                class=" fixed z-20 top-0 left-0 w-full h-screen bg-white flex justify-center items-center">
+                <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+            </section>
+        </Transition>
         <Transition name="delay">
             <section v-show="pickedTask" @click.self="pickedTask = undefined"
                 class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-end">
@@ -200,7 +202,7 @@ const pickedTaskLoading = ref<boolean>(false)
         </div>
 
         <h1 class=" mt-4">{{ t('screens.tasks.tasks.header') }}</h1>
-        <p v-if="tasks.length == 0">{{ t('screens.tasks.noNewTasks') }}</p>
+        <p v-if="tasks?.length == 0">{{ t('screens.tasks.noNewTasks') }}</p>
         <TaskCard v-for="task in tasks" :task="task" :key="task.id" @click="if (!task.claimed) pickedTask = task;" />
     </section>
 </template>

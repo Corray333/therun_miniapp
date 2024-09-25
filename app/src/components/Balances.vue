@@ -70,7 +70,7 @@ onMounted(() => {
 
     <div @click="pick = 'bonuses'; showModal = true"
       class=" bg-half_dark p-4 w-full rounded-2xl flex flex-col justify-center items-center">
-      <span class=" flex gap-1" ref="bonusesLabel">
+      <span class=" flex gap-1" ref="bonusesLabel" :class="componentsStore.animateBonuses ? 'animate-bonuses':''">
         <bcoin color="var(--primary)" />
         <p class=" text-left font-bold">{{ store.user.pointBalance }}</p>
       </span>

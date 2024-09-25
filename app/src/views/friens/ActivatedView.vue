@@ -24,7 +24,7 @@ const friends = ref<Referal[]>([])
 
 const getFriends = async () => {
     try {
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/users/0/referals`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/users/0/referals?activated=true`, {
             withCredentials: true,
             headers: {
                 Authorization: accStore.token
@@ -65,9 +65,10 @@ onBeforeMount(async () => {
             <h1>{{ t('screens.friens.activatedFriends') }}</h1>
             <div class=" friends-list flex flex-col gap-1">
                 <div class="flex w-full gap-4 items-center bg-half_dark p-2" v-for="(friend, i) of friends" :key="i">
-                    <img :src="friend.avatar? friend.avatar : 'https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg'" class="w-12 h-12 rounded-full" alt="">
+                    <img v-if="friend.avatar != ''" :src="friend.avatar" class="w-12 h-12 rounded-full" alt="">
+                    <div v-else  class="w-12 h-12 min-w-12 flex items-center justify-center rounded-full bg-dark text-white font-bold text-2xl"><p>{{ friend.username != '' ? friend.username[0] : '?' }}</p></div>
                     <div class=" w-full">
-                        <p class=" font-bold">{{ friend.username }}</p>
+                        <p class=" font-bold">{{ friend.username != '' ? friend.username : 'No username' }}</p>
                     </div>
                     <i class="pi pi-angle-right text-dark" style="font-size: 1.25rem"></i>
                 </div>

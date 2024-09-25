@@ -157,8 +157,8 @@ let style: HTMLStyleElement
 let breathInterval: number | null = null
 
 onMounted(() => {
-    style = document.createElement('style');
-    document.head.appendChild(style);
+    style = document.createElement('style')
+    document.head.appendChild(style)
 
     startBreath()
 

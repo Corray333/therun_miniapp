@@ -24,7 +24,7 @@ const friends = ref<Referal[]>([])
 
 const getFriends = async () => {
     try {
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/users/0/referals`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/users/0/referals?activated=false`, {
             withCredentials: true,
             headers: {
                 Authorization: accStore.token
