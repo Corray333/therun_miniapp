@@ -12,6 +12,7 @@ export default {
         half_dark: 'var(--half-dark)',
         primary_light: 'var(--primary_light)',
         full_dark: 'var(--full-dark)',
+        half_gray: 'var(--half-gray)',
       }
     },
   },

@@ -97,4 +97,11 @@ export class Battle {
     status: string = '';
     userResult: number = 0;
     opponentResult: number = 0;
+    pick: number = 0;
+}
+
+export class Round {
+    endTime: number = 0;
+    id: number = 0;
+    battles: Battle[] = [];
 }
