@@ -10,6 +10,8 @@ import { auth } from '@/utils/helpers'
 import SlideUpDown from 'vue-slide-up-down'
 import { useComponentsStore } from '@/stores/components'
 import { onMounted } from 'vue'
+import { Vue3Lottie } from 'vue3-lottie'
+import coinBlast from '@/assets/animations/coin-blast.json'
 
 const componentsStore = useComponentsStore()
 
@@ -91,7 +93,8 @@ const claimRewards = async () => {
             }
         })
         friendsInfo.value.rewardsAvailible = 0
-        alert(`+${data.rewardsGot}`)
+        coinBlastAnimation.value?.goToAndStop(0, true)
+        coinBlastAnimation.value?.play()
         return true
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
@@ -107,10 +110,13 @@ const claimRewards = async () => {
     }
 }
 
+const coinBlastAnimation = ref<typeof Vue3Lottie>()
+
 </script>
 
 <template>
     <section class=" pb-20">
+        <Vue3Lottie ref="coinBlastAnimation" :animation-data="coinBlast" class="fixed bottom-0 left-0 w-full pointer-events-none" :auto-play="false" :loop="false"/>
         <Transition>
             <section v-if="!infoLoaded"
                 class=" fixed z-20 top-0 left-0 w-full h-screen bg-white flex justify-center items-center">
