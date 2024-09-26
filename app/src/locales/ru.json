@@ -59,7 +59,7 @@
             }
         },
         "friens":{
-            "call": "Приглашайте друзей и получайте бонусы",
+            "call": "Приглашайте своих друзей и получайте бонусы",
             "frozen":"Замороженный доход",
             "info":{
                 "title":"Как получить бонусы",
@@ -81,8 +81,8 @@
             "availibleForClaim":"Доступно для сбора",
             "claimBtn":"Собрать",
             "listHeader":"Мои друзья",
-            "activated":"Активированы",
-            "waitingForActivation":"Ждут активации",
+            "activated":"Активированые",
+            "waitingForActivation":"В ожидании активации",
             "activatedFriends":"Активированные друзья",
             "waitingForActivationFriends":"Друзья, которые ждут активации",
             "inviteBtn":"Пригласить друга"

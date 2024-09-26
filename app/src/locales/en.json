@@ -129,6 +129,13 @@
             "done":"Done",
             "noNewTasks":"You have done all the tasks🥳",
             "checkError":"You have not completed the task yet"
+        },
+        "battles":{
+            "battle":{
+                "participationFee":"Participation fee",
+                "prize":"Prize",
+                "choose":"Choose"
+            }
         }
     }
 }

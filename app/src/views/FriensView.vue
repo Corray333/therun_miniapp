@@ -118,9 +118,9 @@ const claimRewards = async () => {
             </section>
         </Transition>
         <section class=" flex flex-col p-4 gap-4 h-full w-full">
-            <h1>{{ t("screens.friens.call") }}</h1>
+            <h1 class="text-center">{{ t("screens.friens.call") }}</h1>
             <div class="frozen bg-half_dark p-4 rounded-2xl flex flex-col items-center gap-2">
-                <div class="flex  items-center gap-2 text-2xl font-bold">
+                <div class="flex  items-center gap-2 text-4xl font-bold">
                     <bcoinXL />{{ friendsInfo.rewardsFrozen }}
                 </div>
                 <p class="label">{{ t('screens.friens.frozen') }}</p>
@@ -162,28 +162,28 @@ const claimRewards = async () => {
                 <SlideUpDown :active="showInfo">
                     <div class="info p-4 pt-0 flex flex-col gap-2">
                         <div class="flex gap-4">
-                            <span class=" w-2 h-2 bg-primary rounded-full mt-2 aspect-square"></span>
+                            <span class=" w-2 h-2 bg-primary rounded-full min-w-2 mt-2"></span>
                             <div class="flex flex-col">
                                 <p>{{ t('screens.friens.info.shareTitle') }}</p>
                                 <p class="label">{{ t('screens.friens.info.shareDescription') }}</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
-                            <span class=" w-2 h-2 bg-primary rounded-full mt-2 aspect-square"></span>
+                            <span class=" w-2 h-2 bg-primary rounded-full min-w-2 mt-2"></span>
                             <div class="flex flex-col">
                                 <p>{{ t('screens.friens.info.tellYourFriendTitle') }}</p>
                                 <p class="label">{{ t('screens.friens.info.tellYourFriendDescription') }}</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
-                            <span class=" w-2 h-2 bg-primary rounded-full mt-2 aspect-square"></span>
+                            <span class=" w-2 h-2 bg-primary rounded-full min-w-2 mt-2"></span>
                             <div class="flex flex-col">
                                 <p>{{ t('screens.friens.info.activate1Title') }}</p>
                                 <p class="label">{{ t('screens.friens.info.activate1Description') }}</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
-                            <span class=" w-2 h-2 bg-primary rounded-full mt-2 aspect-square"></span>
+                            <span class=" w-2 h-2 bg-primary rounded-full min-w-2 mt-2"></span>
                             <div class="flex flex-col">
                                 <p>{{ t('screens.friens.info.activate2Title') }}</p>
                                 <p class="label">{{ t('screens.friens.info.activate2Description') }}</p>
@@ -193,7 +193,7 @@ const claimRewards = async () => {
                 </SlideUpDown>
             </div>
             <div class="frozen bg-half_dark p-4 rounded-2xl flex flex-col items-center gap-2">
-                <div class="flex  items-center gap-2 text-2xl font-bold">
+                <div class="flex  items-center gap-2 text-4xl font-bold">
                     <bcoinXL />{{ friendsInfo.rewardsAvailible }}
                 </div>
                 <p class="label">{{ t('screens.friens.availibleForClaim') }}</p>
