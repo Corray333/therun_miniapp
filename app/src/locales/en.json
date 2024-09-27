@@ -135,8 +135,9 @@
                 "participationFee":"Participation fee",
                 "prize":"Prize",
                 "choose":"Choose",
-                "chosen":"Your choice"
-            },
+                "chosen":"Your choice",
+                "errBetTooLate":"Too late, wait for the next world round"
+        },
             "worldRound":"World round",
             "banner":{
                 "header":"Choose your favorite, wait for the victory and get the keys",

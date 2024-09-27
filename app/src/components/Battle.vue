@@ -53,6 +53,10 @@ const makeBet = async (pick: number) => {
                     componentsStore.addError(error.message)
                 }
             }
+        } else if (isAxiosError(error) && error.response?.status === 400) {
+            componentsStore.addError(t('screens.battles.battle.errBetTooLate'))
+        } else if(isAxiosError(error)) {
+            componentsStore.addError(error.message)
         }
     } finally{
         loading1.value = false
@@ -91,7 +95,7 @@ const makeBet = async (pick: number) => {
                         <p>@{{ battle.user.username }}</p>
                     </div>
                     <button @click="makeBet(1)" v-if="battle.pick == 0" class=" py-1">
-                        <p v-if="loading1"><i class="pi pi-spin spin"></i></p>
+                        <p v-if="loading1"><i class="pi pi-spinner pi-spin"></i></p>
                         <p v-else>{{ t('screens.battles.battle.choose') }}</p>
                     </button>
                     <button v-if="battle.pick == 1" class=" py-1">{{ t('screens.battles.battle.chosen') }}</button>
@@ -107,7 +111,7 @@ const makeBet = async (pick: number) => {
                         <p>@{{ battle.opponent.username }}</p>
                     </div>
                     <button @click="makeBet(2)" v-if="battle.pick == 0" class=" py-1">
-                        <p v-if="loading2"><i class="pi pi-spin spin"></i></p>
+                        <p v-if="loading2"><i class="pi pi-spinner pi-spin"></i></p>
                         <p v-else>{{ t('screens.battles.battle.choose') }}</p>
                     </button>
                     <button v-if="battle.pick == 2" class=" py-1" disabled>{{ t('screens.battles.battle.chosen') }}</button>

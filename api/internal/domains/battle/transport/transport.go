@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	battle_service "github.com/Corray333/therun_miniapp/internal/domains/battle/service"
 	"github.com/Corray333/therun_miniapp/internal/domains/battle/types"
 	global_types "github.com/Corray333/therun_miniapp/internal/types"
 	"github.com/Corray333/therun_miniapp/pkg/server/auth"
@@ -80,6 +81,10 @@ func (t *BattleTransport) makeBet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := t.service.MakeBet(userID, battleID, bet.Pick); err != nil {
+		if err == battle_service.ErrTooLate {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		slog.Error("error making bet: " + err.Error())
 	}
