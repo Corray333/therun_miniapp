@@ -38,7 +38,6 @@ export class ExternalUser {
     id: number = 0;
     username: string = "";
     photo: string = "";
-    miles: number = 0;
 }
 
 export class Battle {
@@ -47,6 +46,8 @@ export class Battle {
     user: ExternalUser = new ExternalUser();
     opponent: ExternalUser = new ExternalUser();
     pick: number = 0;
+    userResult: number = 0;
+    opponentResult: number = 0;
 }
 
 export interface Round {

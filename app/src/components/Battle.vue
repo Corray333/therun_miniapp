@@ -5,15 +5,60 @@ import bcoin from '@/components/icons/bcoin-icon.vue'
 import key from '@/components/icons/key-icon.vue'
 import miles from '@/components/icons/miles-icon.vue'
 import { useI18n } from 'vue-i18n'
+import { useAccountStore } from '@/stores/account'
+import axios, {isAxiosError} from 'axios'
+import { useComponentsStore } from '@/stores/components'
+import { auth } from '@/utils/helpers'
+import {ref} from 'vue'
 
 const { t } = useI18n()
+const accStore = useAccountStore()
+const componentsStore = useComponentsStore()
 
-defineProps({
+const props = defineProps({
     battle: {
         type: Battle,
         required: true
     }
 })
+
+const loading1 = ref<boolean>(false)
+const loading2 = ref<boolean>(false)
+
+const makeBet = async (pick: number) => {
+    if (pick === 1) {
+        loading1.value = true
+    } else {
+        loading2.value = true
+    }
+
+    try {
+        await axios.post(`${import.meta.env.VITE_API_URL}/battles/${props.battle.id}/bet`,{
+            pick: pick
+        }, {
+            withCredentials: true,
+            headers: {
+                Authorization: accStore.token
+            }
+        })
+        props.battle.pick = pick
+        return true
+    } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 401) {
+            await auth()
+            try {
+                await makeBet(pick)
+            } catch (error) {
+                if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
+            }
+        }
+    } finally{
+        loading1.value = false
+        loading2.value = false
+    }
+}
 
 </script>
 
@@ -39,26 +84,32 @@ defineProps({
                 <div class="player w-full">
                     <div class="user-info text-center py-2 px-4 gap-2 flex flex-col">
                         <span class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
-                            <miles />{{ Math.floor(battle.user.miles) }}
+                            <miles />{{ Math.floor(battle.userResult) }}
                         </span>
                         <img v-if="battle.user.photo" :src="battle.user.photo" :class="battle.pick == 1 ? 'user-picked':''" class=" w-full rounded-2xl" alt="">
                         <span v-else class="w-full rounded-2xl bg-dark text-white text-4xl font-bold">{{ battle.user.username[0] }}</span>
                         <p>@{{ battle.user.username }}</p>
                     </div>
-                    <button v-if="battle.pick == 0" class=" py-1">{{ t('screens.battles.battle.choose') }}</button>
+                    <button @click="makeBet(1)" v-if="battle.pick == 0" class=" py-1">
+                        <p v-if="loading1"><i class="pi pi-spin spin"></i></p>
+                        <p v-else>{{ t('screens.battles.battle.choose') }}</p>
+                    </button>
                     <button v-if="battle.pick == 1" class=" py-1">{{ t('screens.battles.battle.chosen') }}</button>
                 </div>
                 <img src="../assets/images/battles/vs-sign.png" class=" w-16 object-contain" alt="">
                 <div class="player w-full">
                     <div class="user-info text-center py-2 px-4 gap-2 flex flex-col">
                         <span class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
-                            <miles />{{ Math.floor(battle.opponent.miles) }}
+                            <miles />{{ Math.floor(battle.opponentResult) }}
                         </span>
-                        <img v-if="battle.opponent.photo" :src="battle.opponent.photo" :class="battle.pick == 1 ? 'user-picked':''" class=" w-full rounded-2xl" alt="">
+                        <img v-if="battle.opponent.photo" :src="battle.opponent.photo" :class="battle.pick == 2 ? 'user-picked':''" class=" w-full rounded-2xl" alt="">
                         <span v-else class="w-full rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">{{ battle.opponent.username[0] }}</span>
                         <p>@{{ battle.opponent.username }}</p>
                     </div>
-                    <button v-if="battle.pick == 0" class=" py-1">{{ t('screens.battles.battle.choose') }}</button>
+                    <button @click="makeBet(2)" v-if="battle.pick == 0" class=" py-1">
+                        <p v-if="loading2"><i class="pi pi-spin spin"></i></p>
+                        <p v-else>{{ t('screens.battles.battle.choose') }}</p>
+                    </button>
                     <button v-if="battle.pick == 2" class=" py-1" disabled>{{ t('screens.battles.battle.chosen') }}</button>
                 </div>
             </div>

@@ -64,7 +64,7 @@ func (s *FarmingService) StartFarming(userID int64) (int64, error) {
 		return 0, err
 	}
 
-	if user.FarmingFrom >= user.LastClaim {
+	if user.FarmingFrom > user.LastClaim {
 		return 0, ErrFarmingAlreadyStarted
 	}
 

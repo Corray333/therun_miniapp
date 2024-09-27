@@ -30,4 +30,5 @@ func NewBattleController(router *chi.Mux, store *storage.Storage) *BattleControl
 
 func (c *BattleController) Build() {
 	c.transport.RegisterRoutes()
+	go c.service.RunRounds()
 }
