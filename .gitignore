@@ -1,3 +1,4 @@
 /files
 .env
 certbot
+battles.json

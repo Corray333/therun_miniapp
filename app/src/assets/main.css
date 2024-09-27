@@ -36,6 +36,14 @@
         @apply text-xl font-bold;
     }
 
+    p{
+        line-height: 1.25rem;
+    }
+
+    p.text-xl{
+        line-height: 1.5rem;
+    }
+
     .z-60{
         z-index: 60;
     }

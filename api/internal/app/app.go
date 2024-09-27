@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/Corray333/therun_miniapp/docs"
 	"github.com/Corray333/therun_miniapp/internal/config"
+	"github.com/Corray333/therun_miniapp/internal/domains/battle"
 	"github.com/Corray333/therun_miniapp/internal/domains/farming"
 	"github.com/Corray333/therun_miniapp/internal/domains/task"
 	"github.com/Corray333/therun_miniapp/internal/domains/user"
@@ -77,6 +78,9 @@ func New() *App {
 
 	taskController := task.NewTaskController(router, store, telegramClient)
 	app.AddController(taskController)
+
+	battleController := battle.NewBattleController(router, store)
+	app.AddController(battleController)
 
 	return app
 }

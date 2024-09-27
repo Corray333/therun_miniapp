@@ -36,5 +36,4 @@ export const auth = async ():Promise<boolean> => {
         console.log(error)
         return false
     }
-    return false
 }

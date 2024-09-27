@@ -135,18 +135,18 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
             <div class="flex flex-col w-full p-4 bg-half_dark rounded-2xl gap-4">
                 <div class="flex gap-4 items-center">
                     <img class="h-16" src="../assets/images/friends/tg-logo.png" alt="">
-                    <div>
+                    <div class=" flex flex-col gap-2">
                         <p class="font-bold">{{ t('screens.friens.invite.commonInviteHeader') }}</p>
-                        <p class="flex items-center gap-2">
+                        <p class="flex items-center gap-1">
                             <bcoin />{{ t('screens.friens.invite.commonInviteDescription') }}
                         </p>
                     </div>
                 </div>
                 <div class="flex gap-4 items-center">
                     <img class="h-16" src="../assets/images/friends/premium-star.gif" alt="">
-                    <div>
+                    <div class=" flex flex-col gap-2">
                         <p class="font-bold">{{ t('screens.friens.invite.premiumInviteHeader') }}</p>
-                        <p class="flex items-center gap-2">
+                        <p class="flex items-center gap-1">
                             <bcoin />{{ t('screens.friens.invite.premiumInviteDescription') }}
                         </p>
                     </div>

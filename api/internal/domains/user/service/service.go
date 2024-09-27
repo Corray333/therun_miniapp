@@ -81,10 +81,29 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, is
 		isPremium = true
 	}
 
+	pointBalance := 0
+	var refererID *int64
+
+	if refCode != "" {
+		referer, err := s.repo.GetRefererID(refCode)
+		if err != nil && err != sql.ErrNoRows {
+			return "", false, false, err
+		}
+		if referer != 0 {
+			refererID = &referer
+
+			if isPremium {
+				pointBalance = RefRewardPremium
+			} else {
+				pointBalance = RefReward
+			}
+		}
+	}
+
 	user := &types.User{
 		ID:           creds.ID,
 		Username:     creds.Username,
-		PointBalance: 0,
+		PointBalance: pointBalance,
 		RaceBalance:  0,
 		KeyBalance:   0,
 		LastClaim:    time.Now().Unix(),
@@ -92,6 +111,7 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, is
 		FarmingTime:  FarmingTimeDefault,
 		IsPremium:    isPremium,
 		IsActivated:  isPremium,
+		Referer:      refererID,
 	}
 
 	avatar, err := s.external.GetAvatar(creds.ID)
@@ -105,16 +125,6 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, is
 			return "", false, false, err
 		}
 		user.Avatar = strings.TrimPrefix(filePath, "..")
-	}
-
-	if refCode != "" {
-		referer, err := s.repo.GetRefererID(refCode)
-		if err != nil && err != sql.ErrNoRows {
-			return "", false, false, err
-		}
-		if referer != 0 {
-			user.Referer = &referer
-		}
 	}
 
 	numberOfRetries := 0

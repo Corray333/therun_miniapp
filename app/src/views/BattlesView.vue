@@ -4,136 +4,21 @@ import Balances from '@/components/Balances.vue'
 
 import { ref, onBeforeMount } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Round } from '@/types/types'
+import { type Round } from '@/types/types'
+import { useAccountStore } from '@/stores/account'
 import Battle from '@/components/Battle.vue'
+import axios, {isAxiosError} from 'axios'
+import { useComponentsStore } from '@/stores/components'
+import { auth } from '@/utils/helpers'
+
+const accStore = useAccountStore()
+const componentsStore = useComponentsStore()
 
 const { t } = useI18n()
 
 const remainingTime = ref<string>('00:00:00');
 
-const round = ref<Round>({
-    endTime: 1727421132,
-    id: 1,
-    battles: [
-        {
-            "id": 1,
-            "user": {
-                "id": 1,
-                "username": "incetro",
-                "email": "email@example.com",
-                "phone": "9990123456",
-                "sex_id": "1",
-                "birth_date": "05.05.1995",
-                "firstname": "Иван",
-                "middlename": "Иванович",
-                "lastname": "Иванов",
-                "photo": "https://store-images.s-microsoft.com/image/apps.55245.13537716651231321.3067a421-6c2f-48a9-b77c-1e38e19146e6.10e2aa49-52ca-4e79-9a61-b6422978afb9?h=210",
-                "cover": "http://example.link/cover.png",
-                "bio": "mybio",
-                "isFollower": true,
-                "followersCount": 100000,
-                "followingCount": 100000,
-                "favoritesCount": 100000,
-                "friendsCount": 100000,
-                "activeTournamentsCount": 100,
-                "isFriend": false,
-                "isFavorite": false,
-                "city": "Сочи",
-                "exp": 12.2,
-                "expYear": 12.2,
-                "expOverall": 12.2,
-                "country": "Сочи",
-                "expRatingPlace": 1,
-                "transport": [
-                    0
-                ],
-                "fPoints": 1,
-                "league": {
-                    "id": 0,
-                    "name": "1",
-                    "bottomThreshold": 100,
-                    "topThreshold": 300
-                },
-                "refCode": "S4DGXC",
-                "inviteCode": "S4DGXC",
-                "appliedRefCode": "YNAUVG",
-                "codeGenerationsLeft": 1,
-                "social": [
-                    {
-                        "name": "VK",
-                        "url": "https://vk.com/user"
-                    }
-                ],
-                "minBet": [
-                    {
-                        "currencyName": "R",
-                        "currencyId": 1,
-                        "minBet": 50
-                    }
-                ]
-            },
-            "opponent": {
-                "id": 1,
-                "username": "incetro",
-                "email": "email@example.com",
-                "phone": "9990123456",
-                "sex_id": "1",
-                "birth_date": "05.05.1995",
-                "firstname": "Иван",
-                "middlename": "Иванович",
-                "lastname": "Иванов",
-                "photo": "https://store-images.s-microsoft.com/image/apps.55245.13537716651231321.3067a421-6c2f-48a9-b77c-1e38e19146e6.10e2aa49-52ca-4e79-9a61-b6422978afb9?h=210",
-                "cover": "http://example.link/cover.png",
-                "bio": "mybio",
-                "isFollower": true,
-                "followersCount": 100000,
-                "followingCount": 100000,
-                "favoritesCount": 100000,
-                "friendsCount": 100000,
-                "activeTournamentsCount": 100,
-                "isFriend": false,
-                "isFavorite": false,
-                "city": "Сочи",
-                "exp": 12.2,
-                "expYear": 12.2,
-                "expOverall": 12.2,
-                "country": "Сочи",
-                "expRatingPlace": 1,
-                "transport": [
-                    0
-                ],
-                "fPoints": 1,
-                "league": {
-                    "id": 0,
-                    "name": "1",
-                    "bottomThreshold": 100,
-                    "topThreshold": 300
-                },
-                "refCode": "S4DGXC",
-                "inviteCode": "S4DGXC",
-                "appliedRefCode": "YNAUVG",
-                "codeGenerationsLeft": 1,
-                "social": [
-                    {
-                        "name": "VK",
-                        "url": "https://vk.com/user"
-                    }
-                ],
-                "minBet": [
-                    {
-                        "currencyName": "R",
-                        "currencyId": 1,
-                        "minBet": 50
-                    }
-                ]
-            },
-            "status": "active",
-            "userResult": 10.5,
-            "opponentResult": 10.5,
-            "pick": 2
-        }
-    ]
-})
+const round = ref<Round>()
 
 const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
@@ -143,6 +28,9 @@ const formatTime = (seconds: number) => {
 };
 
 const calculateRemainingTimeAndPoints = () => {
+    if (!round.value) {
+        return
+    }
     const now = Date.now() / 1000
     let secondsLeft = round.value.endTime - now;
 
@@ -154,22 +42,55 @@ const calculateRemainingTimeAndPoints = () => {
     remainingTime.value = formatTime(Math.floor(secondsLeft))
 }
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
+    await getRound()
     calculateRemainingTimeAndPoints()
     setInterval(calculateRemainingTimeAndPoints, 1000)
 })
+
+const getRound = async () => {
+    try {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/round`, {
+            withCredentials: true,
+            headers: {
+                Authorization: accStore.token
+            }
+        })
+        
+        round.value = data
+
+        return true
+    } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 401) {
+            await auth()
+            try {
+                await getRound()
+            } catch (error) {
+                if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
+            }
+        }
+    }
+}
 
 
 </script>
 
 <template>
     <section class="pb-20">
+        <Transition>
+            <section v-if="round === undefined"
+                class=" fixed z-40 top-0 left-0 w-full h-screen bg-white flex justify-center items-center">
+                <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+            </section>
+        </Transition>
         <section class=" p-4 flex flex-col gap-4">
             <Balances/>
 
             <div class="timer flex flex-col items-center justify-center p-4 rounded-2xl bg-secondary">
-                <p class=" text-4xl font-bold">{{ remainingTime }}</p>
-                <p class="font-bold">{{ t('screens.battles.worldRound') }} #{{ round.id }}</p>
+                <p class=" round-timer text-4xl font-bold">{{ remainingTime }}</p>
+                <p class="font-bold">{{ t('screens.battles.worldRound') }} #{{ round?.id }}</p>
             </div>
 
             <div class="banner rounded-2xl w-full p-4 bg-cover text-white ">
@@ -177,8 +98,8 @@ onBeforeMount(() => {
                 <p class="">{{ t('screens.battles.banner.description') }}</p>
             </div>
 
-            <section>
-                <Battle v-for="(battle, i) of round.battles" :key="i" :battle="battle" />
+            <section class=" flex flex-col gap-4">
+                <Battle v-for="(battle, i) of round?.battles" :key="i" :battle="battle" />
             </section>
 
             <span class="flex gap-2 text-dark">
@@ -191,6 +112,10 @@ onBeforeMount(() => {
 
 
 <style scoped>
+
+.round-timer{
+    width: 8.5rem;
+}
 
 .banner{
     background-image: url(../assets/images/battles/banner-bg.png);

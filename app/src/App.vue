@@ -81,7 +81,7 @@ onBeforeMount(async () => {
 	<section>
 		<Errors class=" fixed top-0 left-0" />
 		<RouterView />
-		<Navbar v-show="!excludedRoutes.includes(String(route.name))" class=" fixed bottom-0 left-0 z-40" />
+		<Navbar v-show="!excludedRoutes.includes(String(route.name))" class=" fixed bottom-0 left-0 z-20" />
 	</section>
 </template>
 

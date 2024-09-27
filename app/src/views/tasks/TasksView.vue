@@ -60,7 +60,7 @@ const checkTask = async () => {
             }
         })
         pickedTask.value.done = data.done
-        if (!data.done){
+        if (!data.done) {
             componentsStore.addError(t('screens.tasks.checkError'))
         }
     } catch (error) {
@@ -162,7 +162,8 @@ const pickedTaskLoading = ref<boolean>(false)
 
                         <SlideUpDown :active="!pickedTask.done" class="w-full">
                             <div class="flex flex-col gap-4 w-full">
-                                <a @click="pickedTask.clicked = true" target="_blank" :href="pickedTask?.link" class="w-full"><button>{{ t('screens.tasks.startBtn') }}</button></a>
+                                <a @click="pickedTask.clicked = true" target="_blank" :href="pickedTask?.link"
+                                    class="w-full"><button>{{ t('screens.tasks.startBtn') }}</button></a>
                                 <button :disabled="!pickedTask.clicked" @click="checkTask" class=" btn-type-2">
                                     <p v-if="!pickedTaskLoading">{{ t('screens.tasks.checkBtn') }}</p>
                                     <i v-else class="pi pi-spin pi-spinner"></i>
@@ -201,15 +202,20 @@ const pickedTaskLoading = ref<boolean>(false)
             </div>
         </div>
 
-        <h1 class=" mt-4">{{ t('screens.tasks.tasks.header') }}</h1>
-        <p v-if="tasks?.length == 0">{{ t('screens.tasks.noNewTasks') }}</p>
-        <TaskCard v-for="task in tasks" :task="task" :key="task.id" @click="if (!task.claimed) pickedTask = task;" />
+        <section v-if="tasks && tasks.length > 0">
+            <h1 class=" mt-4">{{ t('screens.tasks.tasks.header') }}</h1>
+            <p v-if="tasks?.length == 0">{{ t('screens.tasks.noNewTasks') }}</p>
+            <TaskCard v-for="task in tasks" :task="task" :key="task.id"
+                @click="if (!task.claimed) pickedTask = task;" />
+        </section>
+        <section class="w-full flex justify-center  py-4">
+            <h1 class=" text-dark">{{ t('screens.tasks.noNewTasks') }}</h1>
+        </section>
     </section>
 </template>
 
 
 <style scoped>
-
 .delay-enter-active,
 .delay-leave-active {
     transition: opacity 0.5s ease;
@@ -234,12 +240,11 @@ const pickedTaskLoading = ref<boolean>(false)
     box-shadow: 0 -0.25rem 1rem 0 rgba(0, 0, 0, 0.1);
 }
 
-#daily-check{
+#daily-check {
     background-image: url(../../assets/images/tasks/daily-check.png);
 }
 
-#daily-combo{
+#daily-combo {
     background-image: url(../../assets/images/tasks/daily-combo.png);
 }
-
 </style>

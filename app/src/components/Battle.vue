@@ -39,9 +39,10 @@ defineProps({
                 <div class="player w-full">
                     <div class="user-info text-center py-2 px-4 gap-2 flex flex-col">
                         <span class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
-                            <miles />{{ battle.userResult }}
+                            <miles />{{ Math.floor(battle.user.miles) }}
                         </span>
-                        <img :src="battle.user.photo" :class="battle.pick == 1 ? 'user-picked':''" class=" w-full rounded-2xl" alt="">
+                        <img v-if="battle.user.photo" :src="battle.user.photo" :class="battle.pick == 1 ? 'user-picked':''" class=" w-full rounded-2xl" alt="">
+                        <span v-else class="w-full rounded-2xl bg-dark text-white text-4xl font-bold">{{ battle.user.username[0] }}</span>
                         <p>@{{ battle.user.username }}</p>
                     </div>
                     <button v-if="battle.pick == 0" class=" py-1">{{ t('screens.battles.battle.choose') }}</button>
@@ -51,9 +52,10 @@ defineProps({
                 <div class="player w-full">
                     <div class="user-info text-center py-2 px-4 gap-2 flex flex-col">
                         <span class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
-                            <miles />{{ battle.opponentResult }}
+                            <miles />{{ Math.floor(battle.opponent.miles) }}
                         </span>
-                        <img :src="battle.opponent.photo" :class="battle.pick == 2 ? 'user-picked':''" class=" w-full rounded-2xl" alt="">
+                        <img v-if="battle.opponent.photo" :src="battle.opponent.photo" :class="battle.pick == 1 ? 'user-picked':''" class=" w-full rounded-2xl" alt="">
+                        <span v-else class="w-full rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">{{ battle.opponent.username[0] }}</span>
                         <p>@{{ battle.opponent.username }}</p>
                     </div>
                     <button v-if="battle.pick == 0" class=" py-1">{{ t('screens.battles.battle.choose') }}</button>
