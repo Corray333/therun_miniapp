@@ -25,6 +25,7 @@ type Task struct {
 	RaceReward   int             `json:"raceReward" db:"race_reward"`
 	Data         json.RawMessage `json:"data" db:"data"`
 	Icon         string          `json:"icon" db:"icon"`
+	Class        string          `json:"class" db:"class"`
 }
 
 type TaskDataTG struct {
