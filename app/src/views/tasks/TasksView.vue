@@ -202,13 +202,13 @@ const pickedTaskLoading = ref<boolean>(false)
             </div>
         </div>
 
-        <section v-if="tasks && tasks.length > 0">
+        <section v-if="tasks && tasks.length > 0" class=" flex flex-col gap-2">
             <h1 class=" mt-4">{{ t('screens.tasks.tasks.header') }}</h1>
             <p v-if="tasks?.length == 0">{{ t('screens.tasks.noNewTasks') }}</p>
             <TaskCard v-for="task in tasks" :task="task" :key="task.id"
                 @click="if (!task.claimed) pickedTask = task;" />
         </section>
-        <section class="w-full flex justify-center  py-4">
+        <section v-else class="w-full flex justify-center  py-4">
             <h1 class=" text-dark">{{ t('screens.tasks.noNewTasks') }}</h1>
         </section>
     </section>
