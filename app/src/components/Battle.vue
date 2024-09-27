@@ -71,12 +71,14 @@ const makeBet = async (pick: number) => {
         <div class="flex w-full">
             <div class="flex flex-col items-center justify-center w-full border-half_gray border-b-1 border-r-1 p-4">
                 <p class=" font-bold flex gap-2">
-                    <bcoin />2000
+                    <!-- TODO: get from server -->
+                    <bcoin />300
                 </p>
                 <p class="label">{{ t('screens.battles.battle.participationFee') }}</p>
             </div>
             <div class="flex flex-col items-center justify-center w-full border-half_gray border-b-1 p-4">
                 <p class=" font-bold flex gap-2">
+                    <!-- TODO: get from server -->
                     <key color="var(--primary)" />1
                 </p>
                 <p class="label">{{ t('screens.battles.battle.prize') }}</p>
