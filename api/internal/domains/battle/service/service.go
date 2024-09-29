@@ -213,16 +213,14 @@ func (s *BattleService) StartNextRoundTimer() {
 	slog.Info("Starting next round timer")
 	// TODO: change to loop with time check
 	time.AfterFunc(RoundDuration, func() {
-		go s.StartRound()
-		s.StartNextRoundTimer()
+		s.StartRound()
 	})
 }
 
 func (s *BattleService) SetUpdateInterval() {
 	slog.Info("Setting update interval")
 	time.AfterFunc(5*time.Minute, func() {
-		go s.UpdateBattles()
-		s.SetUpdateInterval()
+		s.UpdateBattles()
 	})
 }
 
