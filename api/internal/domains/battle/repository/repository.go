@@ -148,7 +148,8 @@ func (r *BattleRepository) MakeBet(userID int64, battleID, pick int) error {
 		return err
 	}
 
-	return nil
+	return tx.Commit()
+
 }
 
 func (r *BattleRepository) ProcessBets(roundID int, keyReward int) error {
