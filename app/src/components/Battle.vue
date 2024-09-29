@@ -93,7 +93,7 @@ const makeBet = async (pick: number) => {
                             <miles />{{ Math.floor(battle.userResult) }}
                         </span>
                         <img v-if="battle.user.photo" :src="battle.user.photo" :class="battle.pick == 1 ? 'user-picked':''" class=" w-full rounded-2xl" alt="">
-                        <span v-else class="w-full rounded-2xl bg-dark text-white text-4xl font-bold">{{ battle.user.username[0] }}</span>
+                        <span v-else class="w-full rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">{{ battle.user.username[0] }}</span>
                         <p>@{{ battle.user.username }}</p>
                     </div>
                     <button @click="makeBet(1)" v-if="battle.pick == 0" class=" py-1">
