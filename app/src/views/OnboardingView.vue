@@ -69,15 +69,26 @@ watch(sliderVal, (val) => {
                         <button @click="currentSlide = 4">{{ t('screens.onboarding.nextButton') }}</button>
                     </div>
                 </div>
+
                 <div class="slide">
-                    <div class="pic-container p-4">
+                    <div class="pic-container pt-4 px-4">
                         <div class="pic" id="onboarding-pic-5"></div>
                     </div>
                     <div class="info">
-                        <h1 v-html="t('screens.onboarding.slide5.title')"></h1>
+                        <h1>{{ t('screens.onboarding.slide5.title') }}</h1>
                         <p>{{ t('screens.onboarding.slide5.description') }}</p>
+                        <button @click="currentSlide = 5">{{ t('screens.onboarding.nextButton') }}</button>
+                    </div>
+                </div>
+
+                <div class="slide">
+                    <div class="pic-container p-4">
+                        <div class="pic" id="onboarding-pic-6"></div>
+                    </div>
+                    <div class="info">
+                        <h1 v-html="t('screens.onboarding.slide6.title')"></h1>
+                        <p>{{ t('screens.onboarding.slide6.description') }}</p>
                         <Slider v-model="sliderVal" :min="0" :max="100" :step="1" id="slider-finish" />
-                        <!-- <button @click="router.push('/')">{{ t('screens.onboarding.startButton') }}</button> -->
                     </div>
                 </div>
             </div>
@@ -149,6 +160,10 @@ watch(sliderVal, (val) => {
 
 #onboarding-pic-5 {
     background-image: url('../assets/images/onboarding/slide5.png');
+}
+
+#onboarding-pic-6 {
+    background-image: url('../assets/images/onboarding/slide6.png');
 }
 
 

@@ -105,14 +105,14 @@ const prePick = ref<number>(0)
     <div class=" bg-half_dark rounded-2xl">
         <div class="flex w-full">
             <div class="flex flex-col items-center justify-center w-full border-half_gray border-b-1 border-r-1 p-4">
-                <p class=" font-bold flex gap-2">
+                <p class=" font-bold flex gap-2 items-center">
                     <!-- TODO: get from server -->
                     <bcoin />300
                 </p>
                 <p class="label">{{ t('screens.battles.battle.participationFee') }}</p>
             </div>
             <div class="flex flex-col items-center justify-center w-full border-half_gray border-b-1 p-4">
-                <p class=" font-bold flex gap-2">
+                <p class=" font-bold flex gap-2 items-center">
                     <!-- TODO: get from server -->
                     <key color="var(--primary)" />1
                 </p>
@@ -127,11 +127,10 @@ const prePick = ref<number>(0)
                         <span v-show="showMiles" class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
                             <miles/>{{ Math.floor(battle.userResult) }}
                         </span>
-                        <img v-if="battle.user.photo" :src="battle.user.photo"
-                            :class="battle.pick == 1 ? 'user-picked' : ''" class=" w-full rounded-2xl" alt="">
-                        <span v-else
-                            class="w-full rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">{{
-            battle.user.username[0] }}</span>
+                        <span class="w-full relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">
+                            <img v-if="battle.user.photo" :src="battle.user.photo" class=" w-full h-full absolute rounded-2xl" alt="">
+                            {{ battle.user.username[0] }}
+                        </span>
                         <p>@{{ battle.user.username }}</p>
                     </div>
                     <button v-show="!showMiles" @click="prePick = 1" v-if="battle.pick == 0" class=" py-1">
@@ -145,11 +144,10 @@ const prePick = ref<number>(0)
                         <span v-show="showMiles" class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
                             <miles/>{{ Math.floor(battle.opponentResult) }}
                         </span>
-                        <img v-if="battle.opponent.photo" :src="battle.opponent.photo"
-                            :class="battle.pick == 2 ? 'user-picked' : ''" class=" w-full rounded-2xl" alt="">
-                        <span v-else
-                            class="w-full rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">{{
-            battle.opponent.username[0] }}</span>
+                        <span  class="w-full relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">
+                            <img v-if="battle.opponent.photo" :src="battle.opponent.photo" class=" w-full h-full absolute rounded-2xl" alt="">
+                            {{ battle.opponent.username[0] }}
+                        </span>
                         <p>@{{ battle.opponent.username }}</p>
                     </div>
                     <button v-show="!showMiles" @click="prePick = 2" v-if="battle.pick == 0" class=" py-1">
