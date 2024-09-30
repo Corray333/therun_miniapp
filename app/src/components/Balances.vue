@@ -62,7 +62,7 @@ onMounted(() => {
       class=" bg-half_dark p-4 w-full rounded-2xl flex flex-col justify-center items-center">
       <span class=" flex gap-1">
         <race color="var(--primary)" />
-        <p class=" text-left font-bold">{{ store.user.raceBalance }}</p>
+        <p class=" text-left font-bold flex items-center">{{ store.user.raceBalance }}</p>
       </span>
       <p class=" label flex items-center gap-1">{{ t('wallet.balance') }}<i class="pi pi-chevron-right text-dark"
           style="font-size: 0.75rem;"></i></p>
@@ -72,7 +72,7 @@ onMounted(() => {
       class=" bg-half_dark p-4 w-full rounded-2xl flex flex-col justify-center items-center">
       <span class=" flex gap-1" ref="bonusesLabel" :class="componentsStore.animateBonuses ? 'animate-bonuses':''">
         <bcoin color="var(--primary)" />
-        <p class=" text-left font-bold">{{ store.user.pointBalance }}</p>
+        <p class=" text-left font-bold flex items-center">{{ store.user.pointBalance }}</p>
       </span>
       <p class=" label flex items-center gap-1">{{ t('wallet.balance') }}<i class="pi pi-chevron-right text-dark"
           style="font-size: 0.75rem;"></i></p>
@@ -82,7 +82,7 @@ onMounted(() => {
       class=" bg-half_dark p-4 rounded-2xl flex flex-col justify-center items-center">
       <span class=" flex gap-1" >
         <key color="var(--primary)" />
-        <p class=" text-left font-bold">{{ store.user.keyBalance }}</p>
+        <p class=" text-left font-bold flex items-center">{{ store.user.keyBalance }}</p>
       </span>
       <p class=" label flex items-center gap-1">{{ t('wallet.keys') }}<i class="pi pi-chevron-right text-dark"
           style="font-size: 0.75rem;"></i></p>

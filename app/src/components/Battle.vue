@@ -6,10 +6,10 @@ import key from '@/components/icons/key-icon.vue'
 import miles from '@/components/icons/miles-icon.vue'
 import { useI18n } from 'vue-i18n'
 import { useAccountStore } from '@/stores/account'
-import axios, {isAxiosError} from 'axios'
+import axios, { isAxiosError } from 'axios'
 import { useComponentsStore } from '@/stores/components'
 import { auth, getUser } from '@/utils/helpers'
-import {ref} from 'vue'
+import { ref } from 'vue'
 
 const { t } = useI18n()
 const accStore = useAccountStore()
@@ -19,21 +19,30 @@ const props = defineProps({
     battle: {
         type: Battle,
         required: true
+    },
+    showMiles: {
+        type: Boolean,
+        default: false
     }
 })
 
-const loading1 = ref<boolean>(false)
+const loading = ref<boolean>(false)
 const loading2 = ref<boolean>(false)
 
 const makeBet = async (pick: number) => {
+    if (accStore.user.pointBalance<300){
+        componentsStore.addError(t('screens.battles.battle.errNotEnoughPoints'))
+        return
+    }
+
     if (pick === 1) {
-        loading1.value = true
+        loading.value = true
     } else {
         loading2.value = true
     }
 
     try {
-        await axios.post(`${import.meta.env.VITE_API_URL}/battles/${props.battle.id}/bet`,{
+        await axios.post(`${import.meta.env.VITE_API_URL}/battles/${props.battle.id}/bet`, {
             pick: pick
         }, {
             withCredentials: true,
@@ -56,18 +65,43 @@ const makeBet = async (pick: number) => {
             }
         } else if (isAxiosError(error) && error.response?.status === 400) {
             componentsStore.addError(t('screens.battles.battle.errBetTooLate'))
-        } else if(isAxiosError(error)) {
+        } else if (isAxiosError(error)) {
             componentsStore.addError(error.message)
         }
-    } finally{
-        loading1.value = false
-        loading2.value = false
+    } finally {
+        loading.value = false
+        prePick.value = 0
     }
 }
+
+
+const prePick = ref<number>(0)
+
 
 </script>
 
 <template>
+    <Transition name="delay">
+        <section v-show="prePick != 0" @click.self="prePick = 0"
+            class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-center justify-center p-4 backdrop-blur-md">
+            <Transition name="slide-down">
+                <section v-if="prePick != 0"
+                    class=" modal gap-4 w-full rounded-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg">
+                    <p class="font-bold">{{ t('screens.battles.battle.pickApprove') }} @{{ prePick ==1 ? battle.user.username : battle.opponent.username }}</p>
+                    <div class="flex gap-2 w-full">
+                        <button @click="prePick = 0"  class=" py-2 text-primary bg-white">{{ t('screens.battles.battle.pickApproveCancel') }}</button>
+                        <button @click="makeBet(prePick)"  class=" py-2">
+                            <p v-if="loading"><i class="pi pi-spinner pi-spin"></i></p>
+                            <p v-else>
+                                {{ t('screens.battles.battle.pickApproveOk') }}
+                            </p>
+                        </button>
+                    </div>
+                </section>
+            </Transition>
+        </section>
+    </Transition>
+
     <div class=" bg-half_dark rounded-2xl">
         <div class="flex w-full">
             <div class="flex flex-col items-center justify-center w-full border-half_gray border-b-1 border-r-1 p-4">
@@ -90,34 +124,39 @@ const makeBet = async (pick: number) => {
             <div class="players flex gap-2">
                 <div class="player w-full">
                     <div class="user-info text-center py-2 px-4 gap-2 flex flex-col">
-                        <span class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
-                            <miles />{{ Math.floor(battle.userResult) }}
+                        <span v-show="showMiles" class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
+                            <miles/>{{ Math.floor(battle.userResult) }}
                         </span>
-                        <img v-if="battle.user.photo" :src="battle.user.photo" :class="battle.pick == 1 ? 'user-picked':''" class=" w-full rounded-2xl" alt="">
-                        <span v-else class="w-full rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">{{ battle.user.username[0] }}</span>
+                        <img v-if="battle.user.photo" :src="battle.user.photo"
+                            :class="battle.pick == 1 ? 'user-picked' : ''" class=" w-full rounded-2xl" alt="">
+                        <span v-else
+                            class="w-full rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">{{
+            battle.user.username[0] }}</span>
                         <p>@{{ battle.user.username }}</p>
                     </div>
-                    <button @click="makeBet(1)" v-if="battle.pick == 0" class=" py-1">
-                        <p v-if="loading1"><i class="pi pi-spinner pi-spin"></i></p>
-                        <p v-else>{{ t('screens.battles.battle.choose') }}</p>
+                    <button v-show="!showMiles" @click="prePick = 1" v-if="battle.pick == 0" class=" py-1">
+                        <p>{{ t('screens.battles.battle.choose') }}</p>
                     </button>
                     <button v-if="battle.pick == 1" class=" py-1">{{ t('screens.battles.battle.chosen') }}</button>
                 </div>
                 <img src="../assets/images/battles/vs-sign.png" class=" w-16 object-contain" alt="">
                 <div class="player w-full">
                     <div class="user-info text-center py-2 px-4 gap-2 flex flex-col">
-                        <span class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
-                            <miles />{{ Math.floor(battle.opponentResult) }}
+                        <span v-show="showMiles" class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
+                            <miles/>{{ Math.floor(battle.opponentResult) }}
                         </span>
-                        <img v-if="battle.opponent.photo" :src="battle.opponent.photo" :class="battle.pick == 2 ? 'user-picked':''" class=" w-full rounded-2xl" alt="">
-                        <span v-else class="w-full rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">{{ battle.opponent.username[0] }}</span>
+                        <img v-if="battle.opponent.photo" :src="battle.opponent.photo"
+                            :class="battle.pick == 2 ? 'user-picked' : ''" class=" w-full rounded-2xl" alt="">
+                        <span v-else
+                            class="w-full rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">{{
+            battle.opponent.username[0] }}</span>
                         <p>@{{ battle.opponent.username }}</p>
                     </div>
-                    <button @click="makeBet(2)" v-if="battle.pick == 0" class=" py-1">
-                        <p v-if="loading2"><i class="pi pi-spinner pi-spin"></i></p>
-                        <p v-else>{{ t('screens.battles.battle.choose') }}</p>
+                    <button v-show="!showMiles" @click="prePick = 2" v-if="battle.pick == 0" class=" py-1">
+                        <p>{{ t('screens.battles.battle.choose') }}</p>
                     </button>
-                    <button v-if="battle.pick == 2" class=" py-1" disabled>{{ t('screens.battles.battle.chosen') }}</button>
+                    <button v-if="battle.pick == 2" class=" py-1" disabled>{{ t('screens.battles.battle.chosen')
+                        }}</button>
                 </div>
             </div>
         </div>
@@ -127,8 +166,27 @@ const makeBet = async (pick: number) => {
 
 <style scoped>
 
-.user-picked{
-    border: 4px solid var(--primary);
+.delay-enter-active,
+.delay-leave-active {
+    transition: opacity 0.5s ease;
 }
 
+.delay-enter-from,
+.delay-leave-to {
+    opacity: 0;
+}
+
+.slide-down-enter-active,
+.slide-down-leave-active {
+    transition: transform 0.5s ease;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+    transform: scale(0);
+}
+
+.user-picked {
+    border: 4px solid var(--primary);
+}
 </style>

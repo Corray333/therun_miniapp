@@ -79,7 +79,7 @@ func New() *App {
 	taskController := task.NewTaskController(router, store, telegramClient)
 	app.AddController(taskController)
 
-	battleController := battle.NewBattleController(router, store)
+	battleController := battle.NewBattleController(router, store, userController.GetService())
 	app.AddController(battleController)
 
 	return app

@@ -6,11 +6,13 @@ import (
 	"time"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/battle/types"
+	user_types "github.com/Corray333/therun_miniapp/internal/domains/user/types"
 )
 
 // Errors
 var (
-	ErrTooLate = errors.New("too late to make a bet")
+	ErrTooLate         = errors.New("too late to make a bet")
+	ErrNotEnoughPoints = errors.New("not enough points")
 )
 
 const (
@@ -40,15 +42,21 @@ type external interface {
 	GetBattlesByID(ids []int) ([]types.Battle, error)
 }
 
-type BattleService struct {
-	repo     repository
-	external external
+type userService interface {
+	GetUser(userID int64) (*user_types.User, error)
 }
 
-func New(repo repository, ext external) *BattleService {
+type BattleService struct {
+	repo        repository
+	external    external
+	userService userService
+}
+
+func New(repo repository, ext external, userService userService) *BattleService {
 	return &BattleService{
-		repo:     repo,
-		external: ext,
+		repo:        repo,
+		external:    ext,
+		userService: userService,
 	}
 }
 
@@ -168,6 +176,15 @@ func (s *BattleService) GetNewBattles() error {
 }
 
 func (s *BattleService) MakeBet(userID int64, battleID, pick int) error {
+	user, err := s.userService.GetUser(userID)
+	if err != nil {
+		return err
+	}
+
+	if user.PointBalance < BetAmount {
+		return ErrNotEnoughPoints
+	}
+
 	roundID, roundEndTime := s.countRound()
 	battle, err := s.repo.GetBattle(battleID)
 	if err != nil {
@@ -217,7 +234,7 @@ func (s *BattleService) StartNextRoundTimer() {
 
 func (s *BattleService) SetUpdateInterval() {
 	go s.UpdateBattles()
-	time.AfterFunc(5*time.Second, func() {
+	time.AfterFunc(5*time.Minute, func() {
 		s.SetUpdateInterval()
 	})
 }

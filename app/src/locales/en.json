@@ -70,26 +70,26 @@
                 "activate1Title":"Activating a Friend – Step 1",
                 "activate1Description":"Your friend needs to start farming and get the first bonus points",
                 "activate2Title":"Activating a Friend – Step 2",
-                "activate2Description":"Getting a bonus for inviting a friend is available after your friend receives 1 key for guessing the winner in any battle in the Battle section"
+                "activate2Description":"You get a bonus for an invited friend after your friend receives 1 key for guessing the winner in any battle in the Battle section"
             },
             "invite":{
                 "commonInviteHeader":"Invite your friends",
                 "commonInviteDescription":"1000 for you and your friend",
                 "premiumInviteHeader":"Invite your friends with Telegram Premium",
-                "premiumInviteDescription":"2000 for you and your friend"
+                "premiumInviteDescription":"3000 for you and your friend"
             },
             "availibleForClaim":"Available for claim",
             "claimBtn":"Claim",
             "listHeader":"My friends",
-            "activated":"Activated",
+            "activated":"Active",
             "waitingForActivation":"Waiting for activation",
-            "activatedFriends":"Activated friends",
+            "activatedFriends":"Active friends",
             "waitingForActivationFriends":"Waiting for activation friends",
             "inviteBtn":"Invite a friend"
         },
         "onboarding":{
             "nextButton":"Next",
-            "startButton":"Play!",
+            "startButton":"Slide to play",
             "slide1":{
                 "title":"TheRun App",
                 "description":"TheRun is a platform (super-app) with various games and competitions based on geolocation of users"
@@ -131,12 +131,17 @@
             "checkError":"You have not completed the task yet"
         },
         "battles":{
+            "header":"Battles of the day",
             "battle":{
                 "participationFee":"Participation fee",
                 "prize":"Prize",
                 "choose":"Choose",
                 "chosen":"Your choice",
-                "errBetTooLate":"Too late, wait for the next world round"
+                "errBetTooLate":"You can make a choice when a new World Round begins",
+                "errNotEnoughPoints":"Not enough points",
+                "pickApprove":"Do you really want to choose",
+                "pickApproveCancel":"Cancel",
+                "pickApproveOk":"Yes"
         },
             "worldRound":"World round",
             "banner":{

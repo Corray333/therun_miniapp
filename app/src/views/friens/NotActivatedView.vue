@@ -68,7 +68,7 @@ onBeforeMount(async () => {
                     <img v-if="friend.avatar != ''" :src="friend.avatar" class="w-12 h-12 rounded-full" alt="">
                     <div v-else  class="w-12 h-12 min-w-12 flex items-center justify-center rounded-full bg-dark text-white font-bold text-2xl"><p>{{ friend.username != '' ? friend.username[0] : '?' }}</p></div>
                     <div class=" w-full">
-                        <p class=" font-bold">{{ friend.username }}</p>
+                        <p>{{ friend.username }}</p>
                     </div>
                     <i class="pi pi-angle-right text-dark" style="font-size: 1.25rem"></i>
                 </div>

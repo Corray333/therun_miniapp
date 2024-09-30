@@ -16,7 +16,12 @@ const componentsStore = useComponentsStore()
 
 const { t } = useI18n()
 
-const remainingTime = ref<string>('00:00:00');
+const remainingTime = ref<string>('00:00:00')
+const remainingSeconds = ref<number>(0)
+const showMiles = ref<boolean>(false)
+
+const showMilesAfter = 12 * 60 * 60
+const roundDuration = 26 * 60 * 60
 
 const round = ref<Round>()
 
@@ -32,7 +37,9 @@ const calculateRemainingTimeAndPoints = () => {
         return
     }
     const now = Date.now() / 1000
-    let secondsLeft = round.value.endTime - now;
+    let secondsLeft = round.value.endTime - now
+    remainingSeconds.value = secondsLeft
+    showMiles.value = (roundDuration - secondsLeft) > showMilesAfter
 
     if (secondsLeft <= 0) {
         remainingTime.value = '00:00:00'
@@ -75,6 +82,7 @@ const getRound = async () => {
 }
 
 
+
 </script>
 
 <template>
@@ -85,6 +93,7 @@ const getRound = async () => {
                 <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
             </section>
         </Transition>
+
         <section class=" p-4 flex flex-col gap-4">
             <Balances/>
 
@@ -98,8 +107,10 @@ const getRound = async () => {
                 <p class="">{{ t('screens.battles.banner.description') }}</p>
             </div>
 
+            <h2 class="text-center text-2xl">{{ t('screens.battles.header') }}</h2>
+
             <section class=" flex flex-col gap-4">
-                <Battle v-for="(battle, i) of round?.battles" :key="i" :battle="battle" />
+                <Battle v-for="(battle, i) of round?.battles" :key="i" :battle="battle" :show-miles="showMiles" />
             </section>
 
             <span class="flex gap-2 text-dark">
