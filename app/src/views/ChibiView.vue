@@ -1,123 +1,74 @@
 <script lang="ts" setup>
+
 import { useI18n } from 'vue-i18n'
-import Navbar from '@/components/Navbar.vue'
-import Balances from '@/components/Balances.vue';
-import key from '@/components/icons/key-icon.vue'
 
 const { t } = useI18n()
 
 </script>
 
-
 <template>
     <section class=" pb-20">
-        <section class=" flex flex-col p-4 h-full w-full">
-            <Balances />
-        </section>
-        <section class=" flex flex-col gap-6 pb-12 items-center p-4">
-            <span class="flex flex-col gap-1 text-center">
-                <h1>{{ t('screens.chibi.case.header') }}</h1>
-                <p>{{ t('screens.chibi.case.description') }}</p>
-            </span>
-            <img id="case" src="../assets/images/chibi/slider/box-3.png" alt="">
-            <div class="flex gap-2">
-                <span class="rounded-full p-4 sm-shadow">
-                    <key color="var(--dark)"/>
-                </span>
-                <span class="rounded-full p-4 sm-shadow">
-                    <key color="var(--dark)"/>
-                </span>
-                <span class="rounded-full p-4 sm-shadow">
-                    <key color="var(--dark)"/>
-                </span>
-            </div>
-            <button class=" bg-dark" disabled>{{ t('comingSoon') }}</button>
-        </section>
-        <section class=" info p-4 rounded-t-2xl bg-white ">
-            <div class="game text-center flex flex-col gap-6">
-                <span class=" flex flex-col gap-2">
-                    <h1 class=" font-bold text-2xl">{{ t("screens.chibi.game.header") }}</h1>
-                    <p>{{ t("screens.chibi.game.subheader") }}</p>
-                </span>
-                <img src="../assets/images/chibi/phones.png" alt="">
-                <div class="flex w-full gap-4">
-                    <a href="https://play.google.com/store/apps/details?id=com.therun.app" target="_blank"><img src="../assets/images/chibi/google-play-btn.png" alt=""></a>
-                    <a href="https://apps.apple.com/us/app/therun/id1634366310" target="_blank"><img src="../assets/images/chibi/appstore-btn.png" alt=""></a>
+        <section class="p-4 flex flex-col items-center gap-4">
+            <h1>{{ t('screens.chibi.header') }}</h1>
+            <router-link to="/chibi/cases">
+                <div class="banner p-4 rounded-2xl flex gap-4 items-center bg-cover">
+                    <img src="../assets/images/chibi/slider/box-3.png" alt="" class=" h-20">
+                    <div class="flex flex-col w-full text-white">
+                        <h2>{{ t('screens.chibi.banner.header') }}</h2>
+                        <p class=" text-sm min-h-10">{{ t('screens.chibi.banner.description') }}</p>
+                    </div>
+                    <i class="pi pi-chevron-right text-white" style="font-size:1.25rem"></i>
                 </div>
-                <p class=" p-4 bg-half_dark rounded-2xl">{{ t("screens.chibi.game.description") }}</p>
+            </router-link>
+            <div class="city card">
+                <div class=" flex">
+                    <div class="flex flex-col gap-2 w-full">
+                        <h2>{{ t('screens.chibi.city.header') }}</h2>
+                        <p>{{ t('screens.chibi.city.description') }}</p>
+                        <button>{{ t('screens.chibi.city.btn') }}</button>
+                    </div>
+                    <img src="../assets/images/chibi/city.png" alt="" class="block w-2/5 object-contain">
+                </div>
+            </div>
+            <div class="flex gap-4 w-full">
+                <div class="card flex flex-col w-full">
+                    <div class="flex justify-between w-full">
+                        <img src="../assets/images/chibi/battles.png" class=" w-20" alt="">
+                        <i class=" pi pi-arrow-right bg-calm h-fit p-2 rounded-full text-white"></i>
+                    </div>
+                    <h2 class=" mt-4">{{ t('screens.chibi.fights.header') }}</h2>
+                    <p>{{ t('screens.chibi.fights.description') }}</p>
+                </div>
+                <div class="card flex flex-col w-full">
+                    <div class="flex justify-between w-full">
+                        <img src="../assets/images/chibi/team.png" class=" w-20" alt="">
+                        <i class=" pi pi-arrow-right bg-calm h-fit p-2 rounded-full text-white"></i>
+                    </div>
+                    <h2 class=" mt-4">{{ t('screens.chibi.team.header') }}</h2>
+                    <p>{{ t('screens.chibi.team.description') }}</p>
+                </div>
             </div>
         </section>
-        <div class="slider">
-            <div class="slide-track">
-                <img src="../assets/images/chibi/slider/box.png" alt="" class="slide">
-                <img src="../assets/images/chibi/slider/box-1.png" alt="" class="slide">
-                <img src="../assets/images/chibi/slider/box-2.png" alt="" class="slide">
-                <img src="../assets/images/chibi/slider/box-3.png" alt="" class="slide">
-                <img src="../assets/images/chibi/slider/box-4.png" alt="" class="slide">
-                <!-- Дублируем изображения для бесконечного эффекта -->
-                <img src="../assets/images/chibi/slider/box.png" alt="" class="slide">
-                <img src="../assets/images/chibi/slider/box-1.png" alt="" class="slide">
-                <img src="../assets/images/chibi/slider/box-2.png" alt="" class="slide">
-                <img src="../assets/images/chibi/slider/box-3.png" alt="" class="slide">
-                <img src="../assets/images/chibi/slider/box-4.png" alt="" class="slide">
-            </div>
-        </div>
     </section>
 </template>
 
 
 <style scoped>
+.card {
+    @apply rounded-2xl bg-half_dark p-4;
 
-
-
-.info{
-    box-shadow: 0 -1rem 1rem 0 rgba(0, 0, 0, 0.1);
-}
-
-#case{
-    animation: case-breath 2s infinite;
-    max-width: 14rem;
-}
-
-.slider {
-    overflow: hidden;
-    width: 100%;
-}
-
-.slide-track {
-    display: flex;
-    gap: 1.4rem;
-    animation: scroll 20s linear infinite;
-    width: calc(7rem * 10 + 1.4rem * 10);
-}
-
-.slide {
-    height: 7rem;
-    width: 7rem;
-    flex-shrink: 0;
-}
-
-@keyframes scroll {
-    0% {
-        transform: translateX(0);
+    p {
+        @apply text-sm text-dark;
+        line-height: 1rem;
     }
 
-    100% {
-        transform: translateX(calc(calc(7rem * 10 + 1.4rem * 10) / -2));
-    }
 }
 
-@keyframes case-breath {
-    0% {
-        transform: scale(1);
-    }
+button {
+    @apply w-fit px-6 py-2 bg-calm;
+}
 
-    50% {
-        transform: scale(0.9);
-    }
-
-    100% {
-        transform: scale(1);
-    }
+.banner {
+    background-image: url(../assets/images/chibi/case-banner-bg.png);
 }
 </style>

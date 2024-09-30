@@ -128,8 +128,6 @@ func (t *UserTransport) listReferals(w http.ResponseWriter, r *http.Request) {
 	var referals []types.Referal
 	var err error
 
-	fmt.Println("isActivated: ", isActivated)
-
 	if isActivated == "true" {
 		referals, err = t.service.ListActivatedReferals(userID)
 		if err != nil {

@@ -56,6 +56,24 @@
                 "header":"Open Red box and get RACE coins",
                 "description":"You can get the keys to open the box in Battles section or for completing tasks",
                 "openButton":"Open the Box"
+            },
+            "header":"Welcome to Chibiverse!",
+            "banner":{
+                "header":"Open the boxes",
+                "description":"Use the keys to open the boxes and get prizes"
+            },
+            "city":{
+                "header":"Chibi City",
+                "description":"Develop your city and construct buildings that will help pump your chibi",
+                "btn":"Let’s go"
+            },
+            "fights":{
+                "header":"Fights",
+                "description":"Pump your chibi team and participate in every day battles vs other chibis"
+            },
+            "team":{
+                "header":"My team",
+                "description":"Collect different chibi and create the strongest dream team in Chibiverse"
             }
         },
         "friens":{

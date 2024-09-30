@@ -2,7 +2,6 @@ package service
 
 import (
 	"database/sql"
-	"fmt"
 	"log/slog"
 	"os"
 	"strings"
@@ -247,7 +246,6 @@ func (s *UserService) DailyCheck(userID int64) (dailyCheckStreak int, dailyCheck
 
 	// Compare the date part of the given time with yesterday's date
 	if lastCheckTime.Year() == yesterday.Year() && lastCheckTime.YearDay() == yesterday.YearDay() {
-		fmt.Println("Yeasterday")
 		user.DailyCheckStreak++
 		if user.DailyCheckStreak > 7 {
 			user.PointBalance += dayliCheckRewards[7]

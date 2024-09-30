@@ -29,7 +29,6 @@ func CheckTelegramAuth(initData string) (int64, string, bool, bool) {
 		Username  string `json:"username"`
 		IsPremium bool   `json:"is_premium"`
 	}{}
-	fmt.Println("User init data: ", parsedData)
 	// Filter and split the chunks
 	for _, chunk := range chunks {
 		if strings.HasPrefix(chunk, "user=") {

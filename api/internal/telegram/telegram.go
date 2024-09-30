@@ -1,7 +1,6 @@
 package telegram
 
 import (
-	"fmt"
 	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -16,7 +15,6 @@ func (t *TelegramClient) GetBot() *tgbotapi.BotAPI {
 }
 
 func NewClient(token string) *TelegramClient {
-	fmt.Println("Token: ", token)
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.Fatal("Failed to create bot: ", err)
