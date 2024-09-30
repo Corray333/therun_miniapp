@@ -6,41 +6,41 @@ import bcoin from '@/components/icons/bcoin-icon.vue'
 import { useAccountStore } from '@/stores/account'
 import { useComponentsStore } from '@/stores/components'
 import { useI18n } from 'vue-i18n'
-import { auth } from '@/utils/helpers'
-import axios, { AxiosError, isAxiosError } from 'axios'
+import { auth, getUser } from '@/utils/helpers'
+import axios, { isAxiosError } from 'axios'
 
 const { t } = useI18n()
 const accStore = useAccountStore()
 
-const remainingTime = ref<string>('00:00:00');
-const currentPoints = ref<number>(0);
+const remainingTime = ref<string>('00:00:00')
+const currentPoints = ref<number>(0)
 
 const totalDuration = 7200
-let coinsGainInterval: number | null = null;
+let coinsGainInterval: number | null = null
 
 const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
-    const minutes = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-    const secondsRemaining = (seconds % 60).toString().padStart(2, '0');
-    return `${hours}:${minutes}:${secondsRemaining}`;
+    const hours = Math.floor(seconds / 3600).toString().padStart(2, '0')
+    const minutes = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0')
+    const secondsRemaining = (seconds % 60).toString().padStart(2, '0')
+    return `${hours}:${minutes}:${secondsRemaining}`
 };
 
 const calculateRemainingTimeAndPoints = () => {
     const now = Date.now() / 1000
-    let secondsLeft = accStore.user.farmingFrom + accStore.user.farmingTime - now;
+    let secondsLeft = accStore.user.farmingFrom + accStore.user.farmingTime - now
 
 
     if (accStore.user.farmingFrom <= accStore.user.lastClaim) {
         stopAnimations();
-        remainingTime.value = '00:00:00';
-        currentPoints.value = 0;
+        remainingTime.value = '00:00:00'
+        currentPoints.value = 0
         return;
     }
 
     if (secondsLeft <= 0) {
-        stopAnimations();
-        remainingTime.value = '00:00:00';
-        currentPoints.value = accStore.user.maxPoints;
+        stopAnimations()
+        remainingTime.value = '00:00:00'
+        currentPoints.value = accStore.user.maxPoints
         return;
     }
 
@@ -157,6 +157,7 @@ let style: HTMLStyleElement
 let breathInterval: number | null = null
 
 onMounted(() => {
+    getUser(accStore.user.id)
     style = document.createElement('style')
     document.head.appendChild(style)
 

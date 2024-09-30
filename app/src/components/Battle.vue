@@ -8,7 +8,7 @@ import { useI18n } from 'vue-i18n'
 import { useAccountStore } from '@/stores/account'
 import axios, {isAxiosError} from 'axios'
 import { useComponentsStore } from '@/stores/components'
-import { auth } from '@/utils/helpers'
+import { auth, getUser } from '@/utils/helpers'
 import {ref} from 'vue'
 
 const { t } = useI18n()
@@ -42,6 +42,7 @@ const makeBet = async (pick: number) => {
             }
         })
         props.battle.pick = pick
+        getUser(accStore.user.id)
         return true
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {

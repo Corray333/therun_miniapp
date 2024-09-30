@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, onMounted } from 'vue'
 import { RouterView, useRouter, useRoute } from 'vue-router'
-import { auth } from '@/utils/helpers'
-import { useAccountStore } from './stores/account'
-import axios from 'axios'
+import { auth, getUser } from '@/utils/helpers'
 import { useI18n } from 'vue-i18n'
 import Navbar from './components/Navbar.vue'
 import Errors from './components/Errors.vue'
@@ -22,23 +20,7 @@ const excludedRoutes = ['onboarding'];
 const showStart = ref<boolean>(true)
 const loggingIn = ref<boolean>(false)
 
-const getUser = async (uid: number) => {
-	const store = useAccountStore()
 
-	try {
-		const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/users/${uid}`, {
-			withCredentials: true,
-			headers: {
-				Authorization: store.token
-			}
-		})
-		store.user = data
-		return true
-	} catch (error) {
-		console.log(error)
-		return false
-	}
-}
 
 onMounted(() => {
 	setTimeout(() => {

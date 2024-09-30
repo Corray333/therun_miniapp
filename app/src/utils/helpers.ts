@@ -37,3 +37,21 @@ export const auth = async ():Promise<boolean> => {
         return false
     }
 }
+
+export const getUser = async (uid: number) => {
+	const store = useAccountStore()
+
+	try {
+		const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/users/${uid}`, {
+			withCredentials: true,
+			headers: {
+				Authorization: store.token
+			}
+		})
+		store.user = data
+		return true
+	} catch (error) {
+		console.log(error)
+		return false
+	}
+}
