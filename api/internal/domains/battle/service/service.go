@@ -98,14 +98,14 @@ func (s *BattleService) RunRounds() {
 		}
 		break
 	}
+	go s.SetUpdateInterval()
 
 	for {
 		if time.Now().Unix() >= nextRoundStartTime {
 			break
 		}
 	}
-	go s.StartNextRoundTimer()
-	go s.SetUpdateInterval()
+	s.StartNextRoundTimer()
 }
 
 func (s *BattleService) StartRound() {
@@ -154,6 +154,7 @@ func (s *BattleService) StartRound() {
 }
 
 func (s *BattleService) GetNewBattles() error {
+	slog.Info("Getting new battles...")
 	battles, err := s.external.GetNewBattles()
 	if err != nil {
 		return err
@@ -181,6 +182,7 @@ func (s *BattleService) MakeBet(userID int64, battleID, pick int) error {
 }
 
 func (s *BattleService) UpdateBattles() error {
+	slog.Info("Updating battles...")
 	round, _ := s.countRound()
 	battles, err := s.repo.GetBattles(round, 0)
 	if err != nil {
@@ -204,26 +206,23 @@ func (s *BattleService) UpdateBattles() error {
 	return nil
 }
 
-// func (s *BattleService) GetBattles() ([]types.Battle, error) {
-// 	round, _ := s.countRound()
-// 	return s.repo.GetBattles(round)
-// }
-
 func (s *BattleService) StartNextRoundTimer() {
-	slog.Info("Starting next round timer")
 	// TODO: change to loop with time check
-	time.AfterFunc(RoundDuration, func() {
-		s.StartRound()
+	slog.Info("Round starting...")
+	go s.StartRound()
+	time.AfterFunc(RoundDuration*time.Second, func() {
+		s.StartNextRoundTimer()
 	})
 }
 
 func (s *BattleService) SetUpdateInterval() {
-	slog.Info("Setting update interval")
-	time.AfterFunc(5*time.Minute, func() {
-		s.UpdateBattles()
+	go s.UpdateBattles()
+	time.AfterFunc(5*time.Second, func() {
+		s.SetUpdateInterval()
 	})
 }
 
 func (s *BattleService) ProcessBets(roundID int) error {
+	slog.Info("Processing bets...")
 	return s.repo.ProcessBets(roundID, BetPrize)
 }
