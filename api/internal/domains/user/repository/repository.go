@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"fmt"
+	"log/slog"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/user/service"
 	"github.com/Corray333/therun_miniapp/internal/domains/user/types"
@@ -204,7 +204,6 @@ func (r *UserRepository) ClaimRefs(userID int64) (rewardsGot int, err error) {
 	}
 	defer tx.Rollback()
 
-	fmt.Printf("refsActivated: %d, refsFrozen: %d, refsPremiumActivatedNotClaimed: %d, refsPremiumFrozenNotClaimed: %d, refsActivatedNotClaimed: %d, refsFrozenNotClaimed: %d\n", refsActivated, refsFrozen, refsPremiumActivatedNotClaimed, refsPremiumFrozenNotClaimed, refsActivatedNotClaimed, refsFrozenNotClaimed)
 	rewardsGot = refsActivatedNotClaimed*service.RefReward + refsPremiumActivatedNotClaimed*service.RefRewardPremium
 	_, err = tx.Exec("UPDATE users SET ref_claimed = true WHERE referer = $1 AND is_activated = true", userID)
 	if err != nil {
@@ -222,4 +221,15 @@ func (r *UserRepository) ClaimRefs(userID int64) (rewardsGot int, err error) {
 	}
 
 	return rewardsGot, nil
+}
+
+func (r *UserRepository) ActivateUser(userID int64) error {
+
+	_, err := r.db.Exec("UPDATE users SET is_activated = true WHERE user_id = $1", userID)
+	if err != nil {
+		slog.Error("error activating user: " + err.Error())
+		return err
+	}
+
+	return nil
 }

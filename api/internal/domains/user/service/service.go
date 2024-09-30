@@ -31,6 +31,8 @@ type repository interface {
 
 	ChangeBalances(userID int64, pointsAmount, raceAmount, keyAmount int) (int, int, int, error)
 	SetPremium(userID int64, isPremium bool) error
+
+	ActivateUser(userID int64) error
 }
 type external interface {
 	GetAvatar(userID int64) ([]byte, error)
@@ -200,7 +202,7 @@ func (s *UserService) ListNotActivatedReferals(userID int64) ([]types.Referal, e
 
 const (
 	RefReward        = 1000
-	RefRewardPremium = 2000
+	RefRewardPremium = 3000
 )
 
 func (s *UserService) CountReferals(userID int64) (refsActivated, refsFrozen, rewardsFrozen, rewardsAvailible int, err error) {
@@ -272,4 +274,8 @@ func (s *UserService) ChangeBalances(userID int64, pointsAmount, raceAmount, key
 
 func (s *UserService) SetPremium(userID int64, isPremium bool) error {
 	return s.repo.SetPremium(userID, isPremium)
+}
+
+func (s *UserService) ActivateUser(userID int64) error {
+	return s.repo.ActivateUser(userID)
 }

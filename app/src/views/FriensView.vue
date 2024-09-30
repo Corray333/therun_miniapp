@@ -6,7 +6,7 @@ import bcoinXL from '@/components/icons/bcoin-icon-xl.vue'
 import CopyIcon from '@/components/icons/copy-icon.vue'
 import { useI18n } from 'vue-i18n'
 import axios, { isAxiosError } from 'axios'
-import { auth } from '@/utils/helpers'
+import { auth, getUser } from '@/utils/helpers'
 import SlideUpDown from 'vue-slide-up-down'
 import { useComponentsStore } from '@/stores/components'
 import { onMounted } from 'vue'
@@ -107,6 +107,9 @@ const claimRewards = async () => {
                 }
             }
         }
+    } finally{
+        getFriendsInfo()
+        getUser(accStore.user.id)
     }
 }
 

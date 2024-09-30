@@ -44,6 +44,7 @@ type external interface {
 
 type userService interface {
 	GetUser(userID int64) (*user_types.User, error)
+	ActivateUser(userID int64) error
 }
 
 type BattleService struct {
@@ -183,6 +184,12 @@ func (s *BattleService) MakeBet(userID int64, battleID, pick int) error {
 
 	if user.PointBalance < BetAmount {
 		return ErrNotEnoughPoints
+	}
+
+	if !user.IsActivated {
+		if err := s.userService.ActivateUser(userID); err != nil {
+			return err
+		}
 	}
 
 	roundID, roundEndTime := s.countRound()
