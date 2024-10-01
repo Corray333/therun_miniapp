@@ -124,7 +124,7 @@ const prePick = ref<number>(0)
             <div class="players flex gap-2">
                 <div class="player w-full">
                     <div class="user-info text-center py-2 px-4 gap-2 flex flex-col">
-                        <span v-show="showMiles" class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
+                        <span v-show="showMiles || battle.pick != 0" class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
                             <miles/>{{ Math.floor(battle.userResult) }}
                         </span>
                         <span class="w-full relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">
@@ -141,7 +141,7 @@ const prePick = ref<number>(0)
                 <img src="../assets/images/battles/vs-sign.png" class=" w-16 object-contain object-top mt-4" alt="">
                 <div class="player w-full">
                     <div class="user-info text-center py-2 px-4 gap-2 flex flex-col">
-                        <span v-show="showMiles" class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
+                        <span v-show="showMiles || battle.pick != 0" class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
                             <miles/>{{ Math.floor(battle.opponentResult) }}
                         </span>
                         <span  class="w-full relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">

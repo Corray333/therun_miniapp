@@ -70,6 +70,7 @@ onBeforeMount(async () => {
                     <div class=" w-full">
                         <p>{{ friend.username }}</p>
                     </div>
+                    <img v-show="friend.isPremium" src="../../assets/images/friends/tg-premium-icon.png" class="h-8" alt="">
                     <i class="pi pi-angle-right text-dark" style="font-size: 1.25rem"></i>
                 </div>
             </div>

@@ -27,6 +27,7 @@ type User struct {
 }
 
 type Referal struct {
-	Avatar   string `json:"avatar"`
-	Username string `json:"username"`
+	Avatar    string `json:"avatar"`
+	Username  string `json:"username"`
+	IsPremium bool   `json:"isPremium"`
 }

@@ -2,6 +2,7 @@
 import { ref, onBeforeMount } from 'vue'
 import { useAccountStore } from '@/stores/account'
 import bcoin from '@/components/icons/bcoin-icon.vue'
+import key from '@/components/icons/key-icon.vue'
 import bcoinXL from '@/components/icons/bcoin-icon-xl.vue'
 import CopyIcon from '@/components/icons/copy-icon.vue'
 import { useI18n } from 'vue-i18n'
@@ -86,7 +87,7 @@ const showInfo = ref<boolean>(false)
 
 const claimRewards = async () => {
     try {
-        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/users/0/referals/claim`,{}, {
+        await axios.post(`${import.meta.env.VITE_API_URL}/users/0/referals/claim`,{}, {
             withCredentials: true,
             headers: {
                 Authorization: accStore.token
@@ -141,7 +142,7 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                     <div class=" flex flex-col gap-2">
                         <p class="font-bold">{{ t('screens.friens.invite.commonInviteHeader') }}</p>
                         <p class="flex items-center gap-1">
-                            <bcoin />{{ t('screens.friens.invite.commonInviteDescription') }}
+                            <bcoin />1000{{ t('screens.friens.invite.commonInviteDescription') }}
                         </p>
                     </div>
                 </div>
@@ -150,7 +151,7 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                     <div class=" flex flex-col gap-2">
                         <p class="font-bold">{{ t('screens.friens.invite.premiumInviteHeader') }}</p>
                         <p class="flex items-center gap-1">
-                            <bcoin />{{ t('screens.friens.invite.premiumInviteDescription') }}
+                            <bcoin />3000 <key color="var(--primary)"/>3{{ t('screens.friens.invite.premiumInviteDescription') }}
                         </p>
                     </div>
                 </div>

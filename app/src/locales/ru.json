@@ -92,9 +92,9 @@
             },
             "invite": {
                 "commonInviteHeader": "Приглашайте друзей",
-                "commonInviteDescription": "1000 для вас и вашего друга",
+                "commonInviteDescription": " для вас и вашего друга",
                 "premiumInviteHeader": "Приглашайте друзей с Telegram Premium",
-                "premiumInviteDescription": "3000 для вас и вашего друга"
+                "premiumInviteDescription": " для вас и вашего друга"
             },
             "availibleForClaim": "Доступно для сбора",
             "claimBtn": "Собрать",

@@ -92,9 +92,9 @@
             },
             "invite":{
                 "commonInviteHeader":"Invite your friends",
-                "commonInviteDescription":"1000 for you and your friend",
+                "commonInviteDescription":" for you and your friend",
                 "premiumInviteHeader":"Invite your friends with Telegram Premium",
-                "premiumInviteDescription":"3000 for you and your friend"
+                "premiumInviteDescription":" for you and your friend"
             },
             "availibleForClaim":"Available for claim",
             "claimBtn":"Claim",

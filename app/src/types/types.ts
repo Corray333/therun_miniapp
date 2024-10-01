@@ -16,6 +16,7 @@ export class User {
 export class Referal {
     avatar: string="";
     username: string="";
+    isPremium: boolean = false;
 }
 
 export class Task {

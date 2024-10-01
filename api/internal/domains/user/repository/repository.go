@@ -96,15 +96,17 @@ func (r *UserRepository) CheckIfRefCodeExists(refCode string) (bool, error) {
 	return exists, err
 }
 
+// TODO: add pagination
 func (r *UserRepository) ListActivatedReferals(userID int64) ([]types.Referal, error) {
 	referals := []types.Referal{}
-	err := r.db.Select(&referals, "SELECT avatar, username FROM users WHERE referer = $1 AND is_activated = true", userID)
+	err := r.db.Select(&referals, "SELECT avatar, username, is_premium FROM users WHERE referer = $1 AND is_activated = true", userID)
 	return referals, err
 }
 
+// TODO: add pagination
 func (r *UserRepository) ListNotActivatedReferals(userID int64) ([]types.Referal, error) {
 	referals := []types.Referal{}
-	err := r.db.Select(&referals, "SELECT avatar, username FROM users WHERE referer = $1 AND is_activated = false", userID)
+	err := r.db.Select(&referals, "SELECT avatar, username, is_premium FROM users WHERE referer = $1 AND is_activated = false", userID)
 	return referals, err
 }
 
