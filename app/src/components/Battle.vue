@@ -83,11 +83,11 @@ const prePick = ref<number>(0)
 <template>
     <Transition name="delay">
         <section v-show="prePick != 0" @click.self="prePick = 0"
-            class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-center justify-center p-4 backdrop-blur-md">
+            class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-center justify-center p-4 drop-shadow-lg">
             <Transition name="slide-down">
                 <section v-if="prePick != 0"
                     class=" modal gap-4 w-full rounded-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg">
-                    <p class="font-bold">{{ t('screens.battles.battle.pickApprove') }} @{{ prePick ==1 ? battle.user.username : battle.opponent.username }}</p>
+                    <p class="font-bold text-center">{{ t('screens.battles.battle.pickApprove') }} @{{ prePick ==1 ? battle.user.username : battle.opponent.username }}</p>
                     <div class="flex gap-2 w-full">
                         <button @click="prePick = 0"  class=" py-2 text-primary bg-white">{{ t('screens.battles.battle.pickApproveCancel') }}</button>
                         <button @click="makeBet(prePick)"  class=" py-2">
@@ -129,7 +129,7 @@ const prePick = ref<number>(0)
                         </span>
                         <span class="w-full relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">
                             <img v-if="battle.user.photo" :src="battle.user.photo" class=" w-full h-full absolute rounded-2xl" alt="">
-                            {{ battle.user.username[0] }}
+                            {{ battle.user.username != '' ? battle.user.username[0].toUpperCase() : '?' }}
                         </span>
                         <p>@{{ battle.user.username }}</p>
                     </div>
@@ -138,7 +138,7 @@ const prePick = ref<number>(0)
                     </button>
                     <button v-if="battle.pick == 1" class=" py-1">{{ t('screens.battles.battle.chosen') }}</button>
                 </div>
-                <img src="../assets/images/battles/vs-sign.png" class=" w-16 object-contain" alt="">
+                <img src="../assets/images/battles/vs-sign.png" class=" w-16 object-contain object-top mt-4" alt="">
                 <div class="player w-full">
                     <div class="user-info text-center py-2 px-4 gap-2 flex flex-col">
                         <span v-show="showMiles" class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
@@ -146,7 +146,7 @@ const prePick = ref<number>(0)
                         </span>
                         <span  class="w-full relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">
                             <img v-if="battle.opponent.photo" :src="battle.opponent.photo" class=" w-full h-full absolute rounded-2xl" alt="">
-                            {{ battle.opponent.username[0] }}
+                            {{ battle.user.username != '' ? battle.user.username[0].toUpperCase() : '?' }}
                         </span>
                         <p>@{{ battle.opponent.username }}</p>
                     </div>

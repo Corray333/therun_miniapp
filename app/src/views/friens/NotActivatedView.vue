@@ -66,7 +66,7 @@ onBeforeMount(async () => {
             <div class=" friends-list flex flex-col gap-1">
                 <div class="flex w-full gap-4 items-center bg-half_dark p-2" v-for="(friend, i) of friends" :key="i">
                     <img v-if="friend.avatar != ''" :src="friend.avatar" class="w-12 h-12 rounded-full" alt="">
-                    <div v-else  class="w-12 h-12 min-w-12 flex items-center justify-center rounded-full bg-dark text-white font-bold text-2xl"><p>{{ friend.username != '' ? friend.username[0] : '?' }}</p></div>
+                    <div v-else  class="w-12 h-12 min-w-12 flex items-center justify-center rounded-full bg-dark text-white font-bold text-2xl"><p>{{ friend.username != '' ? friend.username[0].toUpperCase() : '?' }}</p></div>
                     <div class=" w-full">
                         <p>{{ friend.username }}</p>
                     </div>
