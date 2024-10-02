@@ -30,7 +30,7 @@ const loading = ref<boolean>(false)
 const loading2 = ref<boolean>(false)
 
 const makeBet = async (pick: number) => {
-    if (accStore.user.pointBalance<300){
+    if (accStore.user.pointBalance < 300) {
         componentsStore.addError(t('screens.battles.battle.errNotEnoughPoints'))
         return
     }
@@ -87,10 +87,12 @@ const prePick = ref<number>(0)
             <Transition name="slide-down">
                 <section v-if="prePick != 0"
                     class=" modal gap-4 w-full rounded-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg">
-                    <p class="font-bold text-center">{{ t('screens.battles.battle.pickApprove') }} @{{ prePick ==1 ? battle.user.username : battle.opponent.username }}</p>
+                    <p class="font-bold text-center">{{ t('screens.battles.battle.pickApprove') }} @{{ prePick == 1 ?
+            battle.user.username : battle.opponent.username }}</p>
                     <div class="flex gap-2 w-full">
-                        <button @click="prePick = 0"  class=" py-2 text-primary bg-white">{{ t('screens.battles.battle.pickApproveCancel') }}</button>
-                        <button @click="makeBet(prePick)"  class=" py-2">
+                        <button @click="prePick = 0" class=" py-2 text-primary bg-white">{{
+            t('screens.battles.battle.pickApproveCancel') }}</button>
+                        <button @click="makeBet(prePick)" class=" py-2">
                             <p v-if="loading"><i class="pi pi-spinner pi-spin"></i></p>
                             <p v-else>
                                 {{ t('screens.battles.battle.pickApproveOk') }}
@@ -121,41 +123,44 @@ const prePick = ref<number>(0)
         </div>
 
         <div class="p-4">
-            <div class="players flex gap-2">
-                <div class="player w-full">
-                    <div class="user-info text-center py-2 px-4 gap-2 flex flex-col">
-                        <span v-show="showMiles || battle.pick != 0" class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
-                            <miles/>{{ Math.floor(battle.userResult) }}
-                        </span>
-                        <span class="w-full relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">
-                            <img v-if="battle.user.photo" :src="battle.user.photo" class=" w-full h-full absolute rounded-2xl" alt="">
-                            {{ battle.user.username != '' ? battle.user.username[0].toUpperCase() : '?' }}
-                        </span>
-                        <p>@{{ battle.user.username }}</p>
-                    </div>
-                    <button v-show="!showMiles" @click="prePick = 1" v-if="battle.pick == 0" class=" py-1">
-                        <p>{{ t('screens.battles.battle.choose') }}</p>
-                    </button>
-                    <button v-if="battle.pick == 1" class=" py-1">{{ t('screens.battles.battle.chosen') }}</button>
-                </div>
-                <img src="../assets/images/battles/vs-sign.png" class=" w-16 object-contain object-top mt-4" alt="">
-                <div class="player w-full">
-                    <div class="user-info text-center py-2 px-4 gap-2 flex flex-col">
-                        <span v-show="showMiles || battle.pick != 0" class=" w-full flex items-center justify-center gap-2 font-bold text-xl">
-                            <miles/>{{ Math.floor(battle.opponentResult) }}
-                        </span>
-                        <span  class="w-full relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center">
-                            <img v-if="battle.opponent.photo" :src="battle.opponent.photo" class=" w-full h-full absolute rounded-2xl" alt="">
-                            {{ battle.user.username != '' ? battle.user.username[0].toUpperCase() : '?' }}
-                        </span>
-                        <p>@{{ battle.opponent.username }}</p>
-                    </div>
-                    <button v-show="!showMiles" @click="prePick = 2" v-if="battle.pick == 0" class=" py-1">
-                        <p>{{ t('screens.battles.battle.choose') }}</p>
-                    </button>
-                    <button v-if="battle.pick == 2" class=" py-1" disabled>{{ t('screens.battles.battle.chosen')
-                        }}</button>
-                </div>
+            <div class="players grid grid-cols-3 grid-rows-4">
+                <span v-show="showMiles || battle.pick != 0"
+                    class=" w-full flex items-center justify-center gap-2 font-bold text-xl row-start-1 col-start-1">
+                    <miles />{{ Math.floor(battle.userResult) }}
+                </span>
+                <span
+                    class="w-full  row-start-2 col-start-1 relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center"
+                    :class="showMiles && battle.userResult > battle.opponentResult ? 'user-picked' : ''">
+                    <img v-if="battle.user.photo" :src="battle.user.photo"
+                        :class="showMiles && battle.userResult > battle.opponentResult ? 'user-picked' : ''"
+                        class=" w-full h-full absolute rounded-2xl" alt="">
+                    {{ battle.user.username != '' ? battle.user.username[0].toUpperCase() : '?' }}
+                </span>
+                <p class=" row-start-3 col-start-1">@{{ battle.user.username }}</p>
+                <button v-show="!showMiles" @click="prePick = 1" v-if="battle.pick == 0" class=" py-1 row-start-4 col-start-1">
+                    <p>{{ t('screens.battles.battle.choose') }}</p>
+                </button>
+                <button v-if="battle.pick == 1" class=" py-1 row-start-4 col-start-1">{{ t('screens.battles.battle.chosen') }}</button>
+
+
+
+                <img src="../assets/images/battles/vs-sign.png" class=" w-16 object-contain row-start-2 col-start-2" alt="" >
+
+
+                <span v-show="showMiles || battle.pick != 0"
+                    class=" w-full flex items-center justify-center gap-2 font-bold text-xl row-start-1 col-start-3">
+                    <miles />{{ Math.floor(battle.opponentResult) }}
+                </span>
+                <span  class="w-full relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center row-start-2 col-start-3" :class="showMiles && battle.userResult < battle.opponentResult ? 'user-picked' : ''">
+                    <img v-if="battle.opponent.photo" :src="battle.opponent.photo"  :class="showMiles && battle.userResult < battle.opponentResult ? 'user-picked' : ''"  class=" w-full h-full absolute rounded-2xl" alt="">
+                    {{ battle.user.username != '' ? battle.user.username[0].toUpperCase() : '?' }}
+                </span>
+                <p class=" row-start-3 col-start-3">@{{ battle.opponent.username }}</p>
+                <button v-show="!showMiles" @click="prePick = 2" v-if="battle.pick == 0" class=" py-1  row-start-4 col-start-3">
+                    <p>{{ t('screens.battles.battle.choose') }}</p>
+                </button>
+                <button v-if="battle.pick == 2" class=" py-1  row-start-4 col-start-3" disabled>{{ t('screens.battles.battle.chosen')}}</button>
+
             </div>
         </div>
     </div>
@@ -163,7 +168,6 @@ const prePick = ref<number>(0)
 
 
 <style scoped>
-
 .delay-enter-active,
 .delay-leave-active {
     transition: opacity 0.5s ease;
@@ -186,5 +190,16 @@ const prePick = ref<number>(0)
 
 .user-picked {
     border: 4px solid var(--primary);
+}
+
+.players{
+    grid-template-rows: auto;
+    grid-template-columns: 1fr 4rem 1fr;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    row-gap: 0.5rem;
+    column-gap: 1rem;
+    padding: 0.5rem;
 }
 </style>
