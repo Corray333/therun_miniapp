@@ -151,8 +151,8 @@ const prePick = ref<number>(0)
                     class=" w-full flex items-center justify-center gap-2 font-bold text-xl row-start-1 col-start-3">
                     <miles />{{ Math.floor(battle.opponentResult) }}
                 </span>
-                <span  class="w-full relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center row-start-2 col-start-3" :class="(showMiles || (battle.pick != 0 && battle.userResult > battle.opponentResult)) && !battle.opponent.photo ? 'user-picked' : ''">
-                    <img v-if="battle.opponent.photo" :src="battle.opponent.photo"  :class="showMiles || (battle.pick != 0 && battle.userResult > battle.opponentResult) ? 'user-picked' : ''"  class=" w-full h-full absolute rounded-2xl" alt="">
+                <span  class="w-full relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center row-start-2 col-start-3" :class="(showMiles || (battle.pick != 0 && battle.userResult < battle.opponentResult)) && !battle.opponent.photo ? 'user-picked' : ''">
+                    <img v-if="battle.opponent.photo" :src="battle.opponent.photo"  :class="showMiles || (battle.pick != 0 && battle.userResult < battle.opponentResult) ? 'user-picked' : ''"  class=" w-full h-full absolute rounded-2xl" alt="">
                     {{ battle.user.username != '' ? battle.user.username[0].toUpperCase() : '?' }}
                 </span>
                 <p class=" row-start-3 col-start-3">@{{ battle.opponent.username }}</p>
