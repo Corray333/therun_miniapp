@@ -195,6 +195,12 @@ const claimAnimate = async () => {
     }`;
     style.innerHTML = keyframes;
 
+    if ("vibrate" in navigator) {
+        navigator.vibrate([100, 400, 100, 400, 100, 400, 100]);
+    } else {
+        console.log("Vibration API not supported");
+    }
+
 
     setTimeout(() => {
         animateCoin.value = false
@@ -205,7 +211,7 @@ const claimAnimate = async () => {
 const tapCoin = ref<HTMLElement>()
 
 const tap = () => {
-    
+
     if (tapCoin.value) {
         tapCoin.value.style.transition = 'all 0.2s'
         tapCoin.value.style.transform = 'scale(0.85)'
@@ -343,7 +349,6 @@ const modalPick = ref<string>('keys')
 </template>
 
 <style>
-
 .small-coin {
     position: absolute;
     width: 2rem;
@@ -375,7 +380,7 @@ const modalPick = ref<string>('keys')
     transform: translateY(100%);
 }
 
-.modal{
+.modal {
     box-shadow: 0 -0.25rem 1rem 0 rgba(0, 0, 0, 0.1);
 }
 
