@@ -61,7 +61,7 @@ func (r *TaskRepository) Claim(userID int64, task *types.Task) (done bool, point
 	}
 	defer tx.Rollback()
 
-	rows, err := tx.Query("UPDATE users SET point_balance = point_balance + $1, race_balance = race_balance + $2, key_balance = key_balance + $3 WHERE user_id = $4 RETURNING point_balance, race_balance, key_balance", task.PointsReward, task.RaceReward, task.KeysReward, userID)
+	rows, err := tx.Query("UPDATE users SET point_balance = point_balance + $1, race_balance = race_balance + $2, red_key_balance = red_key_balance + $3 WHERE user_id = $4 RETURNING point_balance, race_balance, red_key_balance", task.PointsReward, task.RaceReward, task.KeysReward, userID)
 	if err != nil {
 		return false, 0, 0, 0, err
 	}

@@ -8,7 +8,10 @@ type User struct {
 
 	PointBalance int `json:"pointBalance" db:"point_balance"`
 	RaceBalance  int `json:"raceBalance" db:"race_balance"`
-	KeyBalance   int `json:"keyBalance" db:"key_balance"`
+
+	RedKeyBalance   int `json:"red_keyBalance" db:"red_key_balance"`
+	BlueKeyBalance  int `json:"blue_keyBalance" db:"blue_key_balance"`
+	GreenKeyBalance int `json:"green_keyBalance" db:"green_key_balance"`
 
 	LastClaim   int64 `json:"lastClaim" db:"last_claim"`
 	FarmingFrom int64 `json:"farmingFrom" db:"farming_from"`

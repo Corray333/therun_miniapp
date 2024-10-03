@@ -1,6 +1,7 @@
 package external
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -44,7 +45,44 @@ func (e *BattleExternal) GetNewBattles() ([]types.Battle, error) {
 		return nil, err
 	}
 
+	e.AckBattles(response.Battles)
+
 	return response.Battles, nil
+}
+
+func (e *BattleExternal) AckBattles(battles []types.Battle) error {
+	battleIDs := []int{}
+	for _, battle := range battles {
+		battleIDs = append(battleIDs, battle.ID)
+	}
+
+	data, err := json.Marshal(struct {
+		ID []int `json:"id"`
+	}{
+		ID: battleIDs,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", os.Getenv("MAIN_THERUN_SERVER")+"/explorer/battle/special/new/ack", bytes.NewBuffer(data))
+	if err != nil {
+		return err
+	}
+
+	// Set headers
+	req.Header.Set("accept", "application/json")
+	req.Header.Set("auth", os.Getenv("MAIN_SERVER_AUTH"))
+
+	// Send the request
+	client := &http.Client{}
+	_, err = client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (e *BattleExternal) GetBattlesByID(ids []int) ([]types.Battle, error) {

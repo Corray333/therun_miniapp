@@ -96,7 +96,7 @@ const claimTask = async () => {
             }
         })
         accStore.user.pointBalance = data.pointBalance
-        accStore.user.keyBalance = data.keyBalance
+        accStore.user.red_keyBalance = data.keyBalance
         accStore.user.raceBalance = data.raceBalance
         pickedTask.value.done = true
         pickedTask.value.claimed = true

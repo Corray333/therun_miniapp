@@ -4,7 +4,7 @@ export class User {
     username?: string;
     pointBalance: number=0;
     raceBalance: number=0;
-    keyBalance: number=0;
+    red_keyBalance: number=10;
     lastClaim: number=0;
     farmingFrom: number=0;
     maxPoints: number=0;
@@ -57,3 +57,20 @@ export interface Round {
     battles: Battle[];
 }
 
+export class Key {
+    type!: string;
+    amount!: number;
+}
+
+export class Case {
+    type!: string;
+    keys!: Key[];
+    rewardType!: string;
+    min_rewards!: number;
+    max_rewards!: number;
+}
+
+export class Reward{
+    type!: string;
+    amount!: number;
+}

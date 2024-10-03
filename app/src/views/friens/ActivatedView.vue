@@ -17,11 +17,6 @@ const { t } = useI18n()
 const friends = ref<Referal[]>([])
 
 
-// const friends = ref<Referal[]>([{
-//     username:"Markovnik",
-//     avatar: 'https://cdn-icons-png.freepik.com/256/15707/15707874.png?semt=ais_hybrid'
-// }])
-
 const getFriends = async () => {
     try {
         const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/users/0/referals?activated=true`, {

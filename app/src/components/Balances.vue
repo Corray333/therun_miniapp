@@ -82,7 +82,7 @@ onMounted(() => {
       class=" bg-half_dark p-4 rounded-2xl flex flex-col justify-center items-center">
       <span class=" flex gap-1" >
         <key color="var(--primary)" />
-        <p class=" text-left font-bold flex items-center">{{ store.user.keyBalance }}</p>
+        <p class=" text-left font-bold flex items-center">{{ store.user.red_keyBalance }}</p>
       </span>
       <p class=" label flex items-center gap-1">{{ t('wallet.keys') }}<i class="pi pi-chevron-right text-dark"
           style="font-size: 0.75rem;"></i></p>

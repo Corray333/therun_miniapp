@@ -66,7 +66,7 @@ func (r *UserRepository) UpdateUser(user *types.User) error {
         in_app_id = :in_app_id, 
         point_balance = :point_balance, 
         race_balance = :race_balance, 
-        key_balance = :key_balance, 
+        red_key_balance = :red_key_balance, 
         last_claim = :last_claim, 
         farming_from = :farming_from, 
         max_points = :max_points, 
@@ -85,7 +85,7 @@ func (r *UserRepository) GetRefererID(refCode string) (int64, error) {
 }
 
 func (r *UserRepository) CreateUser(user *types.User) error {
-	_, err := r.db.NamedExec("INSERT INTO users (user_id, username, avatar, in_app_id, point_balance, race_balance, key_balance, last_claim, max_points, farm_time, ref_code, referer, is_premium, is_activated) VALUES (:user_id, :username, :avatar, 0, :point_balance, :race_balance, :key_balance, :last_claim, :max_points, :farm_time, :ref_code, :referer, :is_premium, :is_activated)", user)
+	_, err := r.db.NamedExec("INSERT INTO users (user_id, username, avatar, in_app_id, point_balance, race_balance, red_key_balance, last_claim, max_points, farm_time, ref_code, referer, is_premium, is_activated) VALUES (:user_id, :username, :avatar, 0, :point_balance, :race_balance, :red_key_balance, :last_claim, :max_points, :farm_time, :ref_code, :referer, :is_premium, :is_activated)", user)
 	return err
 }
 
@@ -145,7 +145,7 @@ func (r *UserRepository) CountReferals(userID int64) (refsActivated, refsFrozen,
 }
 
 func (r *UserRepository) ChangeBalances(userID int64, pointsAmount, raceAmount, keyAmount int) (int, int, int, error) {
-	rows, err := r.db.Query("UPDATE users SET point_balance = point_balance + $1, race_balance = race_balance + $2, key_balance = key_balance + $3 WHERE user_id = $4 RETURNING point_balance, race_balance, key_balance", pointsAmount, raceAmount, keyAmount, userID)
+	rows, err := r.db.Query("UPDATE users SET point_balance = point_balance + $1, race_balance = race_balance + $2, red_key_balance = red_key_balance + $3 WHERE user_id = $4 RETURNING point_balance, race_balance, red_key_balance", pointsAmount, raceAmount, keyAmount, userID)
 	if err != nil {
 		return 0, 0, 0, err
 	}

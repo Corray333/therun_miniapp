@@ -102,17 +102,17 @@ func (s *UserService) AuthUser(initData, refCode string) (accessToken string, is
 	}
 
 	user := &types.User{
-		ID:           creds.ID,
-		Username:     creds.Username,
-		PointBalance: pointBalance,
-		RaceBalance:  0,
-		KeyBalance:   0,
-		LastClaim:    time.Now().Unix(),
-		MaxPoints:    MaxPointsDefault,
-		FarmingTime:  FarmingTimeDefault,
-		IsPremium:    isPremium,
-		IsActivated:  isPremium,
-		Referer:      refererID,
+		ID:            creds.ID,
+		Username:      creds.Username,
+		PointBalance:  pointBalance,
+		RaceBalance:   0,
+		RedKeyBalance: 0,
+		LastClaim:     time.Now().Unix(),
+		MaxPoints:     MaxPointsDefault,
+		FarmingTime:   FarmingTimeDefault,
+		IsPremium:     isPremium,
+		IsActivated:   isPremium,
+		Referer:       refererID,
 	}
 
 	avatar, err := s.external.GetAvatar(creds.ID)

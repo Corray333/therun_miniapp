@@ -55,7 +55,15 @@
             "case":{
                 "header":"Open Red box and get RACE coins",
                 "description":"You can get the keys to open the box in Battles section or for completing tasks",
-                "openButton":"Open the Box"
+                "openButton":"Insert keys and open the box",
+                "inside":"What's inside: ",
+                "types":{
+                    "red":"RED box"
+                },
+                "openApprove":"Do you really want to insert all the keys and open the ",
+                "openApproveCancel":"Cancel",
+                "openApproveOk":"Insert",
+                "claimBtn":"Claim"
             },
             "header":"Welcome to Chibiverse!",
             "banner":{

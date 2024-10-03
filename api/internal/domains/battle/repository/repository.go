@@ -160,7 +160,7 @@ func (r *BattleRepository) ProcessBets(roundID int, keyReward int) error {
 		winners AS (
 			SELECT user_id from round_battles NATURAL JOIN bets WHERE user_miles > opponent_miles AND pick = 1 OR opponent_miles > user_miles AND pick = 2 
 		)
-		UPDATE users SET key_balance = key_balance + $2 WHERE user_id IN (SELECT user_id FROM winners)`, roundID, keyReward)
+		UPDATE users SET red_key_balance = red_key_balance + $2 WHERE user_id IN (SELECT user_id FROM winners)`, roundID, keyReward)
 	if err != nil {
 		slog.Error("error processing bets: " + err.Error())
 		return err
