@@ -10,9 +10,8 @@ import { useComponentsStore } from '@/stores/components'
 
 
 import Carousel from 'primevue/carousel'
-import Navbar from '@/components/Navbar.vue'
 import Balances from '@/components/Balances.vue'
-import key from '@/components/icons/key-icon.vue'
+import KeyIcon from '@/components/icons/key-icon.vue'
 
 
 
@@ -187,7 +186,7 @@ const loading = ref<boolean>(false)
                             <span v-for="key in value.data.keys" :key="key.type"
                                 class="flex gap-2 w-full justify-center">
                                 <span v-for="i of key.amount" :key="i" class="rounded-full bg-white p-4 sm-shadow">
-                                    <key class=" opacity-50" :color="`var(--${key.type})`" />
+                                    <key-icon class=" opacity-50" :color="`var(--${key.type})`" />
                                 </span>
                             </span>
                         </div>
