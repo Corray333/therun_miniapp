@@ -178,7 +178,7 @@ const loading = ref<boolean>(false)
                             <img class=" w-8 h-8" :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`"
                                 alt="">{{ rewardsGot.amount }}
                         </p>
-                        <button @click="rewardsGot = undefined">{{ t('screens.chibi.case.claim') }}</button>
+                        <button @click="rewardsGot = undefined">{{ t('screens.chibi.case.claimBtn') }}</button>
                     </section>
                 </Transition>
             </section>
