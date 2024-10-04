@@ -76,7 +76,7 @@
             },
             "city":{
                 "header":"Chibi City",
-                "yourCityHeader":"Your city",
+                "yourCityHeader":"Build your chibi city",
                 "description":"Develop your city and construct buildings that will help pump your chibi",
                 "btn":"Let’s go",
                 "upgradeBtn":"Level",

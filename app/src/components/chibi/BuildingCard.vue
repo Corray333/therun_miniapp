@@ -41,7 +41,7 @@ defineProps({
     @apply w-full flex flex-col justify-between;
 }
 .building>img{
-    @apply h-24 object-contain scale-150 origin-bottom-right -mr-2;
+    @apply h-24 object-contain scale-[140%] origin-bottom-right -mr-2;
 }
 
 </style>
