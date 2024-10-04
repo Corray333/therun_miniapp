@@ -275,6 +275,18 @@ const loading = ref<boolean>(false)
 
 <style scoped>
 
+.p-button {
+    background-color: var(--primary) !important;
+    min-width: 2.5rem !important;
+    min-height: 2.5rem !important;
+    max-width: 2.5rem !important;
+    max-height: 2.5rem !important;
+    color: white !important;
+}
+</style>
+
+<style scoped>
+
 .keys-container{
     @apply flex gap-2 w-full;
 }
@@ -309,17 +321,6 @@ const loading = ref<boolean>(false)
     transform: scale(0);
 }
 
-.p-button {
-    background-color: var(--primary) !important;
-    min-width: 2.5rem !important;
-    min-height: 2.5rem !important;
-    max-width: 2.5rem !important;
-    max-height: 2.5rem !important;
-    color: white !important;
-}
-</style>
-
-<style scoped>
 .info {
     box-shadow: 0 -1rem 1rem 0 rgba(0, 0, 0, 0.1);
 }
