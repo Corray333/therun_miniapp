@@ -72,7 +72,7 @@ onMounted(() => {
                 </div>
               </div>
               <p class="mb-14">{{ t('wallet.keysDescription') }}</p>
-              <button>{{ t('wallet.ok') }}</button>
+              <button @click="showModal = false">{{ t('wallet.ok') }}</button>
             </div>
           </section>
         </Transition>
