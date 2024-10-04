@@ -240,7 +240,7 @@ func (s *BattleService) StartNextRoundTimer() {
 }
 
 func (s *BattleService) SetUpdateInterval() {
-	go s.UpdateBattles()
+	go s.GetNewBattles()
 	time.AfterFunc(5*time.Minute, func() {
 		s.SetUpdateInterval()
 	})

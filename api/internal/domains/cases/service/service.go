@@ -24,19 +24,19 @@ type repository interface {
 type userService interface {
 }
 
-type CaseService struct {
+type CityService struct {
 	repo        repository
 	userService userService
 }
 
-func New(repo repository, userService userService) *CaseService {
-	return &CaseService{
+func New(repo repository, userService userService) *CityService {
+	return &CityService{
 		repo:        repo,
 		userService: userService,
 	}
 }
 
-func (s *CaseService) OpenCase(userID int64, caseType string) (*types.Reward, error) {
+func (s *CityService) OpenCase(userID int64, caseType string) (*types.Reward, error) {
 	hasCase, err := s.repo.HasCase(userID, caseType)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (s *CaseService) OpenCase(userID int64, caseType string) (*types.Reward, er
 	return reward, nil
 }
 
-func (s *CaseService) countRewards(caseType string) (reward *types.Reward, err error) {
+func (s *CityService) countRewards(caseType string) (reward *types.Reward, err error) {
 	caseToOpen := types.Cases[caseType]
 
 	totalProbability := 0
@@ -83,7 +83,7 @@ func (s *CaseService) countRewards(caseType string) (reward *types.Reward, err e
 	return nil, ErrCaseCannotOpen
 }
 
-func (s *CaseService) GetCases(userID int64) ([]types.Case, error) {
+func (s *CityService) GetCases(userID int64) ([]types.Case, error) {
 	cases, err := s.repo.GetCases(userID)
 	if err != nil {
 		return nil, err

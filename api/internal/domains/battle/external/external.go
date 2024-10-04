@@ -50,10 +50,14 @@ func (e *BattleExternal) GetNewBattles() ([]types.Battle, error) {
 	return response.Battles, nil
 }
 
+const StatusCompleted = "completed"
+
 func (e *BattleExternal) AckBattles(battles []types.Battle) error {
 	battleIDs := []int{}
 	for _, battle := range battles {
-		battleIDs = append(battleIDs, battle.ID)
+		if battle.Status == StatusCompleted {
+			battleIDs = append(battleIDs, battle.ID)
+		}
 	}
 
 	data, err := json.Marshal(struct {

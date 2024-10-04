@@ -212,6 +212,7 @@ const tapCoin = ref<HTMLElement>()
 
 const tap = () => {
 
+    
     if (tapCoin.value) {
         tapCoin.value.style.transition = 'all 0.2s'
         tapCoin.value.style.transform = 'scale(0.85)'

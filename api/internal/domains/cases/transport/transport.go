@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
-type CaseTransport struct {
+type CityTransport struct {
 	router  *chi.Mux
 	service service
 }
@@ -21,14 +21,14 @@ type service interface {
 	GetCases(userID int64) ([]types.Case, error)
 }
 
-func New(router *chi.Mux, service service) *CaseTransport {
-	return &CaseTransport{
+func New(router *chi.Mux, service service) *CityTransport {
+	return &CityTransport{
 		router:  router,
 		service: service,
 	}
 }
 
-func (t *CaseTransport) RegisterRoutes() {
+func (t *CityTransport) RegisterRoutes() {
 	t.router.Group(func(r chi.Router) {
 		r.Use(auth.NewAuthMiddleware())
 
@@ -41,7 +41,7 @@ type OpenCaseRequest struct {
 	CaseType string `json:"caseType"`
 }
 
-func (t *CaseTransport) openCase(w http.ResponseWriter, r *http.Request) {
+func (t *CityTransport) openCase(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(global_types.ContextID).(int64)
 
 	if !ok {
@@ -72,7 +72,7 @@ func (t *CaseTransport) openCase(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (t *CaseTransport) getCases(w http.ResponseWriter, r *http.Request) {
+func (t *CityTransport) getCases(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(global_types.ContextID).(int64)
 
 	if !ok {

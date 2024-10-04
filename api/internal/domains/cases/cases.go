@@ -10,9 +10,9 @@ import (
 )
 
 type CaseController struct {
-	repo      repository.CaseRepository
-	service   service.CaseService
-	transport transport.CaseTransport
+	repo      repository.CityRepository
+	service   service.CityService
+	transport transport.CityTransport
 }
 
 func NewCasesController(router *chi.Mux, store *storage.Storage, userService *user_service.UserService) *CaseController {

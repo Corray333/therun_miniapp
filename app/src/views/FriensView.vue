@@ -137,33 +137,40 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
             </div>
 
             <div class="flex flex-col w-full p-4 bg-half_dark rounded-2xl gap-4">
+
                 <div class="flex gap-4 items-center">
                     <img class="h-16" src="../assets/images/friends/tg-logo.png" alt="">
                     <div class=" flex flex-col gap-2">
                         <p class="font-bold">{{ t('screens.friens.invite.commonInviteHeader') }}</p>
-                        <p class="flex items-center gap-1">
-                            <bcoin />1000{{ t('screens.friens.invite.commonInviteDescription') }}
+                        <p class="flex flex-col gap-1">
+                            <p class="text-dark">
+                                {{ t('screens.friens.invite.commonInviteDescription') }}
+                            </p>
+                            <p class="flex gap-1"><bcoin />3000 <key color="var(--blue_key)"/>3</p>
                         </p>
                     </div>
                 </div>
+                
                 <div class="flex gap-4 items-center">
                     <img class="h-16" src="../assets/images/friends/premium-star.gif" alt="">
                     <div class=" flex flex-col gap-2">
                         <p class="font-bold">{{ t('screens.friens.invite.premiumInviteHeader') }}</p>
-                        <p class="flex flex-col">
-                            <p class="flex gap-1"><bcoin />3000 <key color="var(--primary)"/>3</p>
-                            <p>
+                        <p class="flex flex-col gap-1">
+                            <p class="text-dark">
                                 {{ t('screens.friens.invite.premiumInviteDescription') }}
                             </p>
+                            <p class="flex gap-1"><bcoin />3000 <key color="var(--red_key)"/>3</p>
                         </p>
                     </div>
                 </div>
+
                 <div class="flex gap-2">
                     <button @click="shareOnTelegram">{{ t('screens.friens.inviteBtn') }}</button>
                     <button @click="copyRefUrl" class=" w-fit aspect-square">
                         <CopyIcon color="white" />
                     </button>
                 </div>
+
             </div>
 
             <div class=" bg-half_dark rounded-2xl">
@@ -205,6 +212,7 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                     </div>
                 </SlideUpDown>
             </div>
+
             <div class="frozen bg-half_dark p-4 rounded-2xl flex flex-col items-center gap-2">
                 <div class="flex  items-center gap-2 text-4xl font-bold">
                     <bcoinXL />{{ friendsInfo.rewardsAvailible }}
@@ -213,6 +221,7 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                 <button @click="claimRewards" v-show="friendsInfo.rewardsAvailible > 0" class=" btn-type-2">{{
                 t('screens.friens.claimBtn') }}</button>
             </div>
+
             <div class="friends flex flex-col gap-2">
                 <p class=" w-full flex justify-between px-2">
                 <h1>{{ t('screens.friens.listHeader') }}</h1>
@@ -238,6 +247,7 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                     </button>
                 </router-link>
             </div>
+            
         </section>
     </section>
 </template>

@@ -4,7 +4,11 @@ export class User {
     username?: string;
     pointBalance: number=0;
     raceBalance: number=0;
+
     red_keyBalance: number=10;
+    blue_keyBalance: number=10;
+    green_keyBalance: number=10;
+    
     lastClaim: number=0;
     farmingFrom: number=0;
     maxPoints: number=0;

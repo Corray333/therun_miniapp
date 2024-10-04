@@ -8,6 +8,7 @@ type Battle struct {
 	Pick          int      `json:"pick"`
 	UserMiles     float64  `json:"userResult" db:"user_miles"`
 	OpponentMiles float64  `json:"opponentResult" db:"opponent_miles"`
+	Status        string   `json:"status"`
 }
 
 type User struct {

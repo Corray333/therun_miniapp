@@ -57,7 +57,7 @@ const getCases = async () => {
 const openCase = async () => {
     loading.value = true
     try {
-        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/cases/open`,{
+        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/cases/open`, {
             caseType: casePick.value
         }, {
             withCredentials: true,
@@ -68,9 +68,6 @@ const openCase = async () => {
         getUser(accStore.user.id)
         casePick.value = undefined
         rewardsGot.value = data
-        setTimeout(() => {
-            rewardsGot.value = undefined
-        }, 2500)
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
             if (error.response?.status === 401) {
@@ -86,12 +83,12 @@ const openCase = async () => {
                 componentsStore.addError(error.message)
             }
         }
-    } finally{
+    } finally {
         loading.value = false
     }
 }
 
-onBeforeMount(async ()=>{
+onBeforeMount(async () => {
     await getCases()
 })
 
@@ -124,62 +121,103 @@ const loading = ref<boolean>(false)
     <section class=" pb-20">
 
         <Transition name="delay">
-        <section v-show="casePick" @click.self="casePick = ''"
-            class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-center justify-center p-4 drop-shadow-lg">
-            <Transition name="scale">
-                <section v-if="casePick"
-                    class=" modal max-w-80 gap-4 w-full rounded-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg">
-                    <p class="font-bold text-center">{{ t('screens.chibi.case.openApprove') }}{{ t(`screens.chibi.case.types.${casePick}`) }}?</p>
-                    <div class="flex gap-2 w-full">
-                        <button @click="casePick = ''" class=" py-2 text-primary bg-white">{{ t('screens.chibi.case.openApproveCancel') }}</button>
-                        <button @click="openCase()" class=" py-2">
-                            <p v-if="loading"><i class="pi pi-spinner pi-spin"></i></p>
-                            <p v-else>
-                                {{ t('screens.chibi.case.openApproveOk') }}
-                            </p>
-                        </button>
+            <section v-show="casePick" @click.self="casePick = ''"
+                class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-center justify-center p-4 drop-shadow-lg">
+                <Transition name="scale">
+                    <section v-if="casePick"
+                        class=" modal max-w-80 gap-4 w-full rounded-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg">
+                        <p class="font-bold text-center">{{ t('screens.chibi.case.openApprove') }}{{
+                t(`screens.chibi.case.types.${casePick}`) }}?</p>
+                        <div class="flex gap-2 w-full">
+                            <button @click="casePick = ''" class=" py-2 text-primary bg-white">{{
+                t('screens.chibi.case.openApproveCancel') }}</button>
+                            <button @click="openCase()" class=" py-2">
+                                <p v-if="loading"><i class="pi pi-spinner pi-spin"></i></p>
+                                <p v-else>
+                                    {{ t('screens.chibi.case.openApproveOk') }}
+                                </p>
+                            </button>
+                        </div>
+                    </section>
+                </Transition>
+            </section>
+        </Transition>
+
+        <Transition name="delay">
+            <section v-show="rewardsGot" @click.self="rewardsGot = undefined"
+                class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-center justify-center p-4 drop-shadow-lg">
+                <Transition name="scale">
+                    <section v-if="rewardsGot"
+                        class=" modal max-w-80 gap-4 w-full rounded-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg">
+                        <div class="hero w-full aspect-square relative flex justify-center items-center">
+                            <img class=" absolute w-24 h-24 animate-wiggle"
+                                :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
+                            <img style="animation-delay: -6.4s; rotate: -28deg;"
+                                class=" absolute mt-32 mr-32 blur-[0.1rem] w-16 h-16 animate-wiggle"
+                                :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
+                            <img style="animation-delay: -3.7s; rotate: 24deg;"
+                                class=" absolute -mt-32 mr-36 blur-[0.15rem] w-12 h-12 animate-wiggle"
+                                :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
+                            <img style="animation-delay: -8.2s; rotate: -24deg;"
+                                class=" absolute -mt-24 ml-44 blur-[0.15rem] w-12 h-12 animate-wiggle"
+                                :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
+                            <img style="animation-delay: -10.8s; rotate: -36deg;"
+                                class=" absolute mt-32 ml-36 blur-[0.15rem] w-14 h-14 animate-wiggle"
+                                :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
+                            <img style="animation-delay: -2.6s; rotate: 32deg;"
+                                class=" absolute mt-4 mr-36 blur-[0.15rem] w-6 h-6 animate-wiggle"
+                                :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
+                            <img style="animation-delay: -7.3s; rotate: -36deg;"
+                                class=" absolute -mt-44 ml-8 blur-[0.15rem] w-8 h-8 animate-wiggle"
+                                :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
+                            <img style="animation-delay: -9.1s; rotate: 18deg;"
+                                class=" absolute mt-44 ml-4 blur-[0.15rem] w-8 h-8 animate-wiggle"
+                                :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
+                        </div>
+                        <p class="font-bold flex justify-center w-full gap-1 text-2xl items-center">
+                            <img class=" w-8 h-8" :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`"
+                                alt="">{{ rewardsGot.amount }}
+                        </p>
+                        <button @click="rewardsGot = undefined">{{ t('screens.chibi.case.claim') }}</button>
+                    </section>
+                </Transition>
+            </section>
+        </Transition>
+
+
+        <section class=" flex flex-col gap-6 pb-12 items-center p-4">
+            <div class="keys-container">
+                <div class="balance-card">
+                    <div>
+                        <KeyIcon color="var(--red_key)" />
+                        <p>{{ accStore.user.red_keyBalance }}</p>
                     </div>
-                </section>
-            </Transition>
-        </section>
-    </Transition>
-
-    <Transition name="delay">
-        <section v-show="rewardsGot" @click.self="rewardsGot = undefined"
-            class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-center justify-center p-4 drop-shadow-lg">
-            <Transition name="scale">
-                <section v-if="rewardsGot"
-                    class=" modal max-w-80 gap-4 w-full rounded-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg">
-                    <div class="hero w-full aspect-square relative flex justify-center items-center">
-                        <img class=" absolute w-24 h-24 animate-wiggle" :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
-                        <img style="animation-delay: -6.4s; rotate: -28deg;" class=" absolute mt-32 mr-32 blur-[0.1rem] w-16 h-16 animate-wiggle" :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
-                        <img style="animation-delay: -3.7s; rotate: 24deg;" class=" absolute -mt-32 mr-36 blur-[0.15rem] w-12 h-12 animate-wiggle" :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
-                        <img style="animation-delay: -8.2s; rotate: -24deg;" class=" absolute -mt-24 ml-44 blur-[0.15rem] w-12 h-12 animate-wiggle" :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
-                        <img style="animation-delay: -10.8s; rotate: -36deg;" class=" absolute mt-32 ml-36 blur-[0.15rem] w-14 h-14 animate-wiggle" :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
-                        <img style="animation-delay: -2.6s; rotate: 32deg;" class=" absolute mt-4 mr-36 blur-[0.15rem] w-6 h-6 animate-wiggle" :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
-                        <img style="animation-delay: -7.3s; rotate: -36deg;" class=" absolute -mt-44 ml-8 blur-[0.15rem] w-8 h-8 animate-wiggle" :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
-                        <img style="animation-delay: -9.1s; rotate: 18deg;" class=" absolute mt-44 ml-4 blur-[0.15rem] w-8 h-8 animate-wiggle" :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">
+                    <p>{{ t('wallet.redKeys') }}</p>
+                </div>
+                <div class="balance-card">
+                    <div>
+                        <KeyIcon color="var(--blue_key)" />
+                        <p>{{ accStore.user.blue_keyBalance }}</p>
                     </div>
-                    <p class="font-bold flex justify-center w-full gap-1 text-2xl items-center">
-                        <img class=" w-8 h-8" :src="`${baseURL}/static/images/resources/${rewardsGot.type}.png`" alt="">{{ rewardsGot.amount }}
-                    </p>
-                    <button @click="rewardsGot = undefined">{{ t('screens.chibi.case.openApproveCancel') }}</button>
-                </section>
-            </Transition>
-        </section>
-    </Transition>
+                    <p>{{ t('wallet.blueKeys') }}</p>
+                </div>
+                <div class="balance-card">
+                    <div>
+                        <KeyIcon color="var(--green_key)" />
+                        <p>{{ accStore.user.green_keyBalance }}</p>
+                    </div>
+                    <p>{{ t('wallet.greenKeys') }}</p>
+                </div>
+            </div>
 
-        <section class=" flex flex-col p-4 h-full w-full">
-            <Balances />
-        </section>
-        <section class=" flex flex-col gap-6 pb-12 items-center p-4">   
-
-            <Carousel :value="cases" :numVisible="1" :circular="false" :numScroll="1" :showIndicators="false" class="w-full">
+            <Carousel :value="cases" :numVisible="1" :circular="false" :numScroll="1" :showIndicators="false"
+                class="w-full">
                 <template #item="value" class="w-full">
                     <div class="flex flex-col w-full items-center gap-4">
                         <p class=" font-bold text-2xl">{{ t(`screens.chibi.case.types.${value.data.type}`) }}</p>
-                        <p class="flex items-center gap-1"><p class=" text-dark">{{ t('screens.chibi.case.inside') }}</p> <img class=" w-6 h-6"
-                                :src="`${baseURL}/static/images/resources/${value.data.rewardType}.png`" alt=""> {{
+                        <p class="flex items-center gap-1">
+                        <p class=" text-dark">{{ t('screens.chibi.case.inside') }}</p> <img class=" w-6 h-6"
+                            :src="`${baseURL}/static/images/resources/${value.data.rewardType}.png`" alt=""> {{
                 value.data.min_rewards }}-{{ value.data.max_rewards }}</p>
                         <img id="case" :src="`${baseURL}/static/images/cases/${value.data.type}.png`" alt="">
                         <div class="flex gap-2">
@@ -190,11 +228,16 @@ const loading = ref<boolean>(false)
                                 </span>
                             </span>
                         </div>
-                        <button @click="casePick = value.data.type" class="" :disabled="!balanceEnough(value.data)">{{ t('screens.chibi.case.openButton')}}</button>
+                        <button @click="casePick = value.data.type" class="" :disabled="!balanceEnough(value.data)">{{t('screens.chibi.case.openButton') }}</button>
                     </div>
                 </template>
             </Carousel>
+            <p class="flex text-dark gap-2">
+                <i class=" pi pi-info-circle"></i>
+                <p>{{ t('screens.chibi.case.caseInfo') }}</p>
+            </p>
         </section>
+
 
         <section class=" info p-4 rounded-t-2xl bg-white ">
             <div class="game text-center flex flex-col gap-6">
@@ -230,7 +273,21 @@ const loading = ref<boolean>(false)
     </section>
 </template>
 
-<style>
+<style scoped>
+
+.keys-container{
+    @apply flex gap-2 w-full;
+}
+.balance-card {
+    @apply w-full p-2 rounded-2xl bg-half_dark flex flex-col gap-1 text-center;
+}
+
+.balance-card>div {
+    @apply flex gap-1 items-center justify-center font-bold;
+}
+.balance-card>p{
+    @apply text-sm text-dark;
+}
 
 .delay-enter-active,
 .delay-leave-active {
