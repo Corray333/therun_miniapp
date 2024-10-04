@@ -78,3 +78,39 @@ export class Reward{
     type!: string;
     amount!: number;
 }
+
+export class UpgradeCost {
+    currency: string;
+    amount: number;
+
+    constructor(currency: string, amount: number) {
+        this.currency = currency;
+        this.amount = amount;
+    }
+}
+
+export class Building {
+    img: string;
+    type: string;
+    level: number;
+    upgradeCost: UpgradeCost[] | null;
+
+    constructor(img: string, type: string, level: number, upgradeCost: UpgradeCost[] | null) {
+        this.img = img;
+        this.type = type;
+        this.level = level;
+        this.upgradeCost = upgradeCost;
+    }
+}
+
+export class Buildings {
+    fabric!: Building;
+    mine!: Building;
+    warehouse!: Building;
+
+    constructor(fabric: Building, mine: Building, warehouse: Building) {
+        this.fabric = fabric;
+        this.mine = mine;
+        this.warehouse = warehouse;
+    }
+}

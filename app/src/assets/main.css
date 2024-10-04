@@ -9,19 +9,26 @@
 
     button:disabled,
     button[disabled] {
-        @apply bg-primary_light
+        @apply bg-primary_light;
     }
 
     button.btn-type-2{
-        @apply w-full p-4 font-bold rounded-2xl bg-transparent text-primary border-primary border-2
+        @apply w-full p-4 font-bold rounded-2xl bg-transparent text-primary border-primary border-2;
     }
     button.btn-type-2:disabled,
     .btn-type-2[disabled] {
-        @apply border-primary_light text-primary_light
+        @apply border-primary_light text-primary_light;
     }
 
     button.btn-type-3 {
-        @apply w-full p-4 font-bold rounded-2xl bg-green-600 text-white
+        @apply w-full p-4 font-bold rounded-2xl bg-green-600 text-white;
+    }
+
+    .btn-type-4{
+        @apply py-2 px-4 bg-custom_blue w-fit min-w-32;
+    }
+    .btn-type-4.state-2{
+        @apply bg-transparent border-2 border-custom_blue text-custom_blue;
     }
 
     .label{

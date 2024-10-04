@@ -17,9 +17,9 @@
         "raceDescription": "RACE токен - это основной токен приложения с будущим листингом на биржах",
         "ok": "Ок",
         "withdraw": "Отправить в TheRun",
-        "redKeys": "Красные ключи",
-        "blueKeys": "Синие ключи",
-        "greenKeys": "Зеленые ключи"
+        "redKeys": "Красные",
+        "blueKeys": "Синие",
+        "greenKeys": "Зеленые"
     },
     "screens": {
         "farming": {
@@ -76,8 +76,21 @@
             },
             "city":{
                 "header":"Чиби Сити",
+                "yourCityHeader":"Ваш город",
                 "description":"Развивайте свой город и стройте здания, которые помогут прокачать ваших чиби",
-                "btn":"Вперед"
+                "btn":"Вперед",
+                "upgradeBtn":"Уровень",
+                "buildBtn":"Построить",
+                "buildings":{
+                    "warehouse":{
+                        "name":"Склад",
+                        "description":"Хранилище для ваших ресурсов"
+                    },
+                    "mine":{
+                        "name":"Mine",
+                        "description":"Mine ores and minerals"
+                    }
+                }
             },
             "fights":{
                 "header":"Сражения",

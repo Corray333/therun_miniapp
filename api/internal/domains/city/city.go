@@ -14,7 +14,7 @@ type CityController struct {
 	transport transport.CityTransport
 }
 
-func NewCasesController(router *chi.Mux, store *storage.Storage) *CityController {
+func NewCityController(router *chi.Mux, store *storage.Storage) *CityController {
 	repo := repository.New(store)
 	service := service.New(repo)
 	transport := transport.New(router, service)

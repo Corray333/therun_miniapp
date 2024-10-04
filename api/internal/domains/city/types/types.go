@@ -1,6 +1,10 @@
 package types
 
-import user_types "github.com/Corray333/therun_miniapp/internal/domains/user/types"
+import (
+	"time"
+
+	user_types "github.com/Corray333/therun_miniapp/internal/domains/user/types"
+)
 
 type Resource struct {
 	Name   string
@@ -24,8 +28,8 @@ const (
 )
 
 type Cost struct {
-	Type   user_types.Currency
-	Amount int
+	Currency user_types.Currency `json:"currency"`
+	Amount   int                 `json:"amount"`
 }
 
 type Requirement struct {
@@ -34,16 +38,17 @@ type Requirement struct {
 }
 
 type WarehouseLevel struct {
-	Capacity     int
-	Resources    []ResourceType
-	Cost         []Cost
-	Requirements []Requirement
+	Capacity         int
+	Resources        []ResourceType
+	Cost             []Cost
+	Requirements     []Requirement
+	BuildingDuration time.Duration
 }
 
 type Warehouse []WarehouseLevel
 
-func (w Warehouse) GetLevelCost(level int) []Cost {
-	if level == 0 {
+func (w Warehouse) GetNextLevelCost(level int) []Cost {
+	if level < 0 {
 		return nil
 	}
 	if level >= len(w) {
@@ -54,36 +59,38 @@ func (w Warehouse) GetLevelCost(level int) []Cost {
 
 var WarehouseLevels = Warehouse{
 	WarehouseLevel{
-		Capacity: 1000,
+		Capacity:         1000,
+		BuildingDuration: 10 * time.Minute,
 		Resources: []ResourceType{
 			ResourceTitan,
 		},
 		Cost: []Cost{
 			{
-				Type:   user_types.Point,
-				Amount: 1000,
+				Currency: user_types.Point,
+				Amount:   1000,
 			},
 			{
-				Type:   user_types.BlueKey,
-				Amount: 1,
+				Currency: user_types.BlueKey,
+				Amount:   1,
 			},
 		},
 		Requirements: nil,
 	},
 	WarehouseLevel{
-		Capacity: 2000,
+		Capacity:         2000,
+		BuildingDuration: 2 * time.Hour,
 		Resources: []ResourceType{
 			ResourceTitan,
 			ResourceQuartz,
 		},
 		Cost: []Cost{
 			{
-				Type:   user_types.Point,
-				Amount: 2000,
+				Currency: user_types.Point,
+				Amount:   2000,
 			},
 			{
-				Type:   user_types.BlueKey,
-				Amount: 2,
+				Currency: user_types.BlueKey,
+				Amount:   2,
 			},
 		},
 		Requirements: []Requirement{
@@ -96,13 +103,14 @@ var WarehouseLevels = Warehouse{
 }
 
 type Building interface {
-	GetLevelCost(level int) []Cost
+	GetNextLevelCost(level int) []Cost
 }
 
 type BuildingPublic struct {
-	Name        string
-	Level       int
-	UpgradeCost []Cost
+	Img         string       `json:"img"`
+	Type        BuildingType `json:"type"`
+	Level       int          `json:"level"`
+	UpgradeCost []Cost       `json:"upgradeCost"`
 }
 
 var Buildings = map[BuildingType]Building{

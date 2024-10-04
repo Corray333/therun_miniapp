@@ -20,16 +20,20 @@ const { t } = useI18n()
                     <i class="pi pi-chevron-right text-white" style="font-size:1.25rem"></i>
                 </div>
             </router-link>
-            <div class="city card">
-                <div class=" flex">
-                    <div class="flex flex-col gap-2 w-full">
-                        <h2>{{ t('screens.chibi.city.header') }}</h2>
-                        <p>{{ t('screens.chibi.city.description') }}</p>
-                        <button>{{ t('screens.chibi.city.btn') }}</button>
+
+            <router-link to="/chibi/city">
+                <div class="city card">
+                    <div class=" flex">
+                        <div class="flex flex-col gap-2 w-full">
+                            <h2>{{ t('screens.chibi.city.header') }}</h2>
+                            <p>{{ t('screens.chibi.city.description') }}</p>
+                            <button>{{ t('screens.chibi.city.btn') }}</button>
+                        </div>
+                        <img src="../assets/images/chibi/city.png" alt="" class="block w-2/5 object-contain">
                     </div>
-                    <img src="../assets/images/chibi/city.png" alt="" class="block w-2/5 object-contain">
                 </div>
-            </div>
+            </router-link>
+            
             <div class="flex gap-4 w-full">
                 <div class="card flex flex-col w-full">
                     <div class="flex justify-between w-full">

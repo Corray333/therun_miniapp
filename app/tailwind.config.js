@@ -14,6 +14,8 @@ export default {
         full_dark: 'var(--full-dark)',
         half_gray: 'var(--half-gray)',
         calm: 'var(--calm)',
+        custom_blue: 'var(--blue)',
+        custom_green: 'var(--green)',
       },
       animation: {
         wiggle: 'wiggle 20s infinite ease-in',

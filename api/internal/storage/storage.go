@@ -8,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+type TxKey struct{}
 type Storage struct {
 	db *sqlx.DB
 }
