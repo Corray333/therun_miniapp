@@ -140,9 +140,7 @@ const prePick = ref<number>(0)
                 <button v-show="!showMiles" @click="prePick = 1" v-if="battle.pick == 0" class=" py-1 row-start-4 col-start-1">
                     <p>{{ t('screens.battles.battle.choose') }}</p>
                 </button>
-                <button v-if="battle.pick == 1" class=" py-1 row-start-4 col-start-1">{{ t('screens.battles.battle.chosen') }}</button>
-
-
+                <button v-if="battle.pick == 1" class=" py-1 row-start-4 col-start-1" disabled>{{ t('screens.battles.battle.chosen') }}</button>
 
                 <img src="../assets/images/battles/vs-sign.png" class=" w-16 object-contain row-start-2 col-start-2" alt="" >
 

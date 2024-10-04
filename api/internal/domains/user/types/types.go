@@ -1,5 +1,16 @@
 package types
 
+type Currency string
+
+const (
+	Point = Currency("point")
+	Race  = Currency("race")
+
+	RedKey   = Currency("red_key")
+	BlueKey  = Currency("blue_key")
+	GreenKey = Currency("green_key")
+)
+
 type User struct {
 	ID       int64  `json:"id" db:"user_id"`
 	Avatar   string `json:"avatar" db:"avatar"`
