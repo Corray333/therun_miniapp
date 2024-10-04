@@ -273,7 +273,7 @@ const loading = ref<boolean>(false)
     </section>
 </template>
 
-<style scoped>
+<style>
 
 .p-button {
     background-color: var(--primary) !important;

@@ -146,7 +146,7 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                             <p class="text-dark">
                                 {{ t('screens.friens.invite.commonInviteDescription') }}
                             </p>
-                            <p class="flex gap-1"><bcoin />3000 <key color="var(--blue_key)"/>3</p>
+                            <p class="flex gap-1"><bcoin />1000 <key color="var(--blue_key)"/>1</p>
                         </p>
                     </div>
                 </div>
@@ -159,7 +159,7 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                             <p class="text-dark">
                                 {{ t('screens.friens.invite.premiumInviteDescription') }}
                             </p>
-                            <p class="flex gap-1"><bcoin />3000 <key color="var(--red_key)"/>3</p>
+                            <p class="flex gap-1"><bcoin />3000 <key color="var(--red_key)"/>3 <key color="var(--blue_key)"/>2</p>
                         </p>
                     </div>
                 </div>

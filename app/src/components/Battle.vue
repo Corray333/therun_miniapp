@@ -130,7 +130,7 @@ const prePick = ref<number>(0)
                 </span>
                 <span
                     class="w-full  row-start-2 col-start-1 relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center"
-                    :class="((showMiles || battle.pick != 0) && battle.userResult > battle.opponentResult)  && !battle.opponent.photo ? 'user-picked' : ''">
+                    :class="((showMiles || battle.pick != 0) && battle.userResult > battle.opponentResult)  && !battle.user.photo ? 'user-picked' : ''">
                     <img v-if="battle.user.photo" :src="battle.user.photo"
                         :class="(showMiles || battle.pick != 0) && battle.userResult > battle.opponentResult ? 'user-picked' : ''"
                         class=" w-full h-full absolute rounded-2xl" alt="">
