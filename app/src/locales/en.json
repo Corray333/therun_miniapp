@@ -12,7 +12,7 @@
         "balance":"Balance",
         "keys":"Keys",
         "bonuses":"Bonus points",
-        "keysDescription":"Get keys for various activities and use them to buy and upgrade buildings",
+        "keysDescription":"Get keys for various activities and use them to buy and upgrade buildings",
         "bonusesDescription":"Bonus points are used in all activities in the app, you can farm them or get for playing games",
         "raceDescription":"RACE coin is the main token in the app that will be listed on CEX exchanges",
         "ok":"Ok",
@@ -63,16 +63,16 @@
                 "types":{
                     "red":"RED box"
                 },
-                "openApprove":"Do you really want to insert all the keys and open the ",
+                "openApprove":"Do you really want to insert all the keys and open the ",
                 "openApproveCancel":"Cancel",
                 "openApproveOk":"Insert",
                 "claimBtn":"Great",
-                "caseInfo":"Get the keys for guessing the winner in Million Run battles, completing tasks and inviting friends"
+                "caseInfo":"Get the keys for guessing the winner in Million Run battles, completing tasks and inviting friends"
             },
             "header":"Welcome to Chibiverse!",
             "banner":{
                 "header":"Open the boxes",
-                "description":"Use the keys to open the boxes and get prizes"
+                "description":"Use the keys to open the boxes and get prizes"
             },
             "city":{
                 "header":"Chibi City",
@@ -81,11 +81,11 @@
             },
             "fights":{
                 "header":"Fights",
-                "description":"Pump your chibi team and participate in every day battles vs other chibis"
+                "description":"Pump your chibi team and participate in every day battles vs other chibis"
             },
             "team":{
                 "header":"My team",
-                "description":"Collect different chibi and create the strongest dream team in Chibiverse"
+                "description":"Collect different chibi and create the strongest dream team in Chibiverse"
             }
         },
         "friens":{
@@ -130,7 +130,7 @@
             },
             "slide3":{
                 "title":"One competition for different transports",
-                "description":"A pedestrian competes with a driver and a cyclist competes with a motorcyclist in equal game conditions"
+                "description":"A pedestrian competes with a driver and a cyclist competes with a motorcyclist in equal game conditions"
             },
             "slide4":{
                 "title":"“Million Run” game with interesting and simple mechanics",
@@ -138,11 +138,11 @@
             },
             "slide5":{
                 "title":"Build your own Chibiverse!",
-                "description":"Build buildings, make a chibi team, craft artifacts and battle with other users"
+                "description":"Build buildings, make a chibi team, craft artifacts and battle with other users"
             },
             "slide6":{
                 "title":"Use our Telegram mini-app<br>and the main app TheRun",
-                "description":"You can use this Mini App and download TheRun from the Google Play market or App Store for the full gaming experience"
+                "description":"You can use this Mini App and download TheRun from the Google Play market or App Store for the full gaming experience"
             }
         },
         "tasks":{
@@ -173,17 +173,17 @@
                 "chosen":"Your choice",
                 "errBetTooLate":"You can make a choice when a new World Round begins",
                 "errNotEnoughPoints":"Not enough points",
-                "pickApprove":"Do you really want to choose",
+                "pickApprove":"Do you really want to choose",
                 "pickApproveCancel":"Cancel",
                 "pickApproveOk":"Yes"
         },
             "noBattles":"Coming in a few hours!",
             "worldRound":"World round",
             "banner":{
-                "header":"Choose your favorite, wait for the victory and get a prize",
-                "description":"You can make a choice only during 12 hours after the start of the World Round which lasts for 26 hours"
+                "header":"Choose your favorite, wait for the victory and get a prize",
+                "description":"You can make a choice only during 12 hours after the start of the World Round which lasts for 26 hours"
             },
-            "info":"Right now these users participate in a battle in Million Run game. You can also play battles in the main app!"
+            "info":"Right now these users participate in a battle in Million Run game. You can also play battles in the main app!"
         }
     }
 }
