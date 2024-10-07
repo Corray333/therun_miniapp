@@ -139,9 +139,8 @@ export class Requirement {
 
 class LevelDetail {
     capacity: number = 0;
-    resources: string[] = [];
     cost: Cost[] = [];
-    requirements: Requirement[] = [];
+    requirements: Requirement[] | null = null;
     buildingDuration: number = 0;
 }
 
@@ -152,6 +151,6 @@ export class Warehouse {
     state: string = '';
     lastStateChange: number = 0;
     resources: Resource[] = [];
-    currentLevel: LevelDetail = new LevelDetail();
+    currentLevel: LevelDetail | null = null;
     nextLevel: LevelDetail | null = null;
 }

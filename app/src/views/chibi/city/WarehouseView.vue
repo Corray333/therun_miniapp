@@ -22,16 +22,16 @@ const baseURL = import.meta.env.VITE_BASE_URL
 
 
 const warehouse = ref<Warehouse>({
-	"img": "https://notably-great-coyote.ngrok-free.app/static/images/buildings/warehouse2.png",
+	"img": "https://notably-great-coyote.ngrok-free.app/static/images/buildings/warehouse1.png",
 	"type": "warehouse",
-	"level": 2,
-	"state": "idle",
+	"level": 0,
+	"state": "build",
 	"lastStateChange": 0,
 	"resources": [
 		{
 			"name": "",
 			"type": "quartz",
-			"amount": 10
+			"amount": 0
 		},
 		{
 			"name": "",
@@ -39,58 +39,27 @@ const warehouse = ref<Warehouse>({
 			"amount": 0
 		}
 	],
-	"currentLevel": {
-		"capacity": 2000,
-		"resources": [
-			"titan",
-			"quartz"
-		],
-		"cost": [
-			{
-				"currency": "point",
-				"amount": -2000
-			},
-			{
-				"currency": "blue_key",
-				"amount": -2
-			}
-		],
-		"requirements": [
-			{
-				"type": "warehouse",
-				"level": 1
-			}
-		],
-		"buildingDuration": 7200
-	},
+	"currentLevel": null,
 	"nextLevel": {
-		"capacity": 2000,
-		"resources": [
-			"titan",
-			"quartz"
-		],
+		"capacity": 1000,
 		"cost": [
 			{
 				"currency": "point",
-				"amount": -2000
+				"amount": -1000
 			},
 			{
 				"currency": "blue_key",
-				"amount": -2
+				"amount": -1
 			}
 		],
-		"requirements": [
-			{
-				"type": "warehouse",
-				"level": 1
-			}
-		],
-		"buildingDuration": 7200
+		"requirements": null,
+		"buildingDuration": 600
 	}
 })
 
 const capacityUsed = ref(0)
 const maxLevel = ref<boolean>(false)
+const notBought = ref<boolean>(true)
 
 const getWarehouse = async () => {
     try {
@@ -173,7 +142,7 @@ onBeforeMount(()=>{
                     <p class=" font-bold">{{ t(`screens.chibi.city.buildings.${warehouse.type}.header`) }}</p>
                     <p class=" text-dark">{{ t(`screens.chibi.city.buildings.${warehouse.type}.fullDescription`) }}</p>
                 </p>
-                <div class="flex gap-4">
+                <div v-if="warehouse.currentLevel" class="flex gap-4">
                     <div class="shield">
                         <div class="text-center">
                             <p class="level">{{ warehouse.level }}</p>
@@ -221,12 +190,13 @@ onBeforeMount(()=>{
                 </div>
 
                 <div v-if="!maxLevel" class="requirements">
-                    <p class=" font-bold mb-2">{{ t('screens.chibi.city.buildings.requirements') }}</p>
+                    <p class=" font-bold">{{ t('screens.chibi.city.buildings.requirements') }}</p>
                     <BuildingCardTiny class="requirement" v-for="(building, i) of warehouse.nextLevel?.requirements" :key="i" :building="building" />
                 </div>
 
-                <button class=" py-2">{{ t('screens.chibi.city.buildings.upgrade') }}</button>
+                <button :disable="notBought" class=" py-2">{{ t('screens.chibi.city.buildings.upgrade') }}</button>
             </div>
+            <button v-if="notBought" class=" py-2">{{ t('screens.chibi.city.buildings.build') }}</button>
         </section>
 
     </section>

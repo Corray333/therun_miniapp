@@ -84,6 +84,7 @@
                 "buildings":{
                     "level":"Level",
                     "upgrade":"Upgrade",
+                    "build":"Build",
                     "upgrading":"Upgrade",
                     "cost":"Cost",
                     "requirements":"Requirements",

@@ -84,6 +84,7 @@
                 "buildings":{
                     "level":"Уровень",
                     "upgrading":"Улучшение",
+                    "build":"Построить",
                     "upgrade":"Улучшить",
                     "cost":"Стоимость",
                     "requirements":"Требования",
