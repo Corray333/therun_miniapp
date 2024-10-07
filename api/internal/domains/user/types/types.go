@@ -45,3 +45,8 @@ type Referal struct {
 	Username  string `json:"username" db:"username"`
 	IsPremium bool   `json:"isPremium" db:"is_premium"`
 }
+
+type BalanceChange struct {
+	Currency Currency `json:"currency" db:"currency"`
+	Amount   int      `json:"amount" db:"amount"`
+}

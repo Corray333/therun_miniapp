@@ -82,13 +82,24 @@
                 "upgradeBtn":"Level",
                 "buildBtn":"Build",
                 "buildings":{
+                    "level":"Level",
+                    "upgrade":"Upgrade",
+                    "upgrading":"Upgrade",
+                    "cost":"Cost",
+                    "requirements":"Requirements",
                     "warehouse":{
-                        "name":"Warehouse",
-                        "description":"Storage for your resources"
+                        "name":"Storage",
+                        "description":"Storage for your resources",
+                        "header":"Storage of resources",
+                        "fullDescription":"All your resources will be stored in the warehouse",
+                        "filled":"Filled",
+                        "upgrade":"Upgrade storage to get more resources"
                     },
                     "mine":{
                         "name":"Mine",
-                        "description":"Mine ores and minerals"
+                        "description":"Mine ores and minerals",
+                        "header":"Extraction of ores and minerals",
+                        "fullDescription":"Mine ore and minerals, they are used to build new buildings and produce artifacts"
                     }
                 }
             },

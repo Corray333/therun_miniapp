@@ -25,6 +25,11 @@ const router = createRouter({
       component: () => import('../views/chibi/ChibiCityView.vue')
     },
     {
+      path: '/chibi/city/warehouse',
+      name: 'warehouse',
+      component: () => import('../views/chibi/city/WarehouseView.vue')
+    },
+    {
       path: '/battles',
       name: 'battles',
       component: () => import('../views/BattlesView.vue')

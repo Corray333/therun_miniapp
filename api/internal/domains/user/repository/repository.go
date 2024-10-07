@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log/slog"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/user/service"
@@ -9,6 +11,10 @@ import (
 	"github.com/Corray333/therun_miniapp/internal/storage"
 	global_types "github.com/Corray333/therun_miniapp/internal/types"
 	"github.com/jmoiron/sqlx"
+)
+
+var (
+	ErrInvalidTxType = errors.New("invalid transaction type")
 )
 
 type UserRepository struct {
@@ -45,12 +51,27 @@ func (r *UserRepository) RollbackTx(ctx context.Context) error {
 	return tx.Rollback()
 }
 
-func (r *UserRepository) GetTx(ctx context.Context) *sqlx.Tx {
-	tx, ok := ctx.Value(global_types.TxKey{}).(*sqlx.Tx)
-	if !ok {
-		return nil
+func (r *UserRepository) getTx(ctx context.Context) (tx *sqlx.Tx, isNew bool, err error) {
+	txRaw := ctx.Value(storage.TxKey{})
+	if txRaw != nil {
+		var ok bool
+		tx, ok = txRaw.(*sqlx.Tx)
+		if !ok {
+			slog.Error("invalid transaction type")
+			return nil, false, ErrInvalidTxType
+		}
 	}
-	return tx
+	if tx == nil {
+		tx, err = r.db.BeginTxx(ctx, nil)
+		if err != nil {
+			slog.Error("failed to begin transaction: " + err.Error())
+			return nil, false, err
+		}
+
+		return tx, true, nil
+	}
+
+	return tx, false, nil
 }
 
 func (r *UserRepository) GetUser(userID int64) (*types.User, error) {
@@ -85,6 +106,7 @@ func (r *UserRepository) GetRefererID(refCode string) (int64, error) {
 }
 
 func (r *UserRepository) CreateUser(user *types.User) error {
+	// Trigger inserts buildings, resources etc. for new users
 	_, err := r.db.NamedExec("INSERT INTO users (user_id, username, avatar, in_app_id, point_balance, race_balance, red_key_balance, last_claim, max_points, farm_time, ref_code, referer, is_premium, is_activated) VALUES (:user_id, :username, :avatar, 0, :point_balance, :race_balance, :red_key_balance, :last_claim, :max_points, :farm_time, :ref_code, :referer, :is_premium, :is_activated)", user)
 	return err
 }
@@ -144,22 +166,31 @@ func (r *UserRepository) CountReferals(userID int64) (refsActivated, refsFrozen,
 	return refsActivated, refsFrozen, refsPremiumActivatedNotClaimed, refsPremiumFrozenNotClaimed, refsActivatedNotClaimed, refsFrozenNotClaimed, nil
 }
 
-func (r *UserRepository) ChangeBalances(userID int64, pointsAmount, raceAmount, keyAmount int) (int, int, int, error) {
-	rows, err := r.db.Query("UPDATE users SET point_balance = point_balance + $1, race_balance = race_balance + $2, red_key_balance = red_key_balance + $3 WHERE user_id = $4 RETURNING point_balance, race_balance, red_key_balance", pointsAmount, raceAmount, keyAmount, userID)
+func (r *UserRepository) ChangeBalances(ctx context.Context, userID int64, changes []types.BalanceChange) error {
+	tx, isNew, err := r.getTx(ctx)
 	if err != nil {
-		return 0, 0, 0, err
+		return err
 	}
-	defer rows.Close()
+	if isNew {
+		defer tx.Rollback()
+	}
 
-	var pointBalance, raceBalance, keyBalance int
-	for rows.Next() {
-		err = rows.Scan(&pointBalance, &raceBalance, &keyBalance)
+	for _, change := range changes {
+		fmt.Println("UPDATE users SET " + string(change.Currency) + "_balance = " + string(change.Currency) + "_balance + $1 WHERE user_id = $2")
+		_, err := tx.Exec("UPDATE users SET "+string(change.Currency)+"_balance = "+string(change.Currency)+"_balance + $1 WHERE user_id = $2", change.Amount, userID)
 		if err != nil {
-			return 0, 0, 0, err
+			return err
 		}
 	}
 
-	return pointBalance, raceBalance, keyBalance, nil
+	if isNew {
+		if err := tx.Commit(); err != nil {
+			slog.Error("failed to commit transaction: " + err.Error())
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (r *UserRepository) SetPremium(userID int64, isPremium bool) error {

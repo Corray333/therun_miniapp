@@ -87,7 +87,7 @@ func New() *App {
 	casesController := cases.NewCasesController(router, store, userController.GetService())
 	app.AddController(casesController)
 
-	cityController := city.NewCityController(router, store)
+	cityController := city.NewCityController(router, store, userController.GetRepository())
 	app.AddController(cityController)
 
 	return app

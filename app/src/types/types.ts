@@ -1,3 +1,5 @@
+
+
 export class User {
     id: number=0;
     avatar: string="";
@@ -113,4 +115,43 @@ export class Buildings {
         this.mine = mine;
         this.warehouse = warehouse;
     }
+}
+
+
+
+// City
+
+class Resource {
+    name: string = '';
+    type: string = '';
+    amount: number = 0;
+}
+
+class Cost {
+    currency: string = '';
+    amount: number = 0;
+}
+
+export class Requirement {
+    type: string = '';
+    level: number = 0;
+}
+
+class LevelDetail {
+    capacity: number = 0;
+    resources: string[] = [];
+    cost: Cost[] = [];
+    requirements: Requirement[] = [];
+    buildingDuration: number = 0;
+}
+
+export class Warehouse {
+    img: string = '';
+    type: string = '';
+    level: number = 0;
+    state: string = '';
+    lastStateChange: number = 0;
+    resources: Resource[] = [];
+    currentLevel: LevelDetail = new LevelDetail();
+    nextLevel: LevelDetail | null = null;
 }

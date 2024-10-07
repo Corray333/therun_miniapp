@@ -37,3 +37,7 @@ func NewUserController(router *chi.Mux, tg *telegram.TelegramClient, store *stor
 func (c *UserController) Build() {
 	c.transport.RegisterRoutes()
 }
+
+func (c *UserController) GetRepository() *repository.UserRepository {
+	return c.repo
+}

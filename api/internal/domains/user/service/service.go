@@ -28,7 +28,6 @@ type repository interface {
 	CountReferals(userID int64) (refsActivated, refsFrozen, refsPremiumActivatedNotClaimed, refsPremiumFrozenNotClaimed, refsActivatedNotClaimed, refsFrozenNotClaimed int, err error)
 	ClaimRefs(userID int64) (rewardsGot int, err error)
 
-	ChangeBalances(userID int64, pointsAmount, raceAmount, keyAmount int) (int, int, int, error)
 	SetPremium(userID int64, isPremium bool) error
 
 	ActivateUser(userID int64) error
@@ -264,10 +263,6 @@ func (s *UserService) DailyCheck(userID int64) (dailyCheckStreak int, dailyCheck
 	}
 
 	return user.DailyCheckStreak, user.DailyCheckLast, nil
-}
-
-func (s *UserService) ChangeBalances(userID int64, pointsAmount, raceAmount, keyAmount int) (int, int, int, error) {
-	return s.repo.ChangeBalances(userID, pointsAmount, raceAmount, keyAmount)
 }
 
 func (s *UserService) SetPremium(userID int64, isPremium bool) error {

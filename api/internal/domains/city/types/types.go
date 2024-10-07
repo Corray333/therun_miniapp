@@ -7,17 +7,24 @@ import (
 )
 
 type Resource struct {
-	Name   string
-	Type   string
-	Amount int
+	Name   string `json:"name"`
+	Type   string `json:"type"`
+	Amount int    `json:"amount"`
 }
 
 type ResourceType string
 type BuildingType string
+type BuildingState string
 
 const (
 	ResourceTitan  = ResourceType("titan")
 	ResourceQuartz = ResourceType("quartz")
+)
+
+const (
+	BuildingStateIdle  = BuildingState("idle")
+	BuildingStateBuild = BuildingState("build")
+	BuildingStateWork  = BuildingState("work")
 )
 
 const (
@@ -27,27 +34,21 @@ const (
 	BuildingForest    = BuildingType("forest")
 )
 
-type Cost struct {
-	Currency user_types.Currency `json:"currency"`
-	Amount   int                 `json:"amount"`
-}
-
 type Requirement struct {
-	Type  BuildingType
-	Level int
+	Type  BuildingType `json:"type"`
+	Level int          `json:"level"`
 }
 
 type WarehouseLevel struct {
-	Capacity         int
-	Resources        []ResourceType
-	Cost             []Cost
-	Requirements     []Requirement
-	BuildingDuration time.Duration
+	Capacity         int                        `json:"capacity"`
+	Cost             []user_types.BalanceChange `json:"cost"`
+	Requirements     []Requirement              `json:"requirements"`
+	BuildingDuration time.Duration              `json:"buildingDuration"`
 }
 
 type Warehouse []WarehouseLevel
 
-func (w Warehouse) GetNextLevelCost(level int) []Cost {
+func (w Warehouse) GetNextLevelCost(level int) []user_types.BalanceChange {
 	if level < 0 {
 		return nil
 	}
@@ -60,37 +61,30 @@ func (w Warehouse) GetNextLevelCost(level int) []Cost {
 var WarehouseLevels = Warehouse{
 	WarehouseLevel{
 		Capacity:         1000,
-		BuildingDuration: 10 * time.Minute,
-		Resources: []ResourceType{
-			ResourceTitan,
-		},
-		Cost: []Cost{
+		BuildingDuration: 10 * 60, // 10 minutes
+		Cost: []user_types.BalanceChange{
 			{
 				Currency: user_types.Point,
-				Amount:   1000,
+				Amount:   -1000,
 			},
 			{
 				Currency: user_types.BlueKey,
-				Amount:   1,
+				Amount:   -1,
 			},
 		},
 		Requirements: nil,
 	},
 	WarehouseLevel{
 		Capacity:         2000,
-		BuildingDuration: 2 * time.Hour,
-		Resources: []ResourceType{
-			ResourceTitan,
-			ResourceQuartz,
-		},
-		Cost: []Cost{
+		BuildingDuration: 2 * 60 * 60, // 2 hours
+		Cost: []user_types.BalanceChange{
 			{
 				Currency: user_types.Point,
-				Amount:   2000,
+				Amount:   -2000,
 			},
 			{
 				Currency: user_types.BlueKey,
-				Amount:   2,
+				Amount:   -2,
 			},
 		},
 		Requirements: []Requirement{
@@ -103,14 +97,24 @@ var WarehouseLevels = Warehouse{
 }
 
 type Building interface {
-	GetNextLevelCost(level int) []Cost
+	GetNextLevelCost(level int) []user_types.BalanceChange
 }
 
 type BuildingPublic struct {
-	Img         string       `json:"img"`
-	Type        BuildingType `json:"type"`
-	Level       int          `json:"level"`
-	UpgradeCost []Cost       `json:"upgradeCost"`
+	Img             string                     `json:"img"`
+	Type            BuildingType               `json:"type" db:"type"`
+	Level           int                        `json:"level" db:"level"`
+	State           BuildingState              `json:"state" db:"state"`
+	LastStateChange int64                      `json:"lastStateChange" db:"last_state_change"`
+	UpgradeCost     []user_types.BalanceChange `json:"upgradeCost,omitempty"`
+}
+
+type WarehousePublic struct {
+	BuildingPublic
+
+	Resources    []Resource      `json:"resources"`
+	CurrentLevel *WarehouseLevel `json:"currentLevel"`
+	NextLevel    *WarehouseLevel `json:"nextLevel"`
 }
 
 var Buildings = map[BuildingType]Building{

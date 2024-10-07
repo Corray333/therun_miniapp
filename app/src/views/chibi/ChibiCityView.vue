@@ -18,39 +18,11 @@ const accStore = useAccountStore()
 const componentsStore = useComponentsStore()
 const { t } = useI18n()
 
-const buildings = ref<Buildings>({
-    "fabric": {
-        "img": "https://notably-great-coyote.ngrok-free.app/static/images/buildings/fabric0.png",
-        "type": "fabric",
-        "level": 0,
-        "upgradeCost": null
-    },
-    "mine": {
-        "img": "https://notably-great-coyote.ngrok-free.app/static/images/buildings/mine0.png",
-        "type": "mine",
-        "level": 0,
-        "upgradeCost": null
-    },
-    "warehouse": {
-        "img": "https://notably-great-coyote.ngrok-free.app/static/images/buildings/warehouse0.png",
-        "type": "warehouse",
-        "level": 0,
-        "upgradeCost": [
-            {
-                "currency": "point",
-                "amount": 1000
-            },
-            {
-                "currency": "blue_key",
-                "amount": 1
-            }
-        ]
-    }
-})
+const buildings = ref<Buildings>()
 
 const getCity = async () => {
     try {
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/cases`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/city`, {
             withCredentials: true,
             headers: {
                 Authorization: accStore.token
@@ -75,6 +47,10 @@ const getCity = async () => {
     }
 }
 
+onBeforeMount(()=>{
+    getCity()
+})
+
 </script>
 
 <template>
@@ -85,7 +61,9 @@ const getCity = async () => {
             <h1 class="text-center">{{ t('screens.chibi.city.yourCityHeader') }}</h1>
 
             <div class="buildings">
-                <BuildingCard :building="buildings?.warehouse" />
+                <router-link to="/chibi/city/warehouse">
+                    <BuildingCard :building="buildings?.warehouse" />
+                </router-link>
                 <BuildingCard :building="buildings?.mine" />
             </div>
         </section>
