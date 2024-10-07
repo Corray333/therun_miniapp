@@ -2,7 +2,6 @@
 -- +goose StatementBegin
 
 DROP TRIGGER IF EXISTS negative_balance_trigger ON users;
-DROP FUNCTION IF EXISTS check_balances();
 
 CREATE OR REPLACE FUNCTION check_balances() RETURNS TRIGGER AS $$
 BEGIN
