@@ -85,7 +85,7 @@ const notBought = computed(() => warehouse.value.level === 0)
 const balanceEnoughForUpgrade = computed(() => {
     if (warehouse.value.nextLevel === null) return false
     for (const cost of warehouse.value.nextLevel.cost) {
-        if (accStore.user[`${cost.currency}Balance`] < -cost.amount) return false
+        if ((accStore.user as any)[`${cost.currency}Balance`] < -cost.amount) return false
     }
     return true
 })
