@@ -69,3 +69,23 @@
 
 
 }
+
+.delay-enter-active,
+.delay-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.delay-enter-from,
+.delay-leave-to {
+    opacity: 0;
+}
+
+.scale-enter-active,
+.scale-leave-active {
+    transition: transform 0.5s ease;
+}
+
+.scale-enter-from,
+.scale-leave-to {
+    transform: scale(0);
+}

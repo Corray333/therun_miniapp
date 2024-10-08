@@ -48,7 +48,7 @@ const showMore = ref<boolean>(false)
                 </router-link>
             </li>
             <li>
-                <router-link to="/chibi" class=" flex flex-col gap-1 text-dark items-center router-link">
+                <router-link to="/chibi" :class="route.path.includes('/chibi') ? 'router-link-active' : ''" class=" flex flex-col gap-1 text-dark items-center router-link">
                     <chibi :color="route.path.includes('/chibi') ? 'var(--primary)' : 'var(--dark)'" />
                     <p>{{ t('menu.chibi') }}</p>
                 </router-link>

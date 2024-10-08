@@ -7,9 +7,9 @@ export class User {
     pointBalance: number=0;
     raceBalance: number=0;
 
-    red_keyBalance: number=10;
-    blue_keyBalance: number=10;
-    green_keyBalance: number=10;
+    red_keyBalance: number=0;
+    blue_keyBalance: number=0;
+    green_keyBalance: number=0;
     
     lastClaim: number=0;
     farmingFrom: number=0;
@@ -121,7 +121,7 @@ export class Buildings {
 
 // City
 
-class Resource {
+export class Resource {
     name: string = '';
     type: string = '';
     amount: number = 0;

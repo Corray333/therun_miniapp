@@ -21,6 +21,13 @@
         "blueKeys": "Blue keys",
         "greenKeys": "Green keys"
     },
+    "resources":{
+        "mineral":"Minerals",
+        "ore":"Ores",
+        "metal":"Metals",
+        "crystal":"Crystals",
+        "wood":"Wood"
+    },
     "screens":{
         "farming":{
             "banner":"Upgrade your Droid",
@@ -88,19 +95,27 @@
                     "upgrading":"Upgrade",
                     "cost":"Cost",
                     "requirements":"Requirements",
+                    "buildApprove":"Do you really want to %s the %s?",
+                    "buildApproveCancel":"Cancel",
+                    "notAvailible":"Requirements are not met",
+                    "maxLevel":"Max level reached🔥",
+                    "actions":{
+                        "build":"build",
+                        "upgrade":"upgrade"
+                    },
                     "warehouse":{
                         "name":"Storage",
                         "description":"Storage for your resources",
                         "header":"Storage of resources",
-                        "fullDescription":"All your resources will be stored in the warehouse",
+                        "fullDescription":"All your resources will be stored in the warehouse",
                         "filled":"Filled",
                         "upgrade":"Upgrade storage to get more resources"
                     },
                     "mine":{
                         "name":"Mine",
                         "description":"Mine ores and minerals",
-                        "header":"Extraction of ores and minerals",
-                        "fullDescription":"Mine ore and minerals, they are used to build new buildings and produce artifacts"
+                        "header":"Extraction of ores and minerals",
+                        "fullDescription":"Mine ore and minerals, they are used to build new buildings and produce artifacts"
                     }
                 }
             },
