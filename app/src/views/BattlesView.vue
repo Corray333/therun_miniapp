@@ -90,7 +90,7 @@ const getRound = async () => {
 
         <p v-if="round == undefined" class="text-center font-dark mt-4"><i class=" pi pi-spinner pi-spin" style="font-size: 1.5rem; color: var(--dark)"></i></p>
 
-        <section  class=" p-4 flex flex-col gap-4">
+        <section v-else class=" p-4 flex flex-col gap-4">
             <Balances/>
 
             <div class="timer flex flex-col items-center justify-center p-4 rounded-2xl bg-secondary">
