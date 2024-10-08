@@ -7,9 +7,9 @@ import (
 )
 
 type Resource struct {
-	Name   string       `json:"name"`
+	Name   string       `json:"name" db:"name"`
 	Type   ResourceType `json:"type"`
-	Amount int          `json:"amount"`
+	Amount int          `json:"amount" db:"amount"`
 }
 
 var Resources = map[string]Resource{

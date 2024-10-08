@@ -121,7 +121,7 @@ func (r *CityRepository) getTx(ctx context.Context) (tx *sqlx.Tx, isNew bool, er
 }
 
 func (r *CityRepository) GetResources(ctx context.Context, userID int64) (resources []types.Resource, err error) {
-	if err = r.db.Select(&resources, "SELECT type, amount FROM resources WHERE user_id = $1", userID); err != nil {
+	if err = r.db.Select(&resources, "SELECT name, amount FROM resources WHERE user_id = $1", userID); err != nil {
 		slog.Error("failed to select resources: " + err.Error())
 		return nil, err
 	}
