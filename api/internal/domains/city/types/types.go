@@ -1,8 +1,6 @@
 package types
 
 import (
-	"time"
-
 	user_types "github.com/Corray333/therun_miniapp/internal/domains/user/types"
 )
 
@@ -59,7 +57,7 @@ type WarehouseLevel struct {
 	Capacity         int                        `json:"capacity"`
 	Cost             []user_types.BalanceChange `json:"cost"`
 	Requirements     []Requirement              `json:"requirements"`
-	BuildingDuration time.Duration              `json:"buildingDuration"`
+	BuildingDuration int64                      `json:"buildingDuration"`
 }
 
 type Warehouse []WarehouseLevel
@@ -72,6 +70,16 @@ func (w Warehouse) GetNextLevelCost(level int) []user_types.BalanceChange {
 		return nil
 	}
 	return w[level].Cost
+}
+
+func (w Warehouse) GetNextLevelBuildTime(level int) int64 {
+	if level < 0 {
+		return 0
+	}
+	if level >= len(w) {
+		return 0
+	}
+	return int64(w[level].BuildingDuration)
 }
 
 var WarehouseLevels = Warehouse{
@@ -114,6 +122,7 @@ var WarehouseLevels = Warehouse{
 
 type Building interface {
 	GetNextLevelCost(level int) []user_types.BalanceChange
+	GetNextLevelBuildTime(level int) int64
 }
 
 type BuildingPublic struct {
@@ -122,6 +131,7 @@ type BuildingPublic struct {
 	Level           int                        `json:"level" db:"level"`
 	State           BuildingState              `json:"state" db:"state"`
 	LastStateChange int64                      `json:"lastStateChange" db:"last_state_change"`
+	StateUntil      int64                      `json:"stateUntil" db:"state_until"`
 	UpgradeCost     []user_types.BalanceChange `json:"upgradeCost,omitempty"`
 }
 

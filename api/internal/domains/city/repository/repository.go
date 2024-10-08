@@ -79,7 +79,7 @@ func (r *CityRepository) GetCity(ctx context.Context, userID int64) (buildings [
 		defer tx.Rollback()
 	}
 
-	if err = tx.Select(&buildings, "SELECT type, level FROM buildings WHERE user_id = $1", userID); err != nil {
+	if err = tx.Select(&buildings, "SELECT type, level, state, state_until FROM buildings WHERE user_id = $1", userID); err != nil {
 		slog.Error("failed to select buildings: " + err.Error())
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func (r *CityRepository) GetCity(ctx context.Context, userID int64) (buildings [
 }
 
 func (r *CityRepository) GetBuilding(ctx context.Context, userID int64, buildingType types.BuildingType) (building types.BuildingPublic, err error) {
-	if err = r.db.Get(&building, "SELECT type, level, state, last_state_change FROM buildings WHERE type = $1 AND user_id = $2", buildingType, userID); err != nil {
+	if err = r.db.Get(&building, "SELECT type, level, state, last_state_change, state_until FROM buildings WHERE type = $1 AND user_id = $2", buildingType, userID); err != nil {
 		slog.Error("failed to get building: " + err.Error())
 		return building, err
 	}
@@ -129,7 +129,7 @@ func (r *CityRepository) GetResources(ctx context.Context, userID int64) (resour
 	return resources, nil
 }
 
-func (r *CityRepository) UpgradeBuilding(ctx context.Context, userID int64, buildingType types.BuildingType) error {
+func (r *CityRepository) UpgradeBuilding(ctx context.Context, userID int64, buildingType types.BuildingType, buildingTime int64) error {
 	tx, isNew, err := r.getTx(ctx)
 	if err != nil {
 		return err
@@ -138,7 +138,7 @@ func (r *CityRepository) UpgradeBuilding(ctx context.Context, userID int64, buil
 		defer tx.Rollback()
 	}
 
-	_, err = tx.Exec("UPDATE buildings SET level = level + 1, last_state_change = $3, state = $4 WHERE type = $1 AND user_id = $2", buildingType, userID, time.Now().Unix(), types.BuildingStateBuild)
+	_, err = tx.Exec("UPDATE buildings SET level = level + 1, last_state_change = $3, state = $4, state_until = $5 WHERE type = $1 AND user_id = $2", buildingType, userID, time.Now().Unix(), types.BuildingStateBuild, time.Now().Unix()+buildingTime)
 	if err != nil {
 		slog.Error("failed to update building: " + err.Error())
 		return err

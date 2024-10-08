@@ -23,7 +23,7 @@ type repository interface {
 	GetCity(ctx context.Context, userID int64) ([]types.BuildingPublic, error)
 	GetBuilding(ctx context.Context, userID int64, buildingType types.BuildingType) (types.BuildingPublic, error)
 
-	UpgradeBuilding(ctx context.Context, userID int64, buildingType types.BuildingType) error
+	UpgradeBuilding(ctx context.Context, userID int64, buildingType types.BuildingType, buildingTime int64) error
 
 	GetResources(ctx context.Context, userID int64) ([]types.Resource, error)
 
@@ -127,7 +127,7 @@ func (s *CityService) UpgradeBuilding(userID int64, buildingType types.BuildingT
 		return err
 	}
 
-	if err := s.repo.UpgradeBuilding(ctx, userID, buildingType); err != nil {
+	if err := s.repo.UpgradeBuilding(ctx, userID, buildingType, types.Buildings[building.Type].GetNextLevelBuildTime(building.Level)); err != nil {
 		return err
 	}
 

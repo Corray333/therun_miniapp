@@ -26,7 +26,11 @@
         "ore":"Ores",
         "metal":"Metals",
         "crystal":"Crystals",
-        "wood":"Wood"
+        "wood":"Wood",
+        "meterials":{
+            "quartz":"Quartz",
+            "titan":"Titan"
+        }
     },
     "screens":{
         "farming":{

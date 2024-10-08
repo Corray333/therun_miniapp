@@ -24,9 +24,10 @@ const baseURL = import.meta.env.VITE_BASE_URL
 const warehouse = ref<Warehouse>({
     "img": "https://notably-great-coyote.ngrok-free.app/static/images/buildings/warehouse1.png",
     "type": "warehouse",
-    "level": 0,
+    "level": 1,
     "state": "build",
-    "lastStateChange": 0,
+    "lastStateChange": 1728409781,
+    "stateUntil": 1728417099,
     "resources": [
         {
             "name": "quartz",
@@ -39,7 +40,21 @@ const warehouse = ref<Warehouse>({
             "amount": 0
         }
     ],
-    "currentLevel": null,
+    "currentLevel": {
+        "capacity": 1000,
+        "cost": [
+            {
+                "currency": "point",
+                "amount": -1000
+            },
+            {
+                "currency": "blue_key",
+                "amount": -1
+            }
+        ],
+        "requirements": null,
+        "buildingDuration": 600
+    },
     "nextLevel": {
         "capacity": 1000,
         "cost": [
@@ -164,13 +179,76 @@ const sprintf = (format: string, ...args: any[]): string => {
     return format
 }
 
+const resourcesToDisplay = ref<Resource[]>([])
+
+const scrollToTop = () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' 
+    })
+}
+
+
+const remainingTime = ref<string>('00:00:00')
+const remainingSeconds = ref<number>(0)
+
+const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
+    const minutes = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+    const secondsRemaining = (seconds % 60).toString().padStart(2, '0');
+    return `${hours}:${minutes}:${secondsRemaining}`;
+};
+
+const calculateRemainingTimeAndPoints = () => {
+    const now = Date.now() / 1000
+    let secondsLeft = warehouse.value.stateUntil - now
+    remainingSeconds.value = secondsLeft
+
+    if (secondsLeft <= 0) {
+        remainingTime.value = '00:00:00'
+        return
+    }
+
+    remainingTime.value = formatTime(Math.floor(secondsLeft))
+}
+
+onBeforeMount(() => {
+    calculateRemainingTimeAndPoints()
+    setInterval(calculateRemainingTimeAndPoints, 1000)
+})
+
 </script>
 
 <template>
     <section class=" pb-20">
+        <Transition name="slide-down">
+            <section v-if="resourcesToDisplay.length > 0"
+                class="z-50 w-full h-screen bg-white fixed top-0 left-0">
+                <section class=" overflow-y-scroll h-full relative p-4">
+                    <i @click="resourcesToDisplay = []"
+                        class=" pi fixed pi-times bg-dark text-white aspect-square p-1 rounded-full top-4 right-4"></i>
+                    <p class="text-center text-dark font-bold my-4">{{
+                    t(`screens.chibi.city.buildings.${warehouse.type}.name`) }}</p>
+                    <div class="flex gap-2 flex-col">
+                        
+                        <div v-for="(res, i) of resourcesToDisplay" :key="i"
+                            class=" resource-mini font-bold flex rounded-2xl bg-half_dark p-4 gap-2 items-center">
+                            <img class=" w-16 object-contain aspect-square"
+                                :src="`${baseURL}/static/images/resources/${res.name}.png`" alt="">
+                            <p class="w-full">{{ t(`resources.meterials.${res.name}`) }}</p>
+                            <p>{{ res.amount }}</p>
+                        </div>
+
+                    </div>
+                </section>
+
+
+
+            </section>
+        </Transition>
+
         <Transition name="delay">
-            <section v-show="showUpgradeModal" @click.self="showUpgradeModal = false"
-                class=" wrapper fixed z-50 w-full h-screen top-0 left-0 flex items-center justify-center p-4 drop-shadow-lg">
+            <section v-show="showUpgradeModal" @click.self="showUpgradeModal = false" class=" wrapper">
                 <Transition name="scale">
                     <section v-if="showUpgradeModal" class=" modal">
 
@@ -223,7 +301,7 @@ const sprintf = (format: string, ...args: any[]): string => {
                             <p class="level">{{ warehouse.level }}</p>
                             <p class="label">{{ t('screens.chibi.city.buildings.level') }}</p>
                         </div>
-                        <i class=" text-dark pi pi-chevron-right"></i>
+                        <!-- <i class=" text-dark pi pi-chevron-right"></i> -->
                     </div>
                     <div class="shield">
                         <div class="text-center">
@@ -265,23 +343,22 @@ const sprintf = (format: string, ...args: any[]): string => {
                     </div>
                 </div>
 
-                <div v-if="!maxLevel" class="requirements">
+                <div v-if="!maxLevel && warehouse.nextLevel?.requirements?.length" class="requirements">
                     <p class=" font-bold">{{ t('screens.chibi.city.buildings.requirements') }}</p>
                     <BuildingCardTiny class="requirement" v-for="(building, i) of warehouse.nextLevel?.requirements"
                         :key="i" :building="building" />
                 </div>
-
                 <button :disabled="!balanceEnoughForUpgrade" @click="showUpgradeModal = true"
                     class="flex justify-center">
-                    <p v-if="balanceEnoughForUpgrade" class="flex gap-2">
+                    <p v-if="remainingSeconds > 0" class="flex gap-2 items-center">{{ t('screens.chibi.city.buildings.upgrading') }} <p class=" font-mono">{{ remainingTime }}</p> </p>
+                    <p v-else-if="balanceEnoughForUpgrade" class="flex gap-2">
                         {{ t('screens.chibi.city.buildings.upgrade') }}
-
-                    <div class="flex gap-1">
-                        <p class="flex items-center gap-1" v-for="(cost, i) of warehouse.nextLevel?.cost">
-                            <img class="h-6" :src="`${baseURL}/static/images/resources/${cost.currency}.png`" alt="">
-                        <p>{{ -cost.amount }}</p>
-                        </p>
-                    </div>
+                        <div class="flex gap-1">
+                            <p class="flex items-center gap-1" v-for="(cost, i) of warehouse.nextLevel?.cost">
+                                <img class="h-6" :src="`${baseURL}/static/images/resources/${cost.currency}.png`" alt="">
+                                <p>{{ -cost.amount }}</p>
+                            </p>
+                        </div>
                     </p>
                     <p v-else>{{ t('screens.chibi.city.buildings.notAvailible') }}</p>
                 </button>
@@ -305,7 +382,8 @@ const sprintf = (format: string, ...args: any[]): string => {
             </button>
 
             <section v-if="!notBought" class="resources">
-                <div class="resource-card" v-for="(v,k) of resourceDictionary" :key="k">
+                <div class="resource-card" v-for="(v, k) of resourceDictionary" :key="k"
+                    @click="resourcesToDisplay = v.resources">
                     <img class=" mx-auto max-w-80" :src="`${baseURL}/static/images/resources/${k}.png`" alt="">
                     <p>{{ t(`resources.${k}`) }}</p>
                     <p class=" resource-amount-label">{{ v.totalAmount }}</p>
@@ -318,8 +396,22 @@ const sprintf = (format: string, ...args: any[]): string => {
 
 
 <style scoped>
+.slide-down-enter-active,
+.slide-down-leave-active {
+    transition: transform 0.5s ease;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+    transform: translateY(100%);
+}
+
+.wrapper {
+    @apply fixed z-50 w-full h-screen top-0 left-0 flex items-center justify-center p-4 drop-shadow-lg;
+}
+
 .modal {
-    @apply max-w-80 gap-4 w-full rounded-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg
+    @apply max-w-80 gap-4 w-full rounded-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg;
 }
 
 .card {
@@ -338,7 +430,7 @@ const sprintf = (format: string, ...args: any[]): string => {
     @apply px-2 aspect-square flex items-center justify-center bg-custom_blue text-white rounded-md;
 }
 
-.resources{
+.resources {
     @apply grid grid-cols-2 gap-4;
 }
 
@@ -346,12 +438,11 @@ const sprintf = (format: string, ...args: any[]): string => {
     @apply bg-half_dark relative rounded-2xl p-4 flex flex-col items-center;
 }
 
-.resource-card>img{
+.resource-card>img {
     @apply w-full p-4
 }
 
 .resource-amount-label {
     @apply absolute top-4 right-4 bg-dark text-white p-1 rounded-full;
 }
-
 </style>

@@ -18,7 +18,44 @@ const accStore = useAccountStore()
 const componentsStore = useComponentsStore()
 const { t } = useI18n()
 
-const buildings = ref<Buildings>()
+const buildings = ref<Buildings>({
+    "fabric": {
+        state: "build",
+        "lastStateChange": 1728409781,
+        "stateUntil": 1728417099,
+        "img": "https://notably-great-coyote.ngrok-free.app/static/images/buildings/fabric0.png",
+        "type": "fabric",
+        "level": 0,
+        "upgradeCost": null
+    },
+    "mine": {
+        state: "build",
+        "lastStateChange": 1728409781,
+        "stateUntil": 1728417099,
+        "img": "https://notably-great-coyote.ngrok-free.app/static/images/buildings/mine0.png",
+        "type": "mine",
+        "level": 0,
+        "upgradeCost": null
+    },
+    "warehouse": {
+        state: "build",
+        "lastStateChange": 1728409781,
+        "stateUntil": 1728431136,
+        "img": "https://notably-great-coyote.ngrok-free.app/static/images/buildings/warehouse0.png",
+        "type": "warehouse",
+        "level": 1,
+        "upgradeCost": [
+            {
+                "currency": "point",
+                "amount": 1000
+            },
+            {
+                "currency": "blue_key",
+                "amount": 1
+            }
+        ]
+    }
+})
 
 const getCity = async () => {
     try {

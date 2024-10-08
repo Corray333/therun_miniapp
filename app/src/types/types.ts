@@ -97,6 +97,10 @@ export class Building {
     level: number;
     upgradeCost: UpgradeCost[] | null;
 
+    state: string = '';
+    lastStateChange: number = 0;
+    stateUntil: number = 0;
+
     constructor(img: string, type: string, level: number, upgradeCost: UpgradeCost[] | null) {
         this.img = img;
         this.type = type;
@@ -150,6 +154,7 @@ export class Warehouse {
     level: number = 0;
     state: string = '';
     lastStateChange: number = 0;
+    stateUntil: number = 0;
     resources: Resource[] = [];
     currentLevel: LevelDetail | null = null;
     nextLevel: LevelDetail | null = null;
