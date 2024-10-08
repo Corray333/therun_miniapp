@@ -7,9 +7,22 @@ import (
 )
 
 type Resource struct {
-	Name   string `json:"name"`
-	Type   string `json:"type"`
-	Amount int    `json:"amount"`
+	Name   string       `json:"name"`
+	Type   ResourceType `json:"type"`
+	Amount int          `json:"amount"`
+}
+
+var Resources = map[string]Resource{
+	"titan": {
+		Name:   "titan",
+		Type:   ResourceTypeOre,
+		Amount: 0,
+	},
+	"quartz": {
+		Name:   "quartz",
+		Type:   ResourceTypeMineral,
+		Amount: 0,
+	},
 }
 
 type ResourceType string
@@ -17,8 +30,11 @@ type BuildingType string
 type BuildingState string
 
 const (
-	ResourceTitan  = ResourceType("titan")
-	ResourceQuartz = ResourceType("quartz")
+	ResourceTypeMetal   = ResourceType("metal")
+	ResourceTypeWood    = ResourceType("wood")
+	ResourceTypeMineral = ResourceType("mineral")
+	ResourceTypeOre     = ResourceType("ore")
+	ResourceTypeCrystal = ResourceType("crystal")
 )
 
 const (

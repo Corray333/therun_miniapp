@@ -82,6 +82,10 @@ func (s *CityService) GetWarehouse(userID int64) (*types.WarehousePublic, error)
 		return nil, err
 	}
 
+	for i := range resources {
+		resources[i].Type = types.Resources[resources[i].Name].Type
+	}
+
 	var nextLevel *types.WarehouseLevel
 	if warehouseLevel.Level < len(types.WarehouseLevels) {
 		nextLevel = &types.WarehouseLevels[warehouseLevel.Level]
