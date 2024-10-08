@@ -319,7 +319,7 @@ const modalPick = ref<string>('keys')
             <section class=" flex flex-col gap-4">
                 <button
                     v-if="accStore.user.farmingFrom > accStore.user.lastClaim && accStore.user.farmingFrom + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1"
-                    class="flex items-center justify-between" @click="claim" disabled>
+                    class="flex items-center justify-between text-lg" @click="claim" disabled>
                     <p class=" flex gap-2">
                         {{ t('screens.farming.button.farming') }}
                     <p class="flex items-center gap-1">
@@ -333,14 +333,14 @@ const modalPick = ref<string>('keys')
                     </p>
                 </button>
                 <button v-else-if="accStore.user.farmingFrom > accStore.user.lastClaim"
-                    class="flex items-center justify-center gap-2" @click="claim">
+                    class="flex items-center justify-center gap-2 text-lg" @click="claim">
                     {{ t('screens.farming.button.claim') }}
                     <p class="flex items-center gap-1">
                         <bcoin />
                         {{ accStore.user.maxPoints }}
                     </p>
                 </button>
-                <button v-else class="flex items-center justify-center gap-2" @click="start"
+                <button v-else class="flex items-center justify-center gap-2 text-lg" @click="start"
                     :disabled="accStore.user.farmingFrom + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1">
                     {{ t('screens.farming.button.start') }}
                 </button>

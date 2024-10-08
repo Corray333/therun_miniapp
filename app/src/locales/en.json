@@ -12,7 +12,7 @@
         "balance":"Balance",
         "keys":"Keys",
         "bonuses":"Bonus points",
-        "keysDescription":"Get keys for various activities and use them to buy and upgrade buildings",
+        "keysDescription":"Get keys for various activities and use them to open boxes, to build and upgrade buildings",
         "bonusesDescription":"Bonus points are used in all activities in the app, you can farm them or get for playing games",
         "raceDescription":"RACE coin is the main token in the app that will be listed on CEX exchanges",
         "ok":"Ok",
@@ -148,9 +148,9 @@
             },
             "invite":{
                 "commonInviteHeader":"Invite your friends",
-                "commonInviteDescription":" for you and your friend",
+                "commonInviteDescription":" For you and your friend",
                 "premiumInviteHeader":"Invite your friends with Telegram Premium",
-                "premiumInviteDescription":" for you and your friend"
+                "premiumInviteDescription":" For you and your friend"
             },
             "availibleForClaim":"Available for claim",
             "claimBtn":"Claim",
@@ -209,7 +209,7 @@
             "checkError":"You have not completed the task yet"
         },
         "battles":{
-            "header":"Battles of the day",
+            "header":"Battles of the day <br> in Million Run game",
             "battle":{
                 "participationFee":"Participation fee",
                 "prize":"Prize",
@@ -220,14 +220,14 @@
                 "pickApprove":"Do you really want to choose",
                 "pickApproveCancel":"Cancel",
                 "pickApproveOk":"Yes"
-        },
+            },
             "noBattles":"Coming in a few hours!",
             "worldRound":"World round",
             "banner":{
                 "header":"Choose your favorite, wait for the victory and get a prize",
                 "description":"You can make a choice only during 12 hours after the start of the World Round which lasts for 26 hours"
             },
-            "info":"Right now these users participate in a battle in Million Run game. You can also play battles in the main app!"
+            "info":"Right now these users participate in a battles in Million Run game. You can also play battles in the main app!"
         }
     }
 }

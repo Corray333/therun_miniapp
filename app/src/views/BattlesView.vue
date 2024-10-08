@@ -87,14 +87,10 @@ const getRound = async () => {
 
 <template>
     <section class="pb-20">
-        <Transition>
-            <section v-if="round === undefined"
-                class=" fixed z-40 top-0 left-0 w-full h-screen bg-white flex justify-center items-center">
-                <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-            </section>
-        </Transition>
 
-        <section class=" p-4 flex flex-col gap-4">
+        <p v-if="round == undefined" class="text-center font-dark mt-4"><i class=" pi pi-spinner pi-spin" style="font-size: 1.5rem; color: var(--dark)"></i></p>
+
+        <section  class=" p-4 flex flex-col gap-4">
             <Balances/>
 
             <div class="timer flex flex-col items-center justify-center p-4 rounded-2xl bg-secondary">
@@ -107,16 +103,19 @@ const getRound = async () => {
                 <p class="">{{ t('screens.battles.banner.description') }}</p>
             </div>
 
-            <h2 class="text-center text-2xl">{{ t('screens.battles.header') }}</h2>
+            <h2 class="text-center text-2xl" v-html="t('screens.battles.header')"></h2>
 
-            <section class=" flex flex-col gap-4">
-                <Battle v-for="(battle, i) of round?.battles" :key="i" :battle="battle" :show-miles="showMiles" />
-            </section>
-
-            <span class="flex gap-2 text-dark">
-                <i class=" pi pi-info-circle mt-1" style="font-size: 1.25rem;"></i>
-                <p>{{ t('screens.battles.info') }}</p>
-            </span>
+            <p v-if="!round?.battles.length" class="font-bold text-dark text-center">{{ t('screens.battles.noBattles') }}</p>
+            <div v-else>
+                <section class=" flex flex-col gap-4">
+                    <Battle v-for="(battle, i) of round?.battles" :key="i" :battle="battle" :show-miles="showMiles" />
+                </section>
+    
+                <span class="flex gap-2 text-dark">
+                    <i class=" pi pi-info-circle mt-1" style="font-size: 1.25rem;"></i>
+                    <p>{{ t('screens.battles.info') }}</p>
+                </span>
+            </div>
         </section>
     </section>
 </template>

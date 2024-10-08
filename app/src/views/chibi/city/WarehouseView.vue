@@ -24,10 +24,10 @@ const baseURL = import.meta.env.VITE_BASE_URL
 const warehouse = ref<Warehouse>({
     "img": "https://notably-great-coyote.ngrok-free.app/static/images/buildings/warehouse1.png",
     "type": "warehouse",
-    "level": 1,
+    "level": 0,
     "state": "build",
-    "lastStateChange": 1728409781,
-    "stateUntil": 1728417099,
+    "lastStateChange": 0,
+    "stateUntil": 0,
     "resources": [
         {
             "name": "quartz",
@@ -40,37 +40,12 @@ const warehouse = ref<Warehouse>({
             "amount": 0
         }
     ],
-    "currentLevel": {
-        "capacity": 1000,
-        "cost": [
-            {
-                "currency": "point",
-                "amount": -1000
-            },
-            {
-                "currency": "blue_key",
-                "amount": -1
-            }
-        ],
-        "requirements": null,
-        "buildingDuration": 600
-    },
-    "nextLevel": {
-        "capacity": 1000,
-        "cost": [
-            {
-                "currency": "point",
-                "amount": -1000
-            },
-            {
-                "currency": "blue_key",
-                "amount": -1
-            }
-        ],
-        "requirements": null,
-        "buildingDuration": 600
-    }
+    "currentLevel": null,
+    "nextLevel": null
 })
+
+const loaded = ref<boolean>(false)
+
 
 const resourceDictionary = computed(() => {
     return warehouse.value.resources.reduce((acc, resource) => {
@@ -114,6 +89,7 @@ const getWarehouse = async () => {
             }
         })
         warehouse.value = data
+        loaded.value = true
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
             if (error.response?.status === 401) {
@@ -283,7 +259,9 @@ onBeforeMount(() => {
             </section>
         </Transition>
 
-        <section class=" p-4 flex flex-col gap-4">
+        <p v-if="!loaded" class="text-center font-dark mt-4"><i class=" pi pi-spinner pi-spin" style="font-size: 1.5rem; color: var(--dark)"></i></p>
+
+        <section class=" p-4 flex flex-col gap-4" v-else>
             <Balances />
 
             <img class=" mx-auto max-w-80"

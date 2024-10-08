@@ -198,14 +198,14 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                         <div class="flex gap-4">
                             <span class=" w-2 h-2 bg-primary rounded-full min-w-2 mt-2"></span>
                             <div class="flex flex-col">
-                                <p>{{ t('screens.friens.info.activate1Title') }}</p>
+                                <p class="font-bold">{{ t('screens.friens.info.activate1Title') }}</p>
                                 <p class="label">{{ t('screens.friens.info.activate1Description') }}</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
                             <span class=" w-2 h-2 bg-primary rounded-full min-w-2 mt-2"></span>
                             <div class="flex flex-col">
-                                <p>{{ t('screens.friens.info.activate2Title') }}</p>
+                                <p class="font-bold">{{ t('screens.friens.info.activate2Title') }}</p>
                                 <p class="label">{{ t('screens.friens.info.activate2Description') }}</p>
                             </div>
                         </div>

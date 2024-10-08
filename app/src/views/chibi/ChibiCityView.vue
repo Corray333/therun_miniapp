@@ -57,6 +57,10 @@ const buildings = ref<Buildings>({
     }
 })
 
+const loaded = ref<boolean>(false)
+
+// const buildings = ref<Buildings>()
+
 const getCity = async () => {
     try {
         const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/city`, {
@@ -66,6 +70,7 @@ const getCity = async () => {
             }
         })
         buildings.value = data
+        loaded.value = true
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
             if (error.response?.status === 401) {
@@ -97,7 +102,9 @@ onBeforeMount(()=>{
 
             <h1 class="text-center">{{ t('screens.chibi.city.yourCityHeader') }}</h1>
 
-            <div class="buildings">
+            <p v-if="!loaded" class="text-center font-dark"><i class=" pi pi-spinner pi-spin" style="font-size: 1.5rem; color: var(--dark)"></i></p>
+
+            <div class="buildings" v-else>
                 <router-link to="/chibi/city/warehouse">
                     <BuildingCard :building="buildings?.warehouse" />
                 </router-link>
