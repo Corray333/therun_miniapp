@@ -97,6 +97,7 @@
                     "upgrade":"Upgrade",
                     "build":"Build",
                     "upgrading":"Upgrade",
+                    "building":"Building",
                     "cost":"Cost",
                     "requirements":"Requirements",
                     "buildApprove":"Do you really want to %s the %s?",
@@ -113,7 +114,8 @@
                         "header":"Storage of resources",
                         "fullDescription":"All your resources will be stored in the warehouse",
                         "filled":"Filled",
-                        "upgrade":"Upgrade storage to get more resources"
+                        "upgrade":"Upgrade storage to get more resources",
+                        "capacity":"Capacity"
                     },
                     "mine":{
                         "name":"Mine",

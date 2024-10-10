@@ -51,15 +51,15 @@ onBeforeMount(() => {
 <template>
     <section class="building" v-if="building">
         <div>
-            <p>
+            <div>
                 <p class=" font-bold">{{ t(`screens.chibi.city.buildings.${building.type}.name`) }}</p>
                 <p class=" label">{{ t(`screens.chibi.city.buildings.${building.type}.description`) }}</p>
-            </p>
-            <button v-if="building.level==0" class=" btn-type-4 state-2 bg-custom_blue">
+            </div>
+            <button v-if="building.level==0" class=" btn-type-4 bg-custom_blue">
                 <p>{{ t(`screens.chibi.city.buildBtn`) }}</p>
             </button>
             <button  v-else class=" btn-type-4 state-2">
-                <p v-if="remainingSeconds < 0">{{ t(`screens.chibi.city.upgradeBtn`) }}</p>
+                <p v-if="remainingSeconds < 0" class="flex gap-1 justify-center items-center">{{ t(`screens.chibi.city.upgradeBtn`) }}<i class=" pi pi-arrow-up"></i></p>
                 <p class="flex items-center gap-2 font-mono" v-else>{{ remainingTime }}<i class="pi pi-clock"></i></p>
             </button>
         </div>
@@ -77,7 +77,7 @@ onBeforeMount(() => {
     @apply w-full flex flex-col justify-between;
 }
 .building>img{
-    @apply h-24 object-contain scale-[140%] origin-bottom-right -mr-2;
+    @apply h-24 object-contain;
 }
 
 </style>

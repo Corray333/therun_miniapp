@@ -57,7 +57,7 @@ const buildings = ref<Buildings>({
     }
 })
 
-const loaded = ref<boolean>(false)
+const loaded = ref<boolean>(true)
 
 // const buildings = ref<Buildings>()
 

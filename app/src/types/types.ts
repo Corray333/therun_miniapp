@@ -158,4 +158,5 @@ export class Warehouse {
     resources: Resource[] = [];
     currentLevel: LevelDetail | null = null;
     nextLevel: LevelDetail | null = null;
+    moreLevel: LevelDetail | null = null;
 }
