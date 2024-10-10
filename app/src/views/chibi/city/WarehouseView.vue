@@ -24,7 +24,7 @@ const baseURL = import.meta.env.VITE_BASE_URL
 const warehouse = ref<Warehouse>({
 	"img": "https://notably-great-coyote.ngrok-free.app/static/images/buildings/warehouse1.png",
 	"type": "warehouse",
-	"level": 1,
+	"level": 0,
 	"state": "build",
 	"lastStateChange": 1728414635,
 	"stateUntil": 1728415235,
@@ -40,7 +40,8 @@ const warehouse = ref<Warehouse>({
 			"amount": 0
 		}
 	],
-	"currentLevel":  {
+	"currentLevel": null,
+	"nextLevel": {
 		"capacity": 1000,
 		"cost": [
 			{
@@ -55,7 +56,7 @@ const warehouse = ref<Warehouse>({
 		"requirements": null,
 		"buildingDuration": 600
 	},
-    "nextLevel":{
+	"moreLevel": {
 		"capacity": 2000,
 		"cost": [
 			{
@@ -74,11 +75,10 @@ const warehouse = ref<Warehouse>({
 			}
 		],
 		"buildingDuration": 7200
-	},
-    "moreLevel": null
+	}
 })
 
-const loaded = ref<boolean>(true)
+const loaded = ref<boolean>(false)
 
 
 const resourceDictionary = computed(() => {
