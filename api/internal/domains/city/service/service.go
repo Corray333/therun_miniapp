@@ -96,11 +96,17 @@ func (s *CityService) GetWarehouse(userID int64) (*types.WarehousePublic, error)
 		currentLevel = &types.WarehouseLevels[warehouseLevel.Level-1]
 	}
 
+	var moreLevel *types.WarehouseLevel
+	if warehouseLevel.Level == 0 && len(types.WarehouseLevels) > 1 {
+		moreLevel = &types.WarehouseLevels[1]
+	}
+
 	warehouse := &types.WarehousePublic{
 		BuildingPublic: warehouseLevel,
 		Resources:      resources,
 		CurrentLevel:   currentLevel,
 		NextLevel:      nextLevel,
+		MoreLevel:      moreLevel,
 	}
 
 	return warehouse, nil

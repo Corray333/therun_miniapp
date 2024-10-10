@@ -141,6 +141,7 @@ type WarehousePublic struct {
 	Resources    []Resource      `json:"resources"`
 	CurrentLevel *WarehouseLevel `json:"currentLevel"`
 	NextLevel    *WarehouseLevel `json:"nextLevel"`
+	MoreLevel    *WarehouseLevel `json:"moreLevel"`
 }
 
 var Buildings = map[BuildingType]Building{
