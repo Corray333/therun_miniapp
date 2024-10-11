@@ -301,11 +301,9 @@ func (s *UserService) ClaimRefs(ctx context.Context, userID int64) (err error) {
 		return err
 	}
 
-	refsReward := []types.BalanceChange{}
-	copy(refsReward, types.RefReward)
+	refsReward := append([]types.BalanceChange{}, types.RefReward...)
 
-	refsRewardPremium := []types.BalanceChange{}
-	copy(refsRewardPremium, types.RefRewardPremium)
+	refsRewardPremium := append([]types.BalanceChange{}, types.RefRewardPremium...)
 
 	for i := 0; i < len(refsReward); i++ {
 		refsReward[i].Amount *= refsActivatedNotClaimed

@@ -176,6 +176,8 @@ func (r *UserRepository) ChangeBalances(ctx context.Context, userID int64, chang
 		defer tx.Rollback()
 	}
 
+	fmt.Println(changes)
+
 	for _, change := range changes {
 		fmt.Println("UPDATE users SET " + string(change.Currency) + "_balance = " + string(change.Currency) + "_balance + $1 WHERE user_id = $2")
 		_, err := tx.Exec("UPDATE users SET "+string(change.Currency)+"_balance = "+string(change.Currency)+"_balance + $1 WHERE user_id = $2", change.Amount, userID)
