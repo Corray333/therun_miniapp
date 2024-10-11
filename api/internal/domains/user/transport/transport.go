@@ -1,6 +1,7 @@
 package transport
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -23,9 +24,9 @@ type service interface {
 	AuthUser(initData, refCode string) (accessToken string, isNew bool, isPremium bool, err error)
 	ListActivatedReferals(userID int64) ([]types.Referal, error)
 	ListNotActivatedReferals(userID int64) ([]types.Referal, error)
-	CountReferals(userID int64) (refsActivated, refsFrozen, rewardsFrozen, rewardsAvailible int, err error)
 	DailyCheck(userID int64) (dailyCheckStreak int, dailyCheckLast int64, err error)
-	ClaimRefs(userID int64) (rewardsGot int, err error)
+	CountReferals(userID int64) (refsActivated, refsFrozen int, rewardsFrozenTotal, rewardsAvailibleTotal []types.BalanceChange, err error)
+	ClaimRefs(ctx context.Context, userID int64) (err error)
 
 	SetPremium(userID int64, isPremium bool) error
 }
@@ -152,10 +153,10 @@ func (t *UserTransport) listReferals(w http.ResponseWriter, r *http.Request) {
 }
 
 type countReferalsResponse struct {
-	RefsActivated    int `json:"refsActivated"`
-	RefsFrozen       int `json:"refsFrozen"`
-	RewardsFrozen    int `json:"rewardsFrozen"`
-	RewardsAvailible int `json:"rewardsAvailible"`
+	RefsActivated    int                   `json:"refsActivated"`
+	RefsFrozen       int                   `json:"refsFrozen"`
+	RewardsFrozen    []types.BalanceChange `json:"rewardsFrozen"`
+	RewardsAvailible []types.BalanceChange `json:"rewardsAvailible"`
 }
 
 func (t *UserTransport) countReferals(w http.ResponseWriter, r *http.Request) {
@@ -219,10 +220,6 @@ func (t *UserTransport) dailyCheck(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type claimRefsResponse struct {
-	RewardsGot int `json:"rewardsGot"`
-}
-
 func (t *UserTransport) claimRefs(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(global_types.ContextID).(int64)
 	if !ok {
@@ -231,20 +228,12 @@ func (t *UserTransport) claimRefs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rewardsGot, err := t.service.ClaimRefs(userID)
+	err := t.service.ClaimRefs(r.Context(), userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		slog.Error("failed to claim referals" + err.Error())
 		return
 	}
 
-	resp := &claimRefsResponse{
-		RewardsGot: rewardsGot,
-	}
-
-	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		slog.Error("failed to encode referals" + err.Error())
-		return
-	}
+	w.WriteHeader(http.StatusOK)
 }

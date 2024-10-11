@@ -23,12 +23,14 @@ var Cases map[string]Case = map[string]Case{
 		},
 		RewardType: RewardTypeRace,
 		Rewards: []Reward{
-			{Amount: 30, Probability: 20},
-			{Amount: 20, Probability: 30},
-			{Amount: 10, Probability: 50},
+			{Amount: 800, Probability: 10},
+			{Amount: 700, Probability: 10},
+			{Amount: 600, Probability: 20},
+			{Amount: 500, Probability: 30},
+			{Amount: 400, Probability: 30},
 		},
-		MinRewards: 10,
-		MaxRewards: 30,
+		MinRewards: 400,
+		MaxRewards: 800,
 	},
 }
 

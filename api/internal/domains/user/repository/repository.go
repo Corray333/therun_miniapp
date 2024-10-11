@@ -6,10 +6,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/Corray333/therun_miniapp/internal/domains/user/service"
 	"github.com/Corray333/therun_miniapp/internal/domains/user/types"
 	"github.com/Corray333/therun_miniapp/internal/storage"
-	global_types "github.com/Corray333/therun_miniapp/internal/types"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -27,27 +25,30 @@ func New(store *storage.Storage) *UserRepository {
 	}
 }
 
-func (r *UserRepository) BeginTx(ctx context.Context) (context.Context, error) {
-	tx, err := r.db.Beginx()
+func (r *UserRepository) Begin(ctx context.Context) (context.Context, error) {
+	tx, err := r.db.BeginTxx(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
-	return context.WithValue(ctx, global_types.TxKey{}, tx), nil
+
+	return context.WithValue(ctx, storage.TxKey{}, tx), nil
 }
 
-func (r *UserRepository) CommitTx(ctx context.Context) error {
-	tx, ok := ctx.Value(global_types.TxKey{}).(*sqlx.Tx)
+func (r *UserRepository) Commit(ctx context.Context) error {
+	tx, ok := ctx.Value(storage.TxKey{}).(*sqlx.Tx)
 	if !ok {
 		return nil
 	}
+
 	return tx.Commit()
 }
 
-func (r *UserRepository) RollbackTx(ctx context.Context) error {
-	tx, ok := ctx.Value(global_types.TxKey{}).(*sqlx.Tx)
+func (r *UserRepository) Rollback(ctx context.Context) error {
+	tx, ok := ctx.Value(storage.TxKey{}).(*sqlx.Tx)
 	if !ok {
 		return nil
 	}
+
 	return tx.Rollback()
 }
 
@@ -132,13 +133,18 @@ func (r *UserRepository) ListNotActivatedReferals(userID int64) ([]types.Referal
 	return referals, err
 }
 
-func (r *UserRepository) CountReferals(userID int64) (refsActivated, refsFrozen, refsPremiumActivatedNotClaimed, refsPremiumFrozenNotClaimed, refsActivatedNotClaimed, refsFrozenNotClaimed int, err error) {
+func (r *UserRepository) CountReferals(userID int64) (refsActivated, refsFrozenTotal, refsFrozen, refsPremiumFrozen, refsPremiumActivatedNotClaimed, refsActivatedNotClaimed int, err error) {
 	row := r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_activated = true", userID)
 	if err := row.Scan(&refsActivated); err != nil {
 		return 0, 0, 0, 0, 0, 0, err
 	}
 
 	row = r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_activated = false", userID)
+	if err := row.Scan(&refsFrozenTotal); err != nil {
+		return 0, 0, 0, 0, 0, 0, err
+	}
+
+	row = r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_activated = false AND is_premium = false", userID)
 	if err := row.Scan(&refsFrozen); err != nil {
 		return 0, 0, 0, 0, 0, 0, err
 	}
@@ -148,22 +154,17 @@ func (r *UserRepository) CountReferals(userID int64) (refsActivated, refsFrozen,
 		return 0, 0, 0, 0, 0, 0, err
 	}
 
-	row = r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_premium = true AND is_activated = false AND ref_claimed = false", userID)
-	if err := row.Scan(&refsPremiumFrozenNotClaimed); err != nil {
-		return 0, 0, 0, 0, 0, 0, err
-	}
-
 	row = r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_premium = false AND is_activated = true AND ref_claimed = false", userID)
 	if err := row.Scan(&refsActivatedNotClaimed); err != nil {
 		return 0, 0, 0, 0, 0, 0, err
 	}
 
-	row = r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_premium = false AND is_activated = false AND ref_claimed = false", userID)
-	if err := row.Scan(&refsFrozenNotClaimed); err != nil {
+	row = r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_premium = true AND is_activated = false", userID)
+	if err := row.Scan(&refsPremiumFrozen); err != nil {
 		return 0, 0, 0, 0, 0, 0, err
 	}
 
-	return refsActivated, refsFrozen, refsPremiumActivatedNotClaimed, refsPremiumFrozenNotClaimed, refsActivatedNotClaimed, refsFrozenNotClaimed, nil
+	return refsActivated, refsFrozenTotal, refsFrozen, refsPremiumFrozen, refsPremiumActivatedNotClaimed, refsActivatedNotClaimed, nil
 }
 
 func (r *UserRepository) ChangeBalances(ctx context.Context, userID int64, changes []types.BalanceChange) error {
@@ -198,62 +199,38 @@ func (r *UserRepository) SetPremium(userID int64, isPremium bool) error {
 	return err
 }
 
-func (r *UserRepository) ClaimRefs(userID int64) (rewardsGot int, err error) {
-	var refsActivated, refsFrozen, refsPremiumActivatedNotClaimed, refsPremiumFrozenNotClaimed, refsActivatedNotClaimed, refsFrozenNotClaimed int
-
-	row := r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_activated = true", userID)
-	if err := row.Scan(&refsActivated); err != nil {
-		return 0, err
+func (r *UserRepository) ClaimRefs(ctx context.Context, userID int64) (refsPremiumActivatedNotClaimed, refsActivatedNotClaimed int, err error) {
+	tx, isNew, err := r.getTx(ctx)
+	if err != nil {
+		return 0, 0, err
+	}
+	if isNew {
+		defer tx.Rollback()
 	}
 
-	row = r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_activated = false", userID)
-	if err := row.Scan(&refsFrozen); err != nil {
-		return 0, err
-	}
-
-	row = r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_premium = true AND is_activated = true AND ref_claimed = false", userID)
+	row := r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_premium = true AND is_activated = true AND ref_claimed = false", userID)
 	if err := row.Scan(&refsPremiumActivatedNotClaimed); err != nil {
-		return 0, err
-	}
-
-	row = r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_premium = true AND is_activated = false AND ref_claimed = false", userID)
-	if err := row.Scan(&refsPremiumFrozenNotClaimed); err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	row = r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_premium = false AND is_activated = true AND ref_claimed = false", userID)
 	if err := row.Scan(&refsActivatedNotClaimed); err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
-	row = r.db.QueryRow("SELECT COUNT(*) FROM users WHERE referer = $1 AND is_premium = false AND is_activated = false AND ref_claimed = false", userID)
-	if err := row.Scan(&refsFrozenNotClaimed); err != nil {
-		return 0, err
-	}
-
-	tx, err := r.db.Begin()
-	if err != nil {
-		return 0, err
-	}
-	defer tx.Rollback()
-
-	rewardsGot = refsActivatedNotClaimed*service.RefReward + refsPremiumActivatedNotClaimed*service.RefRewardPremium
 	_, err = tx.Exec("UPDATE users SET ref_claimed = true WHERE referer = $1 AND is_activated = true", userID)
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
-	_, err = tx.Exec("UPDATE users SET point_balance = point_balance + $1 WHERE user_id = $2", rewardsGot, userID)
-	if err != nil {
-		return 0, err
+	if isNew {
+		if err := tx.Commit(); err != nil {
+			slog.Error("failed to commit transaction: " + err.Error())
+			return 0, 0, err
+		}
 	}
 
-	err = tx.Commit()
-	if err != nil {
-		return 0, err
-	}
-
-	return rewardsGot, nil
+	return
 }
 
 func (r *UserRepository) ActivateUser(userID int64) error {

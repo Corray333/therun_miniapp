@@ -20,18 +20,42 @@ const componentsStore = useComponentsStore()
 const { t } = useI18n()
 
 const accStore = useAccountStore()
+const baseURL = import.meta.env.VITE_BASE_URL
 
 const infoLoaded = ref<boolean>(false)
 
 const appUrl = import.meta.env.VITE_APP_URL
 
+class Reward {
+    currency!: string;
+    amount!: number;
+}
 
+class FriendsInfo {
+    refsActivated!: number;
+    refsFrozen!: number;
+    rewardsFrozen!: Reward[];
+    rewardsAvailible!: Reward[];
+}
 
-const friendsInfo = ref({
-    rewardsFrozen: 0,
-    rewardsAvailible: 0,
-    refsActivated: 0,
-    refsFrozen: 0,
+const friendsInfo = ref<FriendsInfo>({
+	"refsActivated": 2,
+	"refsFrozen": 3,
+	"rewardsFrozen": [
+		{
+			"currency": "point",
+			"amount": 5000
+		},
+		{
+			"currency": "blue_key",
+			"amount": 4
+		},
+		{
+			"currency": "red_key",
+			"amount": 3
+		}
+	],
+	"rewardsAvailible": []
 })
 
 const copyRefUrl = () => {
@@ -93,7 +117,7 @@ const claimRewards = async () => {
                 Authorization: accStore.token
             }
         })
-        friendsInfo.value.rewardsAvailible = 0
+        friendsInfo.value.rewardsAvailible = []
         coinBlastAnimation.value?.goToAndStop(0, true)
         coinBlastAnimation.value?.play()
         return true
@@ -127,12 +151,18 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                 <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
             </section>
         </Transition>
+        
         <section class=" flex flex-col p-4 gap-4 h-full w-full">
             <h1 class="text-center">{{ t("screens.friens.call") }}</h1>
             <div class="frozen bg-half_dark p-4 rounded-2xl flex flex-col items-center gap-2">
-                <div class="flex  items-center gap-2 text-4xl font-bold">
-                    <bcoinXL />{{ friendsInfo.rewardsFrozen }}
+                <div v-if="friendsInfo.rewardsFrozen.length" class="flex items-center gap-2 text-4xl font-bold">
+                    <p v-for="(reward, i) of friendsInfo.rewardsFrozen" :key="i" class="flex gap-1">
+                        <img class="h-6" :src="`${baseURL}/static/images/resources/${reward.currency}.png`" alt="">
+                        {{ reward.amount }}
+                    </p>
                 </div>
+                <p v-else class="text-4xl font-bold">0</p>
+                
                 <p class="label">{{ t('screens.friens.frozen') }}</p>
             </div>
 
@@ -142,12 +172,12 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                     <img class="h-16" src="../assets/images/friends/tg-logo.png" alt="">
                     <div class=" flex flex-col gap-2">
                         <p class="font-bold">{{ t('screens.friens.invite.commonInviteHeader') }}</p>
-                        <p class="flex flex-col gap-1">
+                        <span class="flex flex-col gap-1">
                             <p class="text-dark">
                                 {{ t('screens.friens.invite.commonInviteDescription') }}
                             </p>
                             <p class="flex gap-1"><bcoin />1000 <key color="var(--blue_key)"/>1</p>
-                        </p>
+                        </span>
                     </div>
                 </div>
                 
@@ -155,12 +185,12 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                     <img class="h-16" src="../assets/images/friends/premium-star.gif" alt="">
                     <div class=" flex flex-col gap-2">
                         <p class="font-bold">{{ t('screens.friens.invite.premiumInviteHeader') }}</p>
-                        <p class="flex flex-col gap-1">
+                        <span class="flex flex-col gap-1">
                             <p class="text-dark">
                                 {{ t('screens.friens.invite.premiumInviteDescription') }}
                             </p>
                             <p class="flex gap-1"><bcoin />3000 <key color="var(--red_key)"/>3 <key color="var(--blue_key)"/>2</p>
-                        </p>
+                        </span>
                     </div>
                 </div>
 
@@ -199,14 +229,22 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                             <span class=" w-2 h-2 bg-primary rounded-full min-w-2 mt-2"></span>
                             <div class="flex flex-col">
                                 <p class="font-bold">{{ t('screens.friens.info.activate1Title') }}</p>
-                                <p class="label">{{ t('screens.friens.info.activate1Description') }}</p>
+                                <span class="label">
+                                    {{ t('screens.friens.info.activate1Description1') }}
+                                    <bcoin class=" inline" />
+                                    {{ t('screens.friens.info.activate1Description2') }}
+                                </span>
                             </div>
                         </div>
                         <div class="flex gap-4">
                             <span class=" w-2 h-2 bg-primary rounded-full min-w-2 mt-2"></span>
                             <div class="flex flex-col">
                                 <p class="font-bold">{{ t('screens.friens.info.activate2Title') }}</p>
-                                <p class="label">{{ t('screens.friens.info.activate2Description') }}</p>
+                                <span class="label">
+                                    {{ t('screens.friens.info.activate2Description1') }}
+                                    <key class=" inline" color="var(--primary)" /> 1
+                                    {{ t('screens.friens.info.activate2Description2') }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -214,36 +252,42 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
             </div>
 
             <div class="frozen bg-half_dark p-4 rounded-2xl flex flex-col items-center gap-2">
-                <div class="flex  items-center gap-2 text-4xl font-bold">
-                    <bcoinXL />{{ friendsInfo.rewardsAvailible }}
+                
+                <div v-if="friendsInfo.rewardsAvailible.length" class="flex items-center gap-2 text-4xl font-bold">
+                    <p v-for="(reward, i) of friendsInfo.rewardsAvailible" :key="i" class="flex gap-1">
+                        <img class="h-6" :src="`${baseURL}/static/images/resources/${reward.currency}.png`" alt="">
+                        {{ reward.amount }}
+                    </p>
                 </div>
+                <p v-else class="text-4xl font-bold">0</p>
+
                 <p class="label">{{ t('screens.friens.availibleForClaim') }}</p>
-                <button @click="claimRewards" v-show="friendsInfo.rewardsAvailible > 0" class=" btn-type-2">{{
+                <button @click="claimRewards" v-show="friendsInfo.rewardsAvailible.length" class=" btn-type-2">{{
                 t('screens.friens.claimBtn') }}</button>
             </div>
 
             <div class="friends flex flex-col gap-2">
-                <p class=" w-full flex justify-between px-2">
-                <h1>{{ t('screens.friens.listHeader') }}</h1>
-                <p class=" text-dark font-bold">{{ friendsInfo.refsActivated + friendsInfo.refsFrozen }}</p>
-                </p>
+                <span class=" w-full flex justify-between px-2">
+                    <h1>{{ t('screens.friens.listHeader') }}</h1>
+                    <p class=" text-dark font-bold">{{ friendsInfo.refsActivated + friendsInfo.refsFrozen }}</p>
+                </span>
                 <router-link to="/friens/activated">
                     <button class=" bg-half_dark text-black flex justify-between font-medium items-center">
                         <p>{{ t('screens.friens.activated') }}</p>
-                        <p class="flex items-center">
-                        <p class=" text-green-400 font-bold">{{ friendsInfo.refsActivated }}</p>
-                        <i class="pi pi-angle-right text-dark" style="font-size: 1.25rem;"></i>
-                        </p>
+                        <span class="flex items-center">
+                            <p class=" text-green-400 font-bold">{{ friendsInfo.refsActivated }}</p>
+                            <i class="pi pi-angle-right text-dark" style="font-size: 1.25rem;"></i>
+                        </span>
                     </button>
                 </router-link>
 
                 <router-link to="/friens/not-activated">
                     <button class=" bg-half_dark text-black flex justify-between font-medium items-center">
                         <p>{{ t('screens.friens.waitingForActivation') }}</p>
-                        <p class="flex items-center">
-                        <p class=" text-orange-400 font-bold">{{ friendsInfo.refsFrozen }}</p>
-                        <i class="pi pi-angle-right text-dark" style="font-size: 1.25rem;"></i>
-                        </p>
+                        <span class="flex items-center">
+                            <p class=" text-orange-400 font-bold">{{ friendsInfo.refsFrozen }}</p>
+                            <i class="pi pi-angle-right text-dark" style="font-size: 1.25rem;"></i>
+                        </span>
                     </button>
                 </router-link>
             </div>

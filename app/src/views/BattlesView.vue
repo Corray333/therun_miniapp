@@ -6,7 +6,7 @@ import { ref, onBeforeMount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { type Round } from '@/types/types'
 import { useAccountStore } from '@/stores/account'
-import Battle from '@/components/Battle.vue'
+import BattleCard from '@/components/BattleCard.vue'
 import axios, {isAxiosError} from 'axios'
 import { useComponentsStore } from '@/stores/components'
 import { auth } from '@/utils/helpers'
@@ -108,7 +108,7 @@ const getRound = async () => {
             <p v-if="!round?.battles.length" class="font-bold text-dark text-center">{{ t('screens.battles.noBattles') }}</p>
             <div v-else>
                 <section class=" flex flex-col gap-4">
-                    <Battle v-for="(battle, i) of round?.battles" :key="i" :battle="battle" :show-miles="showMiles" />
+                    <BattleCard v-for="(battle, i) of round?.battles" :key="i" :battle="battle" :show-miles="showMiles" />
                 </section>
     
                 <span class="flex gap-2 text-dark">

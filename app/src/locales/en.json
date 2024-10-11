@@ -12,7 +12,7 @@
         "balance":"Balance",
         "keys":"Keys",
         "bonuses":"Bonus points",
-        "keysDescription":"Get keys for various activities and use them to open boxes, to build and upgrade buildings",
+        "keysDescription":"Get keys for various activities and use them to open boxes, to build and upgrade buildings in your Chibi City",
         "bonusesDescription":"Bonus points are used in all activities in the app, you can farm them or get for playing games",
         "raceDescription":"RACE coin is the main token in the app that will be listed on CEX exchanges",
         "ok":"Ok",
@@ -88,7 +88,7 @@
             "city":{
                 "header":"Chibi City",
                 "yourCityHeader":"Build your chibi city",
-                "description":"Develop your city and construct buildings that will help pump your chibi",
+                "description":"Develop your city and build buildings that will allow you to mine resources, create artifacts and much more",
                 "btn":"Let’s go",
                 "upgradeBtn":"Level",
                 "buildBtn":"Build",
@@ -113,8 +113,8 @@
                         "description":"Storage for your resources",
                         "header":"Storage of resources",
                         "fullDescription":"All your resources will be stored in the warehouse",
-                        "filled":"Filled",
-                        "upgrade":"Upgrade storage to get more resources",
+                        "filled":"Capacity",
+                        "upgrade":"Upgrade your building to store more resources and products in the storage",
                         "capacity":"Capacity"
                     },
                     "mine":{
@@ -127,7 +127,7 @@
             },
             "fights":{
                 "header":"Fights",
-                "description":"Pump your chibi team and participate in every day battles vs other chibis"
+                "description":"Pump your chibi team and participate in every day battles vs other players"
             },
             "team":{
                 "header":"My team",
@@ -144,9 +144,11 @@
                 "tellYourFriendTitle":"Tell your friends",
                 "tellYourFriendDescription":"Tell your friends about the simple actions they need to do to get you bonuses",
                 "activate1Title":"Activating a Friend – Step 1",
-                "activate1Description":"Your friend needs to start farming and get the first bonus points",
+                "activate1Description1":"Your friend needs to start farming and get the first ",
+                "activate1Description2":" bonus points",
                 "activate2Title":"Activating a Friend – Step 2",
-                "activate2Description":"You get a bonus for an invited friend after your friend receives 1 key for guessing the winner in any battle in the Battle section"
+                "activate2Description1":"You get a bonus for an invited friend after your friend receives ",
+                "activate2Description2":" for guessing the winner in any battle in the Battle section"
             },
             "invite":{
                 "commonInviteHeader":"Invite your friends",

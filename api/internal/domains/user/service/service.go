@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"database/sql"
 	"log/slog"
 	"os"
@@ -17,6 +18,10 @@ const FarmingTimeDefault = 7200
 const MaxNumberOfRetries = 10
 
 type repository interface {
+	Begin(ctx context.Context) (context.Context, error)
+	Commit(ctx context.Context) error
+	Rollback(ctx context.Context) error
+
 	GetUser(userID int64) (*types.User, error)
 	UpdateUser(user *types.User) error
 	CreateUser(user *types.User) (err error)
@@ -25,12 +30,14 @@ type repository interface {
 
 	ListActivatedReferals(userID int64) ([]types.Referal, error)
 	ListNotActivatedReferals(userID int64) ([]types.Referal, error)
-	CountReferals(userID int64) (refsActivated, refsFrozen, refsPremiumActivatedNotClaimed, refsPremiumFrozenNotClaimed, refsActivatedNotClaimed, refsFrozenNotClaimed int, err error)
-	ClaimRefs(userID int64) (rewardsGot int, err error)
+	CountReferals(userID int64) (refsActivated, refsFrozenTotal, refsFrozen, refsPremiumFrozen, refsPremiumActivatedNotClaimed, refsActivatedNotClaimed int, err error)
+	ClaimRefs(ctx context.Context, userID int64) (refsPremiumActivatedNotClaimed, refsActivatedNotClaimed int, err error)
 
 	SetPremium(userID int64, isPremium bool) error
 
 	ActivateUser(userID int64) error
+
+	ChangeBalances(ctx context.Context, userID int64, changes []types.BalanceChange) error
 }
 type external interface {
 	GetAvatar(userID int64) ([]byte, error)
@@ -203,20 +210,118 @@ const (
 	RefRewardPremium = 3000
 )
 
-func (s *UserService) CountReferals(userID int64) (refsActivated, refsFrozen, rewardsFrozen, rewardsAvailible int, err error) {
-	refsActivated, refsFrozen, refsPremiumActivatedNotClaimed, refsPremiumFrozenNotClaimed, refsActivatedNotClaimed, refsFrozenNotClaimed, err := s.repo.CountReferals(userID)
+func (s *UserService) CountReferals(userID int64) (refsActivated, refsFrozen int, rewardsFrozenTotal, rewardsAvailibleTotal []types.BalanceChange, err error) {
+	refsActivated, refsFrozenTotal, refsFrozen, refsPremiumFrozen, refsPremiumActivatedNotClaimed, refsActivatedNotClaimed, err := s.repo.CountReferals(userID)
 	if err != nil {
-		return 0, 0, 0, 0, err
+		return 0, 0, nil, nil, err
 	}
 
-	rewardsAvailible = refsActivatedNotClaimed*RefReward + refsPremiumActivatedNotClaimed*RefRewardPremium
-	rewardsFrozen = refsFrozenNotClaimed*RefReward + refsPremiumFrozenNotClaimed*RefRewardPremium
+	// var refRewardFrozen, refRewardFrozenPremium, refRewardAvailible, refRewardAvailiblePremium = []types.BalanceChange{}, []types.BalanceChange{}, []types.BalanceChange{}, []types.BalanceChange{}
+	refRewardFrozen := append([]types.BalanceChange{}, types.RefReward...)
+	refRewardFrozenPremium := append([]types.BalanceChange{}, types.RefRewardPremium...)
+	refRewardAvailible := append([]types.BalanceChange{}, types.RefReward...)
+	refRewardAvailiblePremium := append([]types.BalanceChange{}, types.RefRewardPremium...)
 
-	return refsActivated, refsFrozen, rewardsFrozen, rewardsAvailible, nil
+	if refsFrozen == 0 {
+		refRewardFrozen = nil
+	}
+	if refsPremiumFrozen == 0 {
+		refRewardFrozenPremium = nil
+	}
+	if refsActivatedNotClaimed == 0 {
+		refRewardAvailible = nil
+	}
+	if refsPremiumActivatedNotClaimed == 0 {
+		refRewardAvailiblePremium = nil
+	}
+
+	for i := 0; i < len(refRewardFrozen); i++ {
+		refRewardFrozen[i].Amount *= refsFrozen
+	}
+
+	for i := 0; i < len(refRewardFrozenPremium); i++ {
+		refRewardFrozenPremium[i].Amount *= refsPremiumFrozen
+	}
+
+	for i := 0; i < len(refRewardAvailible); i++ {
+		refRewardAvailible[i].Amount *= refsActivatedNotClaimed
+	}
+
+	for i := 0; i < len(refRewardAvailiblePremium); i++ {
+		refRewardAvailiblePremium[i].Amount *= refsPremiumActivatedNotClaimed
+	}
+
+	rewardsFrozenMap := map[types.Currency]int{}
+	for i := 0; i < len(refRewardFrozen); i++ {
+		rewardsFrozenMap[refRewardFrozen[i].Currency] += refRewardFrozen[i].Amount
+	}
+
+	for i := 0; i < len(refRewardFrozenPremium); i++ {
+		rewardsFrozenMap[refRewardFrozenPremium[i].Currency] += refRewardFrozenPremium[i].Amount
+	}
+
+	rewardsAvailibleMap := map[types.Currency]int{}
+	for i := 0; i < len(refRewardAvailible); i++ {
+		rewardsAvailibleMap[refRewardAvailible[i].Currency] += refRewardAvailible[i].Amount
+	}
+
+	for i := 0; i < len(refRewardAvailiblePremium); i++ {
+		rewardsAvailibleMap[refRewardAvailiblePremium[i].Currency] += refRewardAvailiblePremium[i].Amount
+	}
+
+	rewardsFrozenTotal = []types.BalanceChange{}
+	for currency, amount := range rewardsFrozenMap {
+		rewardsFrozenTotal = append(rewardsFrozenTotal, types.BalanceChange{
+			Currency: currency,
+			Amount:   amount,
+		})
+	}
+
+	rewardsAvailibleTotal = []types.BalanceChange{}
+	for currency, amount := range rewardsAvailibleMap {
+		rewardsAvailibleTotal = append(rewardsAvailibleTotal, types.BalanceChange{
+			Currency: currency,
+			Amount:   amount,
+		})
+	}
+
+	return refsActivated, refsFrozenTotal, rewardsFrozenTotal, rewardsAvailibleTotal, nil
+
 }
 
-func (s *UserService) ClaimRefs(userID int64) (rewardsGot int, err error) {
-	return s.repo.ClaimRefs(userID)
+func (s *UserService) ClaimRefs(ctx context.Context, userID int64) (err error) {
+	// rewardsGot = refsActivatedNotClaimed*service.RefReward + refsPremiumActivatedNotClaimed*service.RefRewardPremium
+	ctx, err = s.repo.Begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	refsPremiumActivatedNotClaimed, refsActivatedNotClaimed, err := s.repo.ClaimRefs(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	refsReward := []types.BalanceChange{}
+	copy(refsReward, types.RefReward)
+
+	refsRewardPremium := []types.BalanceChange{}
+	copy(refsRewardPremium, types.RefRewardPremium)
+
+	for i := 0; i < len(refsReward); i++ {
+		refsReward[i].Amount *= refsActivatedNotClaimed
+	}
+
+	for i := 0; i < len(refsRewardPremium); i++ {
+		refsRewardPremium[i].Amount *= refsPremiumActivatedNotClaimed
+	}
+
+	totalReward := append(refsReward, refsRewardPremium...)
+
+	if err := s.repo.ChangeBalances(ctx, userID, totalReward); err != nil {
+		return err
+	}
+
+	return s.repo.Commit(ctx)
 }
 
 const DayTime = 86400

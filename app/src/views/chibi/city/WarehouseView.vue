@@ -391,10 +391,10 @@ const showUpdateDetails = ref<boolean>(false)
                     </div>
                 </div>
 
-                <div v-if="!maxLevel && warehouse.nextLevel?.requirements?.length" class="requirements">
+                <div v-if="!maxLevel && warehouse.nextLevel?.requirements?.length && warehouse.nextLevel.requirements[0].type != warehouse.type" class="requirements">
                     <p class=" font-bold">{{ t('screens.chibi.city.buildings.requirements') }}</p>
                     <BuildingCardTiny class="requirement" v-for="(building, i) of warehouse.nextLevel?.requirements"
-                        :key="i" :building="building" />
+                        :key="i" :building="building" v-show="building.type != warehouse.type" />
                 </div>
                 <button :disabled="!balanceEnoughForUpgrade" @click="showUpgradeModal = true"
                     class="flex justify-center">

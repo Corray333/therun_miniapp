@@ -16,6 +16,7 @@ export default {
         calm: 'var(--calm)',
         custom_blue: 'var(--blue)',
         custom_green: 'var(--green)',
+        custom_gray: 'var(--gray)',
       },
       animation: {
         wiggle: 'wiggle 20s infinite ease-in',

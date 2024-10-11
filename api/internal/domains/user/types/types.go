@@ -50,3 +50,29 @@ type BalanceChange struct {
 	Currency Currency `json:"currency" db:"currency"`
 	Amount   int      `json:"amount" db:"amount"`
 }
+
+var RefReward []BalanceChange = []BalanceChange{
+	{
+		Currency: Point,
+		Amount:   1000,
+	},
+	{
+		Currency: BlueKey,
+		Amount:   1,
+	},
+}
+
+var RefRewardPremium []BalanceChange = []BalanceChange{
+	{
+		Currency: Point,
+		Amount:   3000,
+	},
+	{
+		Currency: RedKey,
+		Amount:   3,
+	},
+	{
+		Currency: BlueKey,
+		Amount:   2,
+	},
+}

@@ -4,6 +4,7 @@ import { Battle } from '@/types/types'
 import bcoin from '@/components/icons/bcoin-icon.vue'
 import key from '@/components/icons/key-icon.vue'
 import miles from '@/components/icons/miles-icon.vue'
+import versus from '@/components/icons/vs-icon.vue'
 import { useI18n } from 'vue-i18n'
 import { useAccountStore } from '@/stores/account'
 import axios, { isAxiosError } from 'axios'
@@ -142,7 +143,7 @@ const prePick = ref<number>(0)
                 </button>
                 <button v-if="battle.pick == 1" class=" py-1 row-start-4 col-start-1" disabled>{{ t('screens.battles.battle.chosen') }}</button>
 
-                <img src="../assets/images/battles/vs-sign.png" class=" w-16 object-contain row-start-2 col-start-2" alt="" >
+                <versus :color="battle.pick == 0 ? 'var(--gray)':'var(--primary)'" class=" w-16 object-contain row-start-2 col-start-2" />
 
 
                 <span v-show="showMiles || battle.pick != 0"
@@ -151,7 +152,7 @@ const prePick = ref<number>(0)
                 </span>
                 <span  class="w-full relative rounded-2xl bg-dark text-white text-4xl font-bold aspect-square flex justify-center items-center row-start-2 col-start-3" :class="((showMiles || battle.pick != 0) && battle.userResult < battle.opponentResult) && !battle.opponent.photo ? 'user-picked' : ''">
                     <img v-if="battle.opponent.photo" :src="battle.opponent.photo"  :class="(showMiles || battle.pick != 0) && battle.userResult < battle.opponentResult ? 'user-picked' : ''"  class=" w-full h-full absolute rounded-2xl" alt="">
-                    {{ battle.user.username != '' ? battle.user.username[0].toUpperCase() : '?' }}
+                    {{ battle.opponent.username != '' ? battle.opponent.username[0].toUpperCase() : '?' }}
                 </span>
                 <p class=" row-start-3 col-start-3">@{{ battle.opponent.username }}</p>
                 <button v-show="!showMiles" @click="prePick = 2" v-if="battle.pick == 0" class=" py-1  row-start-4 col-start-3">
