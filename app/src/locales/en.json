@@ -103,7 +103,7 @@
                     "buildApprove":"Do you really want to %s the %s?",
                     "buildApproveCancel":"Cancel",
                     "notAvailible":"Requirements are not met",
-                    "maxLevel":"Max level reached🔥",
+                    "maxLevel":"Max building level reached🔥",
                     "actions":{
                         "build":"build",
                         "upgrade":"upgrade"

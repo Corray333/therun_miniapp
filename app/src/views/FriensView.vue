@@ -155,8 +155,8 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
         <section class=" flex flex-col p-4 gap-4 h-full w-full">
             <h1 class="text-center">{{ t("screens.friens.call") }}</h1>
             <div class="frozen bg-half_dark p-4 rounded-2xl flex flex-col items-center gap-2">
-                <div v-if="friendsInfo.rewardsFrozen.length" class="flex items-center gap-2 text-4xl font-bold">
-                    <p v-for="(reward, i) of friendsInfo.rewardsFrozen" :key="i" class="flex gap-1">
+                <div v-if="friendsInfo.rewardsFrozen.length" class="flex items-center gap-2 text-2xl font-bold">
+                    <p v-for="(reward, i) of friendsInfo.rewardsFrozen" :key="i" class="flex gap-1 items-center">
                         <img class="h-6" :src="`${baseURL}/static/images/resources/${reward.currency}.png`" alt="">
                         {{ reward.amount }}
                     </p>
@@ -231,7 +231,7 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                                 <p class="font-bold">{{ t('screens.friens.info.activate1Title') }}</p>
                                 <span class="label">
                                     {{ t('screens.friens.info.activate1Description1') }}
-                                    <bcoin class=" inline" />
+                                    <bcoin class=" scale-[80%] inline" />
                                     {{ t('screens.friens.info.activate1Description2') }}
                                 </span>
                             </div>
@@ -242,7 +242,7 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
                                 <p class="font-bold">{{ t('screens.friens.info.activate2Title') }}</p>
                                 <span class="label">
                                     {{ t('screens.friens.info.activate2Description1') }}
-                                    <key class=" inline" color="var(--primary)" /> 1
+                                    <key class=" scale-[80%] inline" color="var(--primary)" /> 1
                                     {{ t('screens.friens.info.activate2Description2') }}
                                 </span>
                             </div>
@@ -253,8 +253,8 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
 
             <div class="frozen bg-half_dark p-4 rounded-2xl flex flex-col items-center gap-2">
                 
-                <div v-if="friendsInfo.rewardsAvailible.length" class="flex items-center gap-2 text-4xl font-bold">
-                    <p v-for="(reward, i) of friendsInfo.rewardsAvailible" :key="i" class="flex gap-1">
+                <div v-if="friendsInfo.rewardsAvailible.length" class="flex items-center gap-2 text-2xl font-bold">
+                    <p v-for="(reward, i) of friendsInfo.rewardsAvailible" :key="i" class="flex gap-1 items-center">
                         <img class="h-6" :src="`${baseURL}/static/images/resources/${reward.currency}.png`" alt="">
                         {{ reward.amount }}
                     </p>

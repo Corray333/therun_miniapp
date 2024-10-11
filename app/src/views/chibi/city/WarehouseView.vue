@@ -331,7 +331,7 @@ const showUpdateDetails = ref<boolean>(false)
                 <div v-if="warehouse.currentLevel" class="flex gap-4">
                     <div class="shield">
                         <div class="text-center">
-                            <p class="level">{{ warehouse.level }}</p>
+                            <p class="level">{{ warehouse.state == 'build' && remainingSeconds > 0 && warehouse.level > 1 ? warehouse.level-1:warehouse.level }}</p>
                             <p class="label">{{ t('screens.chibi.city.buildings.level') }}</p>
                         </div>
                         <!-- <i class=" text-dark pi pi-chevron-right"></i> -->
@@ -396,18 +396,12 @@ const showUpdateDetails = ref<boolean>(false)
                     <BuildingCardTiny class="requirement" v-for="(building, i) of warehouse.nextLevel?.requirements"
                         :key="i" :building="building" v-show="building.type != warehouse.type" />
                 </div>
-                <button :disabled="!balanceEnoughForUpgrade" @click="showUpgradeModal = true"
+                <button :disabled="!balanceEnoughForUpgrade || remainingSeconds > 0" @click="showUpgradeModal = true"
                     class="flex justify-center">
                     <p v-if="remainingSeconds > 0" class="flex gap-2 items-center h-6">{{ warehouse.level == 0 ? t('screens.chibi.city.buildings.building') : t('screens.chibi.city.buildings.upgrading') }} <p class=" font-mono">{{ remainingTime }}</p> </p>
 
                     <span v-else-if="balanceEnoughForUpgrade" class="flex gap-2">
                         {{ t('screens.chibi.city.buildings.upgrade') }}
-                        <div class="flex gap-1">
-                            <span class="flex items-center gap-1" v-for="(cost, i) of warehouse.nextLevel?.cost" :key="i">
-                                <img class="h-6" :src="`${baseURL}/static/images/resources/${cost.currency}.png`" alt="">
-                                <p>{{ -cost.amount }}</p>
-                            </span>
-                        </div>
                     </span>
                     <p v-else class="h-6">{{ t('screens.chibi.city.buildings.notAvailible') }}</p>
                 </button>
@@ -448,12 +442,6 @@ const showUpdateDetails = ref<boolean>(false)
                     class="flex justify-center">
                     <span class="flex gap-2">
                         {{ t('screens.chibi.city.buildings.upgrade') }}
-                        <div class="flex gap-1">
-                            <span class="flex items-center gap-1" v-for="(cost, i) of warehouse.moreLevel?.cost" :key="i">
-                                <img class="h-6" :src="`${baseURL}/static/images/resources/${cost.currency}.png`" alt="">
-                                <p>{{ -cost.amount }}</p>
-                            </span>
-                        </div>
                     </span>
                 </button>
             </div>
@@ -463,7 +451,7 @@ const showUpdateDetails = ref<boolean>(false)
 
             <button v-if="notBought" :disabled="!balanceEnoughForUpgrade" @click="showUpgradeModal = true"
                 class="flex justify-center">
-                <span v-if="balanceEnoughForUpgrade" class="flex gap-2">
+                <span class="flex gap-2">
                     {{ t('screens.chibi.city.buildings.build') }}
 
                     <div class="flex gap-1">
@@ -473,7 +461,6 @@ const showUpdateDetails = ref<boolean>(false)
                         </span>
                     </div>
                 </span>
-                <p v-else class="h-6">{{ t('screens.chibi.city.buildings.notAvailible') }}</p>
             </button>
 
             <section v-if="!notBought" class="resources">
