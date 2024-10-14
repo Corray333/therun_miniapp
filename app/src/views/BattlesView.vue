@@ -7,7 +7,7 @@ import { useI18n } from 'vue-i18n'
 import { type Round } from '@/types/types'
 import { useAccountStore } from '@/stores/account'
 import BattleCard from '@/components/BattleCard.vue'
-import axios, {isAxiosError} from 'axios'
+import axios, { isAxiosError } from 'axios'
 import { useComponentsStore } from '@/stores/components'
 import { auth } from '@/utils/helpers'
 
@@ -63,7 +63,7 @@ const getRound = async () => {
                 Authorization: accStore.token
             }
         })
-        
+
         round.value = data
 
         return true
@@ -88,10 +88,11 @@ const getRound = async () => {
 <template>
     <section class="pb-20">
 
-        <p v-if="round == undefined" class="text-center font-dark mt-4"><i class=" pi pi-spinner pi-spin" style="font-size: 1.5rem; color: var(--dark)"></i></p>
+        <p v-if="round == undefined" class="text-center font-dark mt-4"><i class=" pi pi-spinner pi-spin"
+                style="font-size: 1.5rem; color: var(--dark)"></i></p>
 
         <section v-else class=" p-4 flex flex-col gap-4">
-            <Balances/>
+            <Balances />
 
             <div class="timer flex flex-col items-center justify-center p-4 rounded-2xl bg-secondary">
                 <p class=" round-timer text-4xl font-bold">{{ remainingTime }}</p>
@@ -105,16 +106,30 @@ const getRound = async () => {
 
             <h2 class="text-center text-2xl" v-html="t('screens.battles.header')"></h2>
 
-            <p v-if="!round?.battles.length" class="font-bold text-dark text-center">{{ t('screens.battles.noBattles') }}</p>
+            <p v-if="!round?.battles.length" class="font-bold text-dark text-center">{{ t('screens.battles.noBattles')
+                }}</p>
             <div v-else>
                 <section class=" flex flex-col gap-4">
-                    <BattleCard v-for="(battle, i) of round?.battles" :key="i" :battle="battle" :show-miles="showMiles" />
+                    <BattleCard v-for="(battle, i) of round?.battles" :key="i" :battle="battle"
+                        :show-miles="showMiles" />
                 </section>
-    
-                <span class="flex gap-2 text-dark">
-                    <i class=" pi pi-info-circle mt-1" style="font-size: 1.25rem;"></i>
-                    <p>{{ t('screens.battles.info') }}</p>
-                </span>
+
+                <div class=" flex flex-col gap-2 py-2">
+                    <span class="flex gap-2 text-dark">
+                        <i class=" pi pi-info-circle mt-1" style="font-size: 1.25rem;"></i>
+                        <p>{{ t('screens.battles.info') }}</p>
+                    </span>
+                    <span class="flex gap-2 text-dark">
+                        <i class=" pi pi-info-circle mt-1" style="font-size: 1.25rem;"></i>
+                        <p>{{ t('screens.battles.info2') }}</p>
+                    </span>
+                </div>
+                <div class="flex gap-4 py-2">
+                    <a href="https://play.google.com/store/apps/details?id=com.therun.app" target="_blank"><img
+                            src="../assets/images/chibi/google-play-btn.png" alt=""></a>
+                    <a href="https://apps.apple.com/us/app/therun/id1634366310" target="_blank"><img
+                            src="../assets/images/chibi/appstore-btn.png" alt=""></a>
+                </div>
             </div>
         </section>
     </section>
@@ -122,12 +137,11 @@ const getRound = async () => {
 
 
 <style scoped>
-
-.round-timer{
+.round-timer {
     width: 8.5rem;
 }
 
-.banner{
+.banner {
     background-image: url(../assets/images/battles/banner-bg.png);
 }
 
@@ -140,5 +154,4 @@ const getRound = async () => {
 .v-leave-to {
     opacity: 0;
 }
-
 </style>
