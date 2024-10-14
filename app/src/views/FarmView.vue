@@ -285,10 +285,11 @@ const modalPick = ref<string>('keys')
                 </Transition>
             </section>
         </Transition>
-        <section class=" h-full flex flex-col gap-4 p-4">
+
+        <section class=" main h-full flex flex-col gap-4 p-4">
             <Balances />
             <span class=" flex justify-center">
-                <div ref="coinsFarmedEl" class=" flex gap-2 p-2 bg-white rounded-full items-center">
+                <div ref="coinsFarmedEl" class=" flex gap-2 p-2 rounded-full items-center">
                     <bcoinXL />
                     <bcoinXL class="absolute anim-coin duration-500" id="anim-coin-1"
                         :class="{ 'animate-coin': animateCoin }" />
@@ -301,12 +302,12 @@ const modalPick = ref<string>('keys')
             </section>
             <div class="more-points grid grid-cols-3 gap-2">
                 <div @click="showModal = true; modalPick = 'bonuses'"
-                    class=" bg-half_dark rounded-2xl flex flex-col items-center">
+                    class=" bg-white rounded-2xl flex flex-col items-center">
                     <p class=" mt-2">{{ t('screens.farming.earning.getMore') }}</p>
                     <bcoin id="more-btn-coin" />
                 </div>
                 <div @click="showModal = true; modalPick = 'droid'"
-                    class=" bg-half_dark rounded-2xl flex flex-col items-center">
+                    class=" bg-white rounded-2xl flex flex-col items-center">
                     <p class=" mt-2">{{ t('screens.farming.earning.upgrade') }}</p>
                     <img class=" h-8 object-contain object-bottom" src="../assets/images/farming/robot.png" alt="">
                 </div>
@@ -316,18 +317,19 @@ const modalPick = ref<string>('keys')
                     <img class=" h-8 object-contain object-bottom" src="../assets/images/farming/spy.png" alt="">
                 </div>
             </div>
+
             <section class=" flex flex-col gap-4">
                 <button
                     v-if="accStore.user.farmingFrom > accStore.user.lastClaim && accStore.user.farmingFrom + accStore.user.farmingTime - Math.floor(Date.now() / 1000) > 1"
                     class="flex items-center justify-between text-lg" @click="claim" disabled>
-                    <p class=" flex gap-2">
+                    <span class=" flex gap-2">
                         {{ t('screens.farming.button.farming') }}
-                    <p class="flex items-center gap-1">
-                        <bcoin />
-                        {{ Math.floor(currentPoints) }}/
-                        {{ accStore.user.maxPoints }}
-                    </p>
-                    </p>
+                        <p class="flex items-center gap-1">
+                            <bcoin />
+                            {{ Math.floor(currentPoints) }}/
+                            {{ accStore.user.maxPoints }}
+                        </p>
+                    </span>
                     <p class=" text-left w-20">
                         {{ remainingTime }}
                     </p>
@@ -349,7 +351,12 @@ const modalPick = ref<string>('keys')
     </section>
 </template>
 
-<style>
+<style scoped>
+
+.main{
+    background-image: url(../assets/images/farming/droid-bg.png);
+}
+
 .small-coin {
     position: absolute;
     width: 2rem;

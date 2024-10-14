@@ -89,7 +89,7 @@ const prePick = ref<number>(0)
                 <section v-if="prePick != 0"
                     class=" modal gap-4 w-full rounded-2xl bg-white p-4 flex flex-col justify-center items-center shadow-lg">
                     <p class="font-bold text-center">{{ t('screens.battles.battle.pickApprove') }} @{{ prePick == 1 ?
-            battle.user.username : battle.opponent.username }}</p>
+            battle.user.username : battle.opponent.username }}?</p>
                     <div class="flex gap-2 w-full">
                         <button @click="prePick = 0" class=" py-2 text-primary bg-white">{{
             t('screens.battles.battle.pickApproveCancel') }}</button>

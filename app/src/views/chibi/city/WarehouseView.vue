@@ -235,7 +235,7 @@ const showUpdateDetails = ref<boolean>(false)
                         class=" pi fixed pi-times bg-dark text-white aspect-square p-1 rounded-full top-4 right-4"></i>
                     <p class="text-center text-dark font-bold my-4">
                         {{ t(`screens.chibi.city.buildings.level`) }} {{ warehouse.level }}
-                        <i class="pi pi-arrow-right"></i>
+                        <i class="pi pi-arrow-right mx-1"></i>
                         {{ t(`screens.chibi.city.buildings.level`) }} {{ warehouse.level+1 }}
                     </p>
 
@@ -316,7 +316,7 @@ const showUpdateDetails = ref<boolean>(false)
 
         <p v-if="!loaded" class="text-center font-dark mt-4"><i class=" pi pi-spinner pi-spin" style="font-size: 1.5rem; color: var(--dark)"></i></p>
 
-        <section class=" p-4 flex flex-col gap-4" v-else>
+        <section v-else class=" p-4 flex flex-col gap-4">
             <Balances />
 
             <img class=" mx-auto max-w-80"
@@ -331,7 +331,7 @@ const showUpdateDetails = ref<boolean>(false)
                 <div v-if="warehouse.currentLevel" class="flex gap-4">
                     <div class="shield">
                         <div class="text-center">
-                            <p class="level">{{ warehouse.state == 'build' && remainingSeconds > 0 && warehouse.level > 1 ? warehouse.level-1:warehouse.level }}</p>
+                            <p class="level">{{ warehouse.level }}</p>
                             <p class="label">{{ t('screens.chibi.city.buildings.level') }}</p>
                         </div>
                         <!-- <i class=" text-dark pi pi-chevron-right"></i> -->
@@ -343,13 +343,12 @@ const showUpdateDetails = ref<boolean>(false)
                         </div>
                     </div>
                 </div>
-                <div v-else-if="warehouse.nextLevel" class="flex gap-4">
+                <!-- <div v-else-if="warehouse.nextLevel" class="flex gap-4">
                     <div class="shield">
                         <div class="text-center">
                             <p class="level">{{ warehouse.level+1 }}</p>
                             <p class="label">{{ t('screens.chibi.city.buildings.level') }}</p>
                         </div>
-                        <!-- <i class=" text-dark pi pi-chevron-right"></i> -->
                     </div>
                     <div class="shield">
                         <div class="text-center">
@@ -357,10 +356,10 @@ const showUpdateDetails = ref<boolean>(false)
                             <p class="label">{{ t('screens.chibi.city.buildings.warehouse.filled') }}</p>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
 
-            <div v-if="!notBought && !maxLevel" class="card">
+            <div v-if="!notBought && !maxLevel" class="card" :class="remainingSeconds > 0 ? 'opacity-50':''">
                 <span>
                     <p class=" font-bold">{{ t(`screens.chibi.city.buildings.upgrading`) }}</p>
                     <p class=" text-dark">{{ t(`screens.chibi.city.buildings.${warehouse.type}.upgrade`) }}</p>
@@ -398,16 +397,12 @@ const showUpdateDetails = ref<boolean>(false)
                 </div>
                 <button :disabled="!balanceEnoughForUpgrade || remainingSeconds > 0" @click="showUpgradeModal = true"
                     class="flex justify-center">
-                    <p v-if="remainingSeconds > 0" class="flex gap-2 items-center h-6">{{ warehouse.level == 0 ? t('screens.chibi.city.buildings.building') : t('screens.chibi.city.buildings.upgrading') }} <p class=" font-mono">{{ remainingTime }}</p> </p>
-
-                    <span v-else-if="balanceEnoughForUpgrade" class="flex gap-2">
-                        {{ t('screens.chibi.city.buildings.upgrade') }}
-                    </span>
+                    <span v-if="remainingSeconds > 0 || balanceEnoughForUpgrade" class="flex gap-2 items-center h-6">{{ t('screens.chibi.city.buildings.upgrade') }}</span>
                     <p v-else class="h-6">{{ t('screens.chibi.city.buildings.notAvailible') }}</p>
                 </button>
             </div>
             
-            <div v-if="notBought && warehouse.moreLevel" class="card opacity-50">
+            <!-- <div v-if="notBought && warehouse.moreLevel" class="card opacity-50">
                 <span>
                     <p class=" font-bold">{{ t(`screens.chibi.city.buildings.upgrading`) }}</p>
                     <p class=" text-dark">{{ t(`screens.chibi.city.buildings.${warehouse.type}.upgrade`) }}</p>
@@ -444,7 +439,7 @@ const showUpdateDetails = ref<boolean>(false)
                         {{ t('screens.chibi.city.buildings.upgrade') }}
                     </span>
                 </button>
-            </div>
+            </div> -->
 
             <p v-else-if="maxLevel" class=" text-dark text-center font-bold">{{
                 t('screens.chibi.city.buildings.maxLevel') }}</p>
@@ -461,6 +456,12 @@ const showUpdateDetails = ref<boolean>(false)
                         </span>
                     </div>
                 </span>
+            </button>
+
+            <button v-if="remainingSeconds > 0 && warehouse.state == 'build'" disabled
+                class="flex justify-center">
+                <span v-if="warehouse.level > 1" class="flex gap-2 items-center h-6">{{ t('screens.chibi.city.buildings.upgrading') }} <p class=" font-mono">{{ remainingTime }}</p></span>
+                <span v-else class="flex gap-2 items-center h-6">{{ t('screens.chibi.city.buildings.building') }} <p class=" font-mono">{{ remainingTime }}</p></span>
             </button>
 
             <section v-if="!notBought" class="resources">

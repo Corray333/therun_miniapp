@@ -104,6 +104,7 @@
                     "buildApproveCancel":"Cancel",
                     "notAvailible":"Requirements are not met",
                     "maxLevel":"Max building level reached🔥",
+                    "inProgress":"Progress",
                     "actions":{
                         "build":"build",
                         "upgrade":"upgrade"

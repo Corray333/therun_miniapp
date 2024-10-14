@@ -80,7 +80,7 @@ onMounted(() => {
     </Transition>
 
     <div @click="pick = 'race'; showModal = true"
-      class=" bg-half_dark p-2 px-4 w-full rounded-2xl flex flex-col justify-center items-center">
+      class=" bg-white sm-shadow p-2 px-4 w-full rounded-2xl flex flex-col justify-center items-center">
       <span class=" flex gap-1">
         <race color="var(--primary)" />
         <p class=" text-left font-bold flex items-center">{{ accStore.user.raceBalance }}</p>
@@ -90,7 +90,7 @@ onMounted(() => {
     </div>
 
     <div @click="pick = 'bonuses'; showModal = true"
-      class=" bg-half_dark p-2 px-4 w-full rounded-2xl flex flex-col justify-center items-center">
+      class=" bg-white sm-shadow p-2 px-4 w-full rounded-2xl flex flex-col justify-center items-center">
       <span class=" flex gap-1" ref="bonusesLabel" :class="componentsStore.animateBonuses ? 'animate-bonuses' : ''">
         <bcoin color="var(--primary)" />
         <p class=" text-left font-bold flex items-center">{{ accStore.user.pointBalance }}</p>
@@ -100,7 +100,7 @@ onMounted(() => {
     </div>
 
     <div @click="pick = 'key'; showModal = true"
-      class=" bg-half_dark p-2 px-4 rounded-2xl flex flex-col justify-center items-center">
+      class=" bg-white sm-shadow p-2 px-4 rounded-2xl flex flex-col justify-center items-center">
       <span class=" flex gap-1">
         <keys color="var(--primary)" />
       </span>

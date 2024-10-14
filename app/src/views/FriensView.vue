@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { ref, onBeforeMount } from 'vue'
+import { ref, onBeforeMount, computed } from 'vue'
 import { useAccountStore } from '@/stores/account'
 import bcoin from '@/components/icons/bcoin-icon.vue'
 import key from '@/components/icons/key-icon.vue'
-import bcoinXL from '@/components/icons/bcoin-icon-xl.vue'
 import CopyIcon from '@/components/icons/copy-icon.vue'
 import { useI18n } from 'vue-i18n'
 import axios, { isAxiosError } from 'axios'
@@ -140,6 +139,22 @@ const claimRewards = async () => {
 
 const coinBlastAnimation = ref<typeof Vue3Lottie>()
 
+const sortedRewardsAvailible = computed(() => {
+    return friendsInfo.value.rewardsAvailible.slice().sort((a, b) => {
+        if (a.currency === 'point') return -1
+        if (b.currency === 'point') return 1
+        return 0
+    })
+})
+
+const sortedRewardsFrozen = computed(() => {
+    return friendsInfo.value.rewardsFrozen.slice().sort((a, b) => {
+        if (a.currency === 'point') return -1
+        if (b.currency === 'point') return 1
+        return 0
+    })
+})
+
 </script>
 
 <template>
@@ -156,7 +171,7 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
             <h1 class="text-center">{{ t("screens.friens.call") }}</h1>
             <div class="frozen bg-half_dark p-4 rounded-2xl flex flex-col items-center gap-2">
                 <div v-if="friendsInfo.rewardsFrozen.length" class="flex items-center gap-2 text-2xl font-bold">
-                    <p v-for="(reward, i) of friendsInfo.rewardsFrozen" :key="i" class="flex gap-1 items-center">
+                    <p v-for="(reward, i) of sortedRewardsFrozen" :key="i" class="flex gap-1 items-center">
                         <img class="h-6" :src="`${baseURL}/static/images/resources/${reward.currency}.png`" alt="">
                         {{ reward.amount }}
                     </p>
@@ -254,7 +269,7 @@ const coinBlastAnimation = ref<typeof Vue3Lottie>()
             <div class="frozen bg-half_dark p-4 rounded-2xl flex flex-col items-center gap-2">
                 
                 <div v-if="friendsInfo.rewardsAvailible.length" class="flex items-center gap-2 text-2xl font-bold">
-                    <p v-for="(reward, i) of friendsInfo.rewardsAvailible" :key="i" class="flex gap-1 items-center">
+                    <p v-for="(reward, i) of sortedRewardsAvailible" :key="i" class="flex gap-1 items-center">
                         <img class="h-6" :src="`${baseURL}/static/images/resources/${reward.currency}.png`" alt="">
                         {{ reward.amount }}
                     </p>
