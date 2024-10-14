@@ -355,6 +355,7 @@ const modalPick = ref<string>('keys')
 
 .main{
     background-image: url(../assets/images/farming/droid-bg.png);
+    background-size: cover;
 }
 
 .small-coin {
