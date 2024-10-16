@@ -35,3 +35,5 @@ func NewCityController(router *chi.Mux, store *storage.Storage, userRepository u
 func (c *CityController) Build() {
 	c.transport.RegisterRoutes()
 }
+
+func (c *CityController) Run() {}

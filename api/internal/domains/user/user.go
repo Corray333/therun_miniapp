@@ -41,3 +41,5 @@ func (c *UserController) Build() {
 func (c *UserController) GetRepository() *repository.UserRepository {
 	return c.repo
 }
+
+func (c *UserController) Run() {}

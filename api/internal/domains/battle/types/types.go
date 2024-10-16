@@ -23,12 +23,6 @@ type Opponent struct {
 	Photo    string `json:"photo" db:"opponent_photo"`
 }
 
-type Round struct {
-	ID      int      `json:"id"`
-	EndTime int64    `json:"endTime"`
-	Battles []Battle `json:"battles"`
-}
-
 type Bet struct {
 	BattleID int `json:"battleID" db:"battle_id"`
 	UserID   int `json:"userID" db:"user_id"`

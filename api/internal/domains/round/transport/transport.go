@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/Corray333/therun_miniapp/internal/domains/battle/types"
+	"github.com/Corray333/therun_miniapp/internal/domains/round/types"
 	global_types "github.com/Corray333/therun_miniapp/internal/types"
 	"github.com/Corray333/therun_miniapp/pkg/server/auth"
 	"github.com/go-chi/chi"

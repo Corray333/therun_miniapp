@@ -30,3 +30,5 @@ func NewFarmingController(router *chi.Mux, store *storage.Storage, userService *
 func (c *FarmingController) Build() {
 	c.transport.RegisterRoutes()
 }
+
+func (c *FarmingController) Run() {}

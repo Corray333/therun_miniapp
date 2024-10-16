@@ -30,3 +30,5 @@ func NewCasesController(router *chi.Mux, store *storage.Storage, userService *us
 func (c *CaseController) Build() {
 	c.transport.RegisterRoutes()
 }
+
+func (c *CaseController) Run() {}

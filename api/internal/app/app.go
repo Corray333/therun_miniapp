@@ -11,6 +11,7 @@ import (
 	"github.com/Corray333/therun_miniapp/internal/domains/cases"
 	"github.com/Corray333/therun_miniapp/internal/domains/city"
 	"github.com/Corray333/therun_miniapp/internal/domains/farming"
+	"github.com/Corray333/therun_miniapp/internal/domains/round"
 	"github.com/Corray333/therun_miniapp/internal/domains/task"
 	"github.com/Corray333/therun_miniapp/internal/domains/user"
 	"github.com/Corray333/therun_miniapp/internal/files"
@@ -25,6 +26,7 @@ import (
 
 type controller interface {
 	Build()
+	Run()
 }
 
 type App struct {
@@ -81,7 +83,10 @@ func New() *App {
 	taskController := task.NewTaskController(router, store, telegramClient)
 	app.AddController(taskController)
 
-	battleController := battle.NewBattleController(router, store, userController.GetService())
+	roundController := round.NewRoundController(router, store)
+	app.AddController(roundController)
+
+	battleController := battle.NewBattleController(router, store, userController.GetService(), roundController.GetService())
 	app.AddController(battleController)
 
 	casesController := cases.NewCasesController(router, store, userController.GetService())
@@ -102,5 +107,8 @@ func (app *App) Init() *App {
 
 func (app *App) Run() {
 	slog.Info("Server started at " + app.server.Addr)
+	for _, c := range app.controllers {
+		go c.Run()
+	}
 	slog.Error(app.server.ListenAndServe().Error())
 }

@@ -65,6 +65,7 @@ const getRound = async () => {
         })
 
         round.value = data
+        await getBattles()
 
         return true
     } catch (error) {
@@ -81,6 +82,31 @@ const getRound = async () => {
     }
 }
 
+const getBattles = async () => {
+    try {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/battles`, {
+            withCredentials: true,
+            headers: {
+                Authorization: accStore.token
+            }
+        })
+
+        if (round.value) round.value.battles = data
+
+        return true
+    } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 401) {
+            await auth()
+            try {
+                await getRound()
+            } catch (error) {
+                if (isAxiosError(error)) {
+                    componentsStore.addError(error.message)
+                }
+            }
+        }
+    }
+}
 
 
 </script>

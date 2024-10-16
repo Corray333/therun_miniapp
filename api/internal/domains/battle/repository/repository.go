@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"log/slog"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/battle/service"
@@ -64,7 +65,7 @@ func (r *BattleRepository) GetBattles(round int, userID int64) ([]types.Battle, 
 			Pick:          pick,
 		})
 	}
-
+	fmt.Println(result)
 	return result, nil
 }
 

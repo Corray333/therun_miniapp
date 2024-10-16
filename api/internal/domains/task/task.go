@@ -32,3 +32,5 @@ func NewTaskController(router *chi.Mux, store *storage.Storage, tg *telegram.Tel
 func (c *TaskController) Build() {
 	c.transport.RegisterRoutes()
 }
+
+func (c *TaskController) Run() {}

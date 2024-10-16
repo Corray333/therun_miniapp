@@ -19,8 +19,8 @@ type BattleTransport struct {
 }
 
 type service interface {
-	GetRound(userID int64) *types.Round
 	MakeBet(userID int64, battleID, pick int) error
+	GetBattles(userID int64) ([]types.Battle, error)
 }
 
 func New(router *chi.Mux, service service) *BattleTransport {
@@ -34,12 +34,12 @@ func (t *BattleTransport) RegisterRoutes() {
 	t.router.Group(func(r chi.Router) {
 		r.Use(auth.NewAuthMiddleware())
 
-		r.Get("/api/round", t.getRound)
+		r.Get("/api/battles", t.getBattles)
 		r.Post("/api/battles/{battle_id}/bet", t.makeBet)
 	})
 }
 
-func (t *BattleTransport) getRound(w http.ResponseWriter, r *http.Request) {
+func (t *BattleTransport) getBattles(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(global_types.ContextID).(int64)
 	if !ok {
 		http.Error(w, "user id not found in context", http.StatusInternalServerError)
@@ -47,10 +47,17 @@ func (t *BattleTransport) getRound(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	round := t.service.GetRound(userID)
+	battles, err := t.service.GetBattles(userID)
+	if err != nil {
+		slog.Error("battles not found: " + err.Error())
+		http.Error(w, "battles not found", http.StatusInternalServerError)
+		return
+	}
 
-	if err := json.NewEncoder(w).Encode(round); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := json.NewEncoder(w).Encode(battles); err != nil {
+		slog.Error("error encoding battles: " + err.Error())
+		http.Error(w, "error encoding battles", http.StatusInternalServerError)
+		return
 	}
 }
 

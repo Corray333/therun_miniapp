@@ -2,10 +2,13 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	"time"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/battle/types"
+	round_service "github.com/Corray333/therun_miniapp/internal/domains/round/service"
+	round_types "github.com/Corray333/therun_miniapp/internal/domains/round/types"
 	user_types "github.com/Corray333/therun_miniapp/internal/domains/user/types"
 )
 
@@ -47,79 +50,27 @@ type userService interface {
 	ActivateUser(userID int64) error
 }
 
+type roundService interface {
+	CurrentRound() *round_types.Round
+}
+
 type BattleService struct {
-	repo        repository
-	external    external
-	userService userService
+	repo         repository
+	external     external
+	userService  userService
+	roundService roundService
 }
 
-func New(repo repository, ext external, userService userService) *BattleService {
+func New(repo repository, ext external, userService userService, roundService *round_service.RoundService) *BattleService {
 	return &BattleService{
-		repo:        repo,
-		external:    ext,
-		userService: userService,
+		repo:         repo,
+		external:     ext,
+		userService:  userService,
+		roundService: roundService,
 	}
 }
 
-func (s *BattleService) countRound() (roundID int, roundEndTime int64) {
-	elapsedTime := time.Now().Unix() - InitialRoundStartTime
-	currentRound := InitialRoundID + int(elapsedTime/RoundDuration)
-	currentRoundStartTime := InitialRoundStartTime + int64(currentRound-InitialRoundID)*RoundDuration
-
-	nextRoundStartTime := currentRoundStartTime + RoundDuration
-
-	return currentRound, nextRoundStartTime
-}
-
-func (s *BattleService) GetRound(userID int64) *types.Round {
-	roundID, roundEndTime := s.countRound()
-	round := &types.Round{
-		ID:      roundID,
-		EndTime: roundEndTime,
-	}
-
-	battles, err := s.repo.GetBattles(roundID, userID)
-	if err != nil {
-		slog.Error("error getting battles: " + err.Error())
-		return round
-	}
-
-	round.Battles = battles
-	return round
-}
-
-func (s *BattleService) RunRounds() {
-	elapsedTime := time.Now().Unix() - InitialRoundStartTime
-	currentRound := InitialRoundID + int(elapsedTime/RoundDuration)
-	currentRoundStartTime := InitialRoundStartTime + int64(currentRound-InitialRoundID)*RoundDuration
-
-	nextRoundStartTime := currentRoundStartTime + RoundDuration
-
-	retriesNumber := 0
-	for {
-		if retriesNumber > 10 {
-			panic("couldn't start new round: error processing bets")
-		}
-		if err := s.GetNewBattles(); err != nil {
-			slog.Error("error processing bets: " + err.Error())
-			retriesNumber++
-			continue
-		}
-		break
-	}
-	go s.SetUpdateInterval()
-
-	for {
-		if time.Now().Unix() >= nextRoundStartTime {
-			break
-		}
-	}
-	s.StartNextRoundTimer()
-}
-
-func (s *BattleService) StartRound() {
-	time.Sleep(5 * time.Second)
-
+func (s *BattleService) AcceptNewRound(round *round_types.Round) {
 	retriesNumber := 0
 	for {
 		if retriesNumber > 10 {
@@ -134,13 +85,11 @@ func (s *BattleService) StartRound() {
 	}
 	retriesNumber = 0
 
-	round, _ := s.countRound()
-
 	for {
 		if retriesNumber > 10 {
 			panic("couldn't start new round: error processing bets")
 		}
-		if err := s.ProcessBets(round - 1); err != nil {
+		if err := s.ProcessBets(round.ID - 1); err != nil {
 			slog.Error("error processing bets: " + err.Error())
 			retriesNumber++
 			time.Sleep(5 * time.Second)
@@ -193,13 +142,13 @@ func (s *BattleService) MakeBet(userID int64, battleID, pick int) error {
 		}
 	}
 
-	roundID, roundEndTime := s.countRound()
+	round := s.roundService.CurrentRound()
 	battle, err := s.repo.GetBattle(battleID)
 	if err != nil {
 		return err
 	}
 
-	if battle.RoundID != roundID || time.Now().Unix() >= roundEndTime-BetsPeriodDuration {
+	if battle.RoundID != round.ID || time.Now().Unix() >= round.EndTime-BetsPeriodDuration {
 		return ErrTooLate
 	}
 
@@ -208,8 +157,8 @@ func (s *BattleService) MakeBet(userID int64, battleID, pick int) error {
 
 func (s *BattleService) UpdateBattles() error {
 	slog.Info("Updating battles...")
-	round, _ := s.countRound()
-	battles, err := s.repo.GetBattles(round, 0)
+	round := s.roundService.CurrentRound()
+	battles, err := s.repo.GetBattles(round.ID, 0)
 	if err != nil {
 		return err
 	}
@@ -231,15 +180,6 @@ func (s *BattleService) UpdateBattles() error {
 	return nil
 }
 
-func (s *BattleService) StartNextRoundTimer() {
-	// TODO: change to loop with time check
-	slog.Info("Round starting...")
-	go s.StartRound()
-	time.AfterFunc(RoundDuration*time.Second, func() {
-		s.StartNextRoundTimer()
-	})
-}
-
 func (s *BattleService) SetUpdateInterval() {
 	go s.GetNewBattles()
 	time.AfterFunc(5*time.Minute, func() {
@@ -252,8 +192,10 @@ func (s *BattleService) ProcessBets(roundID int) error {
 	return s.repo.ProcessBets(roundID, BetPrize)
 }
 
-func (s *BattleService) GetBattles(round int, userID int64) ([]types.Battle, error) {
-	return s.repo.GetBattles(round, userID)
+func (s *BattleService) GetBattles(userID int64) ([]types.Battle, error) {
+	round := s.roundService.CurrentRound()
+	fmt.Println(round)
+	return s.repo.GetBattles(round.ID, userID)
 }
 
 func (s *BattleService) GetBattlesByID(ids []int) ([]types.Battle, error) {
