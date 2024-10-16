@@ -11,7 +11,7 @@ import (
 )
 
 type CarController struct {
-	repo      repository.RoundRepository
+	repo      repository.CarRepository
 	service   service.CarService
 	transport transport.CarTransport
 }

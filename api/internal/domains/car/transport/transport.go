@@ -1,6 +1,15 @@
 package transport
 
 import (
+	"context"
+	"encoding/json"
+	"log/slog"
+	"net/http"
+	"strconv"
+
+	"github.com/Corray333/therun_miniapp/internal/domains/car/types"
+	round_types "github.com/Corray333/therun_miniapp/internal/domains/round/types"
+	global_types "github.com/Corray333/therun_miniapp/internal/types"
 	"github.com/Corray333/therun_miniapp/pkg/server/auth"
 	"github.com/go-chi/chi"
 )
@@ -11,6 +20,16 @@ type CarTransport struct {
 }
 
 type service interface {
+	GetAllCars(ctx context.Context) []types.Car
+	GetOwnedCars(ctx context.Context, userID int64) []types.Car
+	GetMainCar(ctx context.Context, userID int64) (*types.Car, error)
+	BuyCar(ctx context.Context, element round_types.Element, userID int64) error
+	GetCarByID(ctx context.Context, carID int64) (*types.Car, error)
+	PickCar(ctx context.Context, carID int64, userID int64) error
+
+	GetRace(ctx context.Context, userID int64) (race *types.RaceState, err error)
+	StartRace(ctx context.Context, userID int64) (race *types.RaceState, err error)
+	EndRace(ctx context.Context, userID int64) (race *types.RaceState, err error)
 }
 
 func New(router *chi.Mux, service service) *CarTransport {
@@ -24,10 +43,201 @@ func (t *CarTransport) RegisterRoutes() {
 	t.router.Group(func(r chi.Router) {
 		r.Use(auth.NewAuthMiddleware())
 
-		// r.Get("/race/all-cars", t.getAllCars) // All cars
-		// r.Get("/race/car", t.getCar) // Current car
-		// r.Get("/race/cars", t.getCars) // Get all available cars
-		// r.Post("/race/buy-car", t.buyCar) // Buy car
-		// r.Get("/race/state", t.getRace) // Get race state
+		r.Get("/api/cars/all", t.getAllCars)                      // All cars
+		r.Get("/api/cars/main", t.getMainCar)                     // Current car
+		r.Get("/api/cars/owned", t.getOwnedCars)                  // Get all available cars
+		r.Get("/api/cars/{car_id}", t.getMainCar)                 // Get car by id
+		r.Method("BUY", "/api/car", http.HandlerFunc(t.buyCar))   // Choose start car
+		r.Method("PICK", "/api/car", http.HandlerFunc(t.pickCar)) // Choose start car
+		r.Get("/race", t.getRace)                                 // Get race state
+		r.MethodFunc("START", "/api/race", t.startRace)           // Start moving
+		r.MethodFunc("END", "/api/race", t.endRace)               // End moving
 	})
+}
+
+func (t *CarTransport) getAllCars(w http.ResponseWriter, r *http.Request) {
+	cars := t.service.GetAllCars(r.Context())
+
+	if err := json.NewEncoder(w).Encode(cars); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (t *CarTransport) buyCar(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(global_types.ContextID).(int64)
+	if !ok {
+		http.Error(w, "user id not found in context", http.StatusInternalServerError)
+		slog.Error("user id not found in context")
+		return
+	}
+
+	element := r.URL.Query().Get("element")
+	if element == "" {
+		http.Error(w, "element not found in query", http.StatusBadRequest)
+		slog.Error("element not found in query")
+		return
+	}
+
+	if err := t.service.BuyCar(r.Context(), round_types.Element(element), userID); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (t *CarTransport) pickCar(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(global_types.ContextID).(int64)
+	if !ok {
+		http.Error(w, "user id not found in context", http.StatusInternalServerError)
+		slog.Error("user id not found in context")
+		return
+	}
+
+	carIDStr := r.URL.Query().Get("car_id")
+	if carIDStr == "" {
+		http.Error(w, "car id not found in query", http.StatusBadRequest)
+		slog.Error("car id not found in query")
+		return
+	}
+
+	carID, err := strconv.ParseInt(carIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := t.service.PickCar(r.Context(), carID, userID); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (t *CarTransport) getMainCar(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(global_types.ContextID).(int64)
+	if !ok {
+		http.Error(w, "user id not found in context", http.StatusInternalServerError)
+		slog.Error("user id not found in context")
+		return
+	}
+
+	car, err := t.service.GetMainCar(r.Context(), userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(car); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (t *CarTransport) getCarByID(w http.ResponseWriter, r *http.Request) {
+
+	carIDStr := chi.URLParam(r, "car_id")
+	if carIDStr == "" {
+		http.Error(w, "car id not found in query", http.StatusBadRequest)
+		slog.Error("car id not found in query")
+		return
+	}
+
+	carID, err := strconv.ParseInt(carIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	car, err := t.service.GetCarByID(r.Context(), carID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(car); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (t *CarTransport) getOwnedCars(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(global_types.ContextID).(int64)
+	if !ok {
+		http.Error(w, "user id not found in context", http.StatusInternalServerError)
+		slog.Error("user id not found in context")
+		return
+	}
+
+	cars := t.service.GetOwnedCars(r.Context(), userID)
+
+	if err := json.NewEncoder(w).Encode(cars); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (t *CarTransport) getRace(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(global_types.ContextID).(int64)
+	if !ok {
+		http.Error(w, "user id not found in context", http.StatusInternalServerError)
+		slog.Error("user id not found in context")
+		return
+	}
+
+	race, err := t.service.GetRace(r.Context(), userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(race); err != nil {
+		slog.Error("failed to encode an info about race: " + err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (t *CarTransport) startRace(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(global_types.ContextID).(int64)
+	if !ok {
+		http.Error(w, "user id not found in context", http.StatusInternalServerError)
+		slog.Error("user id not found in context")
+		return
+	}
+
+	race, err := t.service.StartRace(r.Context(), userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(race); err != nil {
+		slog.Error("failed to encode an info about race: " + err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (t *CarTransport) endRace(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(global_types.ContextID).(int64)
+	if !ok {
+		http.Error(w, "user id not found in context", http.StatusInternalServerError)
+		slog.Error("user id not found in context")
+		return
+	}
+
+	race, err := t.service.EndRace(r.Context(), userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(race); err != nil {
+		slog.Error("failed to encode an info about race: " + err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

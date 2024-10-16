@@ -59,6 +59,29 @@ func (r *CityRepository) Rollback(ctx context.Context) error {
 	return tx.Rollback()
 }
 
+func (r *CityRepository) getTx(ctx context.Context) (tx *sqlx.Tx, isNew bool, err error) {
+	txRaw := ctx.Value(storage.TxKey{})
+	if txRaw != nil {
+		var ok bool
+		tx, ok = txRaw.(*sqlx.Tx)
+		if !ok {
+			slog.Error("invalid transaction type")
+			return nil, false, ErrInvalidTxType
+		}
+	}
+	if tx == nil {
+		tx, err = r.db.BeginTxx(ctx, nil)
+		if err != nil {
+			slog.Error("failed to begin transaction: " + err.Error())
+			return nil, false, err
+		}
+
+		return tx, true, nil
+	}
+
+	return tx, false, nil
+}
+
 func (r *CityRepository) GetCity(ctx context.Context, userID int64) (buildings []types.BuildingPublic, err error) {
 	var tx *sqlx.Tx
 	txRaw := ctx.Value(storage.TxKey{})
@@ -95,29 +118,6 @@ func (r *CityRepository) GetBuilding(ctx context.Context, userID int64, building
 	}
 
 	return building, nil
-}
-
-func (r *CityRepository) getTx(ctx context.Context) (tx *sqlx.Tx, isNew bool, err error) {
-	txRaw := ctx.Value(storage.TxKey{})
-	if txRaw != nil {
-		var ok bool
-		tx, ok = txRaw.(*sqlx.Tx)
-		if !ok {
-			slog.Error("invalid transaction type")
-			return nil, false, ErrInvalidTxType
-		}
-	}
-	if tx == nil {
-		tx, err = r.db.BeginTxx(ctx, nil)
-		if err != nil {
-			slog.Error("failed to begin transaction: " + err.Error())
-			return nil, false, err
-		}
-
-		return tx, true, nil
-	}
-
-	return tx, false, nil
 }
 
 func (r *CityRepository) GetResources(ctx context.Context, userID int64) (resources []types.Resource, err error) {

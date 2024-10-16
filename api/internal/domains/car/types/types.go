@@ -22,7 +22,9 @@ type Car struct {
 	Hendling     int                 `json:"hendling" db:"hendling"`
 	Brakes       int                 `json:"brakes" db:"brakes"`
 	Strength     int                 `json:"strength" db:"strength"`
+	Tank         int                 `json:"tank" db:"tank"`
 	Fuel         int                 `json:"fuel" db:"fuel"`
+	Health       int                 `json:"health" db:"health"`
 
 	Modules []Module `json:"modules" db:"-"`
 }
@@ -32,6 +34,12 @@ type Module struct {
 	Boost          int            `json:"boost" db:"boost"`
 	Img            string         `json:"img" db:"-"`
 	Name           string         `json:"name" db:"name"`
+}
+
+type RaceState struct {
+	CurrentMiles float64 `json:"currentMiles" db:"current_miles"`
+	StartTime    int64   `json:"startTime" db:"start_time"`
+	Place        int     `json:"place" db:"place"`
 }
 
 var ElementEffects = map[round_types.Element]map[round_types.Element]int{
