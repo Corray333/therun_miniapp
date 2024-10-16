@@ -91,7 +91,7 @@ const getBattles = async () => {
             }
         })
 
-        if (round.value) round.value.battles = data
+        if (round.value && data) round.value.battles = data
 
         return true
     } catch (error) {
@@ -105,17 +105,21 @@ const getBattles = async () => {
                 }
             }
         }
+    } finally{
+        loaded.value = true
     }
 }
+
+const loaded = ref<boolean>(false)
 
 
 </script>
 
 <template>
     <section class="pb-20">
-
-        <p v-if="round == undefined" class="text-center font-dark mt-4"><i class=" pi pi-spinner pi-spin"
-                style="font-size: 1.5rem; color: var(--dark)"></i></p>
+        <p v-if="!loaded" class="text-center font-dark mt-4">
+            <i class=" pi pi-spinner pi-spin" style="font-size: 1.5rem; color: var(--dark)"></i>
+            </p>
 
         <section v-else class=" p-4 flex flex-col gap-4">
             <Balances />
@@ -132,7 +136,7 @@ const getBattles = async () => {
 
             <h2 class="text-center text-2xl" v-html="t('screens.battles.header')"></h2>
 
-            <p v-if="!round?.battles.length" class="font-bold text-dark text-center">{{ t('screens.battles.noBattles')
+            <p v-if="!round?.battles?.length" class="font-bold text-dark text-center">{{ t('screens.battles.noBattles')
                 }}</p>
             <div v-else>
                 <section class=" flex flex-col gap-4">
@@ -142,11 +146,11 @@ const getBattles = async () => {
 
                 <div class=" flex flex-col gap-2 py-2">
                     <span class="flex gap-2 text-dark">
-                        <i class=" pi pi-info-circle mt-1" style="font-size: 1.25rem;"></i>
+                        <i class=" pi pi-info-circle" style="font-size: 1.25rem;"></i>
                         <p>{{ t('screens.battles.info') }}</p>
                     </span>
                     <span class="flex gap-2 text-dark">
-                        <i class=" pi pi-info-circle mt-1" style="font-size: 1.25rem;"></i>
+                        <i class=" pi pi-info-circle" style="font-size: 1.25rem;"></i>
                         <p>{{ t('screens.battles.info2') }}</p>
                     </span>
                 </div>

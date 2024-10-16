@@ -60,7 +60,7 @@ onBeforeMount(() => {
             </button>
             <div v-else class="flex gap-2">
                 <p class="level">{{ building.level  }}</p>
-                <button class=" btn-type-4 state-2">
+                <button v-if="building.upgradeCost != null || remainingSeconds > 0" class=" btn-type-4 state-2">
                     <p v-if="remainingSeconds < 0" class="flex gap-1 justify-center items-center">{{ t(`screens.chibi.city.upgradeBtn`) }}<i class=" pi pi-arrow-up"></i></p>
                     <p v-else class="flex items-center gap-2 font-mono">{{ remainingTime }}<i class="pi pi-clock"></i></p>
                 </button>
@@ -84,7 +84,7 @@ onBeforeMount(() => {
 }
 
 .level {
-    @apply px-2 aspect-square h-full flex items-center justify-center bg-custom_blue text-white rounded-2xl;
+    @apply p-2 max-h-full font-bold aspect-square h-full flex items-center justify-center bg-custom_blue text-white rounded-2xl;
 }
 
 </style>

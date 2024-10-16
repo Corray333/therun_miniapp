@@ -351,12 +351,7 @@ const modalPick = ref<string>('keys')
     </section>
 </template>
 
-<style scoped>
-
-.main{
-    background-image: url(../assets/images/farming/droid-bg.png);
-    background-size: cover;
-}
+<style>
 
 .small-coin {
     position: absolute;
@@ -368,6 +363,26 @@ const modalPick = ref<string>('keys')
     border-radius: 50%;
     z-index: -10;
 }
+
+@keyframes move-to-center {
+    0% {
+        transform: translate(var(--start-x), var(--start-y));
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+</style>
+
+<style scoped>
+
+.main{
+    background-image: url(../assets/images/farming/droid-bg.png);
+    background-size: cover;
+}
+
 
 .delay-enter-active,
 .delay-leave-active {
@@ -457,16 +472,6 @@ const modalPick = ref<string>('keys')
 
     100% {
         transform: rotateY(360deg);
-    }
-}
-
-@keyframes move-to-center {
-    0% {
-        transform: translate(var(--start-x), var(--start-y));
-    }
-
-    100% {
-        transform: translate(0, 0);
     }
 }
 

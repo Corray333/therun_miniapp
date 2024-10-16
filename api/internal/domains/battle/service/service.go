@@ -74,7 +74,8 @@ func (s *BattleService) AcceptNewRound(round *round_types.Round) {
 	retriesNumber := 0
 	for {
 		if retriesNumber > 10 {
-			panic("couldn't start new round: error processing bets")
+			slog.Error("couldn't start new round: error updating battles")
+			break
 		}
 		if err := s.UpdateBattles(); err != nil {
 			slog.Error("error processing bets: " + err.Error())
@@ -87,7 +88,8 @@ func (s *BattleService) AcceptNewRound(round *round_types.Round) {
 
 	for {
 		if retriesNumber > 10 {
-			panic("couldn't start new round: error processing bets")
+			slog.Error("couldn't start new round: error processing bets")
+			break
 		}
 		if err := s.ProcessBets(round.ID - 1); err != nil {
 			slog.Error("error processing bets: " + err.Error())
@@ -101,7 +103,8 @@ func (s *BattleService) AcceptNewRound(round *round_types.Round) {
 	retriesNumber = 0
 	for {
 		if retriesNumber > 10 {
-			panic("couldn't start new round: error getting new battles")
+			slog.Error("couldn't start new round: error getting new battles")
+			break
 		}
 		if err := s.GetNewBattles(); err != nil {
 			slog.Error("error getting new battles: " + err.Error())

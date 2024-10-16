@@ -132,7 +132,7 @@ type BuildingPublic struct {
 	State           BuildingState              `json:"state" db:"state"`
 	LastStateChange int64                      `json:"lastStateChange" db:"last_state_change"`
 	StateUntil      int64                      `json:"stateUntil" db:"state_until"`
-	UpgradeCost     []user_types.BalanceChange `json:"upgradeCost,omitempty"`
+	UpgradeCost     []user_types.BalanceChange `json:"upgradeCost"`
 }
 
 type WarehousePublic struct {
