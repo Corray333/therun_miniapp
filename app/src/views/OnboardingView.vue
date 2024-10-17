@@ -17,6 +17,28 @@ watch(sliderVal, (val) => {
     }
 })
 
+const lowerIntervalID = ref<number>()
+
+function lowerToZero() {
+    const duration = 2000; // 2 seconds
+    const interval = 10; // 10ms interval
+    const steps = duration / interval;
+    const decrement = sliderVal.value / steps;
+
+    lowerIntervalID.value = setInterval(() => {
+        sliderVal.value -= decrement;
+        if (sliderVal.value <= 0) {
+            sliderVal.value = 0;
+            clearInterval(lowerIntervalID.value);
+        }
+    }, interval);
+}
+
+const stopLowering = ()=>{
+    clearInterval(lowerIntervalID.value)
+}
+
+
 </script>
 
 <template>
@@ -88,7 +110,7 @@ watch(sliderVal, (val) => {
                     <div class="info">
                         <h1 v-html="t('screens.onboarding.slide6.title')"></h1>
                         <p>{{ t('screens.onboarding.slide6.description') }}</p>
-                        <Slider v-model="sliderVal" :min="0" :max="100" :step="1" id="slider-finish" />
+                        <Slider v-model="sliderVal" :min="0" :max="100" :step="1" @drag-started="stopLowering" @drag-ended="lowerToZero" id="slider-finish" />
                     </div>
                 </div>
             </div>

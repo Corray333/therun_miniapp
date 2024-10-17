@@ -59,3 +59,21 @@ var ElementEffects = map[round_types.Element]map[round_types.Element]int{
 		round_types.ElementTrack:  100,
 	},
 }
+
+var ElementEffectsFuel = map[round_types.Element]map[round_types.Element]int{
+	round_types.ElementDesert: {
+		round_types.ElementDesert: 100,
+		round_types.ElementCity:   70,
+		round_types.ElementTrack:  40,
+	},
+	round_types.ElementCity: {
+		round_types.ElementDesert: 40,
+		round_types.ElementCity:   100,
+		round_types.ElementTrack:  70,
+	},
+	round_types.ElementTrack: {
+		round_types.ElementDesert: 30,
+		round_types.ElementCity:   80,
+		round_types.ElementTrack:  100,
+	},
+}

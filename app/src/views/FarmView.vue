@@ -149,6 +149,10 @@ const createSmallCoin = () => {
 
     coinsContainer.value.appendChild(smallCoin);
 
+    // setTimeout(() => {
+    //     navigator.vibrate([100])
+    // }, 1000);
+
     setTimeout(() => smallCoin.remove(), 2000);
 };
 

@@ -58,6 +58,7 @@ export default {
             return Math.min(Math.max(percentage, 0), 100); // Ограничиваем до диапазона [0, 100]
         },
         startDrag(event) {
+            this.$emit('drag-started');
             this.dragging = true;
             this.updateValue(event);
         },
@@ -67,6 +68,7 @@ export default {
             }
         },
         endDrag() {
+            this.$emit('drag-ended');
             this.dragging = false;
         },
         updateValue(event) {
