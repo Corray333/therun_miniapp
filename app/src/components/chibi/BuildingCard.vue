@@ -80,7 +80,7 @@ onBeforeMount(() => {
     @apply w-full flex flex-col justify-between;
 }
 .building>img{
-    @apply h-36 object-contain;
+    @apply h-32 object-contain;
 }
 
 .level {
