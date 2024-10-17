@@ -27,21 +27,21 @@ type Car struct {
 	Brakes       int                 `json:"brakes" db:"brakes"`
 	Strength     int                 `json:"strength" db:"strength"`
 	Tank         int                 `json:"tank" db:"tank"`
-	Fuel         int                 `json:"fuel" db:"fuel"`
-	Health       int                 `json:"health" db:"health"`
+	Fuel         float64             `json:"fuel" db:"fuel"`
+	Health       float64             `json:"health" db:"health"`
 
 	Modules []Module `json:"modules" db:"-"`
 }
 
 type Module struct {
 	Characteristic Characteristic `json:"characteristic" db:"characteristic"`
-	Boost          int            `json:"boost" db:"boost"`
+	Boost          float64        `json:"boost" db:"boost"`
 	Img            string         `json:"img" db:"-"`
 	Name           string         `json:"name" db:"name"`
 }
 
 type RaceState struct {
-	CurrentMiles float64 `json:"currentMiles" db:"current_miles"`
+	CurrentMiles float64 `json:"currentMiles" db:"miles"`
 	StartTime    int64   `json:"startTime" db:"start_time"`
 	Place        int     `json:"place" db:"place"`
 }

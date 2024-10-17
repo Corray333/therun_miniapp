@@ -136,8 +136,7 @@ const loaded = ref<boolean>(false)
 
             <h2 class="text-center text-2xl" v-html="t('screens.battles.header')"></h2>
 
-            <p v-if="!round?.battles?.length" class="font-bold mt-4 text-red-400 text-center">{{ t('screens.battles.noBattles')
-                }}</p>
+            <p v-if="!round?.battles?.length" class="font-bold mt-4 text-red-400 text-center">{{ t('screens.battles.noBattles')}}</p>
             <div v-else>
                 <section class=" flex flex-col gap-4">
                     <BattleCard v-for="(battle, i) of round?.battles" :key="i" :battle="battle"

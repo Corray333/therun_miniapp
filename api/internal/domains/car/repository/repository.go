@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"log/slog"
+	"time"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/car/types"
 	"github.com/Corray333/therun_miniapp/internal/storage"
@@ -12,8 +13,10 @@ import (
 )
 
 var (
-	ErrAlreadyHasCar = errors.New("user already has a car")
-	ErrInvalidTxType = errors.New("invalid transaction type")
+	ErrAlreadyHasCar      = errors.New("user already has a car")
+	ErrRaceAlreadyStarted = errors.New("race already started")
+	ErrNoCar              = errors.New("user has no car")
+	ErrInvalidTxType      = errors.New("invalid transaction type")
 )
 
 type CarRepository struct {
@@ -101,7 +104,7 @@ func (r *CarRepository) BuyCar(ctx context.Context, car *types.Car, userID int64
 		return ErrAlreadyHasCar
 	}
 
-	_, err = r.db.Exec("INSERT INTO cars (user_id, element, acceleration, hendling, brakes, strength, tank, fuel, health) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)", userID, car.Element, car.Acceleration, car.Hendling, car.Brakes, car.Strength, car.Tank, car.Fuel, car.Health)
+	_, err = r.db.Exec("INSERT INTO cars (user_id, element, acceleration, hendling, brakes, strength, tank, fuel, health, is_main) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", userID, car.Element, car.Acceleration, car.Hendling, car.Brakes, car.Strength, car.Tank, car.Fuel, car.Health, car.IsMain)
 	if err != nil {
 		slog.Error("error while choosing car: " + err.Error())
 		return err
@@ -160,4 +163,101 @@ func (r *CarRepository) GetOwnedCars(ctx context.Context, userID int64) []types.
 	}
 
 	return cars
+}
+
+func (r *CarRepository) GetRaceState(ctx context.Context, userID int64, roundID int) (*types.RaceState, error) {
+	var raceState types.RaceState
+
+	if err := r.db.Get(&raceState, "SELECT start_time, miles FROM races WHERE user_id = $1 AND round_id = $2", userID, roundID); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		slog.Error("error while getting race state: " + err.Error())
+		return nil, err
+	}
+
+	return &raceState, nil
+}
+
+func (r *CarRepository) StartRace(ctx context.Context, userID int64, roundID int) (*types.RaceState, error) {
+	tx, isNew, err := r.getTx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if isNew {
+		defer tx.Rollback()
+	}
+
+	car, err := r.GetMainCar(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	if car == nil {
+		return nil, ErrNoCar
+	}
+
+	state, err := r.GetRaceState(ctx, userID, roundID)
+	if err != nil {
+		return nil, err
+	}
+
+	if state == nil {
+		state = &types.RaceState{
+			CurrentMiles: 0,
+			StartTime:    0,
+		}
+	}
+
+	if state.StartTime != 0 {
+		return nil, ErrRaceAlreadyStarted
+	}
+
+	startTime := time.Now().Unix()
+
+	_, err = tx.Exec("INSERT INTO races (user_id, round_id, start_time) VALUES ($1, $2, $3) ON CONFLICT (user_id, round_id) DO UPDATE SET start_time = $3", userID, roundID, startTime)
+	if err != nil {
+		slog.Error("error starting race: " + err.Error())
+		return nil, err
+	}
+
+	if isNew {
+		if err := tx.Commit(); err != nil {
+			slog.Error("failed to commit transaction: " + err.Error())
+			return nil, err
+		}
+	}
+
+	state.StartTime = startTime
+
+	return state, nil
+}
+
+func (r *CarRepository) EndRace(ctx context.Context, userID int64, roundID int, miles float64, fuelWasted, healthWasted float64) error {
+	tx, isNew, err := r.getTx(ctx)
+	if err != nil {
+		return err
+	}
+	if isNew {
+		defer tx.Rollback()
+	}
+
+	if _, err := tx.Exec("UPDATE races SET miles = $1, start_time = 0 WHERE user_id = $2 AND round_id = $3", miles, userID, roundID); err != nil {
+		slog.Error("error ending race: " + err.Error())
+		return err
+	}
+
+	if _, err := tx.Exec("UPDATE cars SET fuel = fuel - $1, health = health - $2 WHERE user_id = $3 AND is_main = true", fuelWasted, healthWasted, userID); err != nil {
+		slog.Error("error ending race: error updating car: " + err.Error())
+		return err
+	}
+
+	if isNew {
+		if err := tx.Commit(); err != nil {
+			slog.Error("failed to commit transaction: " + err.Error())
+			return err
+		}
+	}
+
+	return nil
 }

@@ -9,9 +9,10 @@ CREATE TABLE IF NOT EXISTS cars (
     brakes INTEGER NOT NULL,
     strength INTEGER NOT NULL,
     tank INTEGER NOT NULL,
-    fuel INTEGER NOT NULL DEFAULT 0 ,
-    health INTEGER NOT NULL DEFAULT 0 ,
-    is_main BOOLEAN NOT NULL DEFAULT FALSE
+    fuel FLOAT NOT NULL DEFAULT 0 ,
+    health FLOAT NOT NULL DEFAULT 0 ,
+    is_main BOOLEAN NOT NULL DEFAULT FALSE,
+    CONSTRAINT cars_pk PRIMARY KEY (car_id)
 );
 -- +goose StatementEnd
 

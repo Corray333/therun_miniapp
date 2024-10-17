@@ -49,7 +49,7 @@ func (t *CarTransport) RegisterRoutes() {
 		r.Get("/api/cars/{car_id}", t.getMainCar) // Get car by id
 		r.Post("/api/buy-car", t.buyCar)          // Choose start car
 		r.Post("/api/pick-car", t.pickCar)        // Choose start car
-		r.Get("/race", t.getRace)                 // Get race state
+		r.Get("/api/race", t.getRace)             // Get race state
 		r.Post("/api/start-race", t.startRace)    // Start moving
 		r.Post("/api/end-race", t.endRace)        // End moving
 	})

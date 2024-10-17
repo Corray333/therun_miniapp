@@ -23,6 +23,6 @@ func NewClient(token string) *TelegramClient {
 	bot.Debug = true
 
 	return &TelegramClient{
-		bot: bot,
+		bot: nil,
 	}
 }

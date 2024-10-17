@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/round/types"
+	"golang.org/x/exp/rand"
 )
 
 // Errors
@@ -28,6 +29,7 @@ const (
 )
 
 type repository interface {
+	SetRound(round *types.Round) error
 }
 
 type newRoundSubscriber interface {
@@ -63,22 +65,22 @@ func (s *RoundService) countRound() (roundID int, roundEndTime int64) {
 	return currentRound, nextRoundStartTime
 }
 
-func (s *RoundService) GetRound(userID int64) *types.Round {
-	roundID, roundEndTime := s.countRound()
-	round := &types.Round{
-		ID:      roundID,
-		EndTime: roundEndTime,
-	}
+func (s *RoundService) generateElement() types.Element {
+	elements := types.Elements
+	seed := uint64(time.Now().UnixNano())
+	r := rand.New(rand.NewSource(seed))
 
-	return round
+	return elements[r.Intn(len(elements))]
 }
 
 func (s *RoundService) RunRounds() {
-	elapsedTime := time.Now().Unix() - InitialRoundStartTime
-	currentRound := InitialRoundID + int(elapsedTime/RoundDuration)
-	currentRoundStartTime := InitialRoundStartTime + int64(currentRound-InitialRoundID)*RoundDuration
+	roundID, endTime := s.countRound()
 
-	nextRoundStartTime := currentRoundStartTime + RoundDuration
+	s.repo.SetRound(&types.Round{
+		ID:      roundID,
+		EndTime: endTime,
+		Element: s.generateElement(),
+	})
 
 	// retriesNumber := 0
 	// for {
@@ -96,27 +98,39 @@ func (s *RoundService) RunRounds() {
 	// go s.SetUpdateInterval()
 
 	for {
-		if time.Now().Unix() >= nextRoundStartTime {
+		if time.Now().Unix() >= endTime {
 			break
 		}
 	}
 	s.StartNextRoundTimer()
 }
 
-func (s *RoundService) CurrentRound() *types.Round {
-	roundID, endTime := s.countRound()
-	// TODO: get element
-	return &types.Round{
+func (s *RoundService) GetRound() *types.Round {
+
+	// TODO: get element from db
+	roundID, roundEndTime := s.countRound()
+	round := &types.Round{
 		ID:      roundID,
-		EndTime: endTime,
+		EndTime: roundEndTime,
+		Element: "desert",
 	}
+
+	return round
 }
 
 func (s *RoundService) StartRound() {
 	time.Sleep(5 * time.Second)
 
+	go func() {
+		s.repo.SetRound(&types.Round{
+			ID:      s.GetRound().ID,
+			EndTime: s.GetRound().EndTime,
+			Element: s.generateElement(),
+		})
+	}()
+
 	for _, sub := range s.subscribers {
-		sub.AcceptNewRound(s.CurrentRound())
+		sub.AcceptNewRound(s.GetRound())
 	}
 
 }

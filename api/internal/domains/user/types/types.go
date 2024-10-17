@@ -38,9 +38,6 @@ type User struct {
 
 	IsPremium   bool `json:"isPremium" db:"is_premium"`
 	IsActivated bool `json:"isActivated" db:"is_activated"`
-
-	CurrentMiles  float64 `json:"currentMiles" db:"current_miles"`
-	RaceStartTime int64   `json:"raceStartTime" db:"race_start_time"`
 }
 
 type Referal struct {
