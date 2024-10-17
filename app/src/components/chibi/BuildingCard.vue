@@ -84,7 +84,7 @@ onBeforeMount(() => {
 }
 
 .level {
-    @apply p-2 max-h-full font-bold aspect-square flex items-center justify-center bg-custom_blue text-white rounded-2xl;
+    @apply p-2 max-h-full font-bold aspect-square flex items-center justify-center bg-custom_blue text-white rounded-md;
 }
 
 </style>
