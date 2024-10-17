@@ -78,7 +78,7 @@ func (r *CarRepository) getTx(ctx context.Context) (tx *sqlx.Tx, isNew bool, err
 
 func (r *CarRepository) GetMainCar(ctx context.Context, userID int64) (*types.Car, error) {
 	var car types.Car
-	err := r.db.Get(&car, "SELECT * FROM cars WHERE user_id = $1, is_main = true", userID)
+	err := r.db.Get(&car, "SELECT * FROM cars WHERE user_id = $1 AND is_main = true", userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -101,7 +101,7 @@ func (r *CarRepository) BuyCar(ctx context.Context, car *types.Car, userID int64
 		return ErrAlreadyHasCar
 	}
 
-	_, err = r.db.Exec("INSERT INTO cars (user_id, element, acceleration, hendling, brakes, strength, fuel) VALUES ($1, $2, $3, $4, $5, $6, $7)", userID, car.Element, car.Acceleration, car.Hendling, car.Brakes, car.Strength, car.Fuel)
+	_, err = r.db.Exec("INSERT INTO cars (user_id, element, acceleration, hendling, brakes, strength, tank, fuel, health) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)", userID, car.Element, car.Acceleration, car.Hendling, car.Brakes, car.Strength, car.Tank, car.Fuel, car.Health)
 	if err != nil {
 		slog.Error("error while choosing car: " + err.Error())
 		return err

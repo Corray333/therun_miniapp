@@ -16,6 +16,10 @@ const (
 )
 
 type Car struct {
+	UserID int64 `json:"-" db:"user_id"`
+	ID     int64 `json:"id" db:"car_id"`
+	IsMain bool  `json:"isMain" db:"is_main"`
+
 	Element      round_types.Element `json:"element" db:"element"`
 	Img          string              `json:"img" db:"-"`
 	Acceleration int                 `json:"acceleration" db:"acceleration"`

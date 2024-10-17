@@ -53,6 +53,9 @@ func (s *CarService) generateCar(element round_types.Element) *types.Car {
 	car.Hendling = r.Intn(max-min+1) + min
 	car.Brakes = r.Intn(max-min+1) + min
 	car.Strength = r.Intn(max-min+1) + min
+	car.Tank = r.Intn(max-min+1) + min
+	car.Fuel = 10
+	car.Health = 10
 
 	return &car
 }
@@ -101,7 +104,7 @@ func (s *CarService) countFuelWasting(duration int, car *types.Car) float64 {
 }
 
 func (s *CarService) GetAllCars(ctx context.Context) []types.Car {
-	cars := make([]types.Car, 3)
+	cars := []types.Car{}
 
 	cars = append(cars, types.Car{
 		Element: round_types.ElementDesert,
