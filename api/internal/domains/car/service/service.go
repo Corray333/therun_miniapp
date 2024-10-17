@@ -144,6 +144,12 @@ func (s *CarService) CurrentPoints(car *types.Car, state *types.RaceState) float
 	return s.countMiles(int(time.Now().Unix())-int(state.StartTime), car)
 }
 
-func (s *CarService) GetRace(ctx context.Context, userID int64) (race *types.RaceState, err error)
-func (s *CarService) StartRace(ctx context.Context, userID int64) (race *types.RaceState, err error)
-func (s *CarService) EndRace(ctx context.Context, userID int64) (race *types.RaceState, err error)
+func (s *CarService) GetRace(ctx context.Context, userID int64) (race *types.RaceState, err error) {
+	return nil, nil
+}
+func (s *CarService) StartRace(ctx context.Context, userID int64) (race *types.RaceState, err error) {
+	return nil, nil
+}
+func (s *CarService) EndRace(ctx context.Context, userID int64) (race *types.RaceState, err error) {
+	return nil, nil
+}

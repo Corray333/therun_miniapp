@@ -20,7 +20,7 @@ watch(sliderVal, (val) => {
 const lowerIntervalID = ref<number>()
 
 function lowerToZero() {
-    const duration = 2000; // 2 seconds
+    const duration = 500; // 2 seconds
     const interval = 10; // 10ms interval
     const steps = duration / interval;
     const decrement = sliderVal.value / steps;

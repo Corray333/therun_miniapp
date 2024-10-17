@@ -43,15 +43,15 @@ func (t *CarTransport) RegisterRoutes() {
 	t.router.Group(func(r chi.Router) {
 		r.Use(auth.NewAuthMiddleware())
 
-		r.Get("/api/cars/all", t.getAllCars)                      // All cars
-		r.Get("/api/cars/main", t.getMainCar)                     // Current car
-		r.Get("/api/cars/owned", t.getOwnedCars)                  // Get all available cars
-		r.Get("/api/cars/{car_id}", t.getMainCar)                 // Get car by id
-		r.Method("BUY", "/api/car", http.HandlerFunc(t.buyCar))   // Choose start car
-		r.Method("PICK", "/api/car", http.HandlerFunc(t.pickCar)) // Choose start car
-		r.Get("/race", t.getRace)                                 // Get race state
-		r.MethodFunc("START", "/api/race", t.startRace)           // Start moving
-		r.MethodFunc("END", "/api/race", t.endRace)               // End moving
+		r.Get("/api/cars/all", t.getAllCars)      // All cars
+		r.Get("/api/cars/main", t.getMainCar)     // Current car
+		r.Get("/api/cars/owned", t.getOwnedCars)  // Get all available cars
+		r.Get("/api/cars/{car_id}", t.getMainCar) // Get car by id
+		r.Post("/api/buy-car", t.buyCar)          // Choose start car
+		r.Post("/api/pick-car", t.pickCar)        // Choose start car
+		r.Get("/race", t.getRace)                 // Get race state
+		r.Post("/api/start-race", t.startRace)    // Start moving
+		r.Post("/api/end-race", t.endRace)        // End moving
 	})
 }
 

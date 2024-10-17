@@ -8,6 +8,7 @@ import (
 	_ "github.com/Corray333/therun_miniapp/docs"
 	"github.com/Corray333/therun_miniapp/internal/config"
 	"github.com/Corray333/therun_miniapp/internal/domains/battle"
+	"github.com/Corray333/therun_miniapp/internal/domains/car"
 	"github.com/Corray333/therun_miniapp/internal/domains/cases"
 	"github.com/Corray333/therun_miniapp/internal/domains/city"
 	"github.com/Corray333/therun_miniapp/internal/domains/farming"
@@ -94,6 +95,9 @@ func New() *App {
 
 	cityController := city.NewCityController(router, store, userController.GetRepository())
 	app.AddController(cityController)
+
+	carsControlles := car.NewCarController(router, store, userController.GetService(), roundController.GetService())
+	app.AddController(carsControlles)
 
 	return app
 }
