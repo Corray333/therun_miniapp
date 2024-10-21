@@ -6,7 +6,8 @@
         "battles": "Battles",
         "friens":"Friens",
         "tasks":"Tasks",
-        "more":"More"
+        "more":"More",
+        "cars": "Race"
     },
     "wallet":{
         "balance":"Balance",
@@ -31,6 +32,9 @@
             "quartz":"Quartz",
             "titan":"Titan"
         }
+    },
+    "other":{
+        "worldRound":"World round"
     },
     "screens":{
         "farming":{
@@ -133,6 +137,45 @@
             "team":{
                 "header":"My team",
                 "description":"Collect different chibi and create the strongest dream team in Chibiverse"
+            }
+        },
+        "cars":{
+            "first":{
+                "choose":{
+                    "header":"Choose your car",
+                    "description":"The class of the car does not affect its performance. Choose the body you like best!",
+                    "btn":"Choose"
+                },
+                "rating":"Rating"
+            },
+            "carType":"Car type",
+            "round":{
+                "header":{
+                    "desert":"In the current World Round, the race takes place in desert",
+                    "track":"In the current World Round, the race takes place at the race trackc",
+                    "city":"In the current World Round, the race takes place in city"
+                },
+                "description1":{
+                    "short":"Your task: ",
+                    "part1":"to drive as much as possible ",
+                    "part2":" before the time runs out in order to take the best place in the World Round ranking and to get more "
+                },
+                "description2":{
+                    "short":"Important: ",
+                    "text":"If your car is not adapted to racing in this element, its performance will be reduced. Use tuning to drive as many miles as possible!"
+                }
+            },
+            "carTypes":{
+                "header":{
+                    "desert":"Your car is built for racing in the Desert.",
+                    "track":"Your car is built for racing at the Race track",
+                    "city":"Your car is built for racing in the City"
+                },
+                "note":"Note: ",
+                "description":"If you race in other elements in the current World Round, your car's performance will be reduced. Use tuning to drive as many miles as possible!"
+            },
+            "pitStop":{
+                "pitStop":"Pit stop"
             }
         },
         "friens":{

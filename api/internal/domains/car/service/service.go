@@ -21,6 +21,11 @@ type repository interface {
 	GetRaceState(ctx context.Context, userId int64, roundID int) (*types.RaceState, error)
 	StartRace(ctx context.Context, userID int64, roundID int) (*types.RaceState, error)
 	EndRace(ctx context.Context, userID int64, roundID int, miles float64, fuelWasted, healthWasted float64) error
+
+	GetModulesOfUser(ctx context.Context, carID int64) ([]types.Module, error)
+
+	BuyFuel(ctx context.Context, userID int64, cost int) error
+	BuyHealth(ctx context.Context, userID int64, cost int) error
 }
 
 type userService interface {
@@ -65,13 +70,14 @@ func (s *CarService) GenerateCar(element round_types.Element) *types.Car {
 	return &car
 }
 
-func (s *CarService) СountSpeed(car *types.Car) float64 {
+func (s *CarService) СountSpeed(roundElement round_types.Element, car *types.Car) float64 {
+	if car == nil {
+		return 0
+	}
 	accelerationCoef := float64(car.Acceleration) / 100 * 25
 	hendlingCoef := float64(car.Hendling) / 100 * 25
 	brakesCoef := float64(car.Brakes) / 100 * 25
 	strengthCoef := float64(car.Strength) / 100 * 25
-
-	fmt.Println(accelerationCoef, hendlingCoef, brakesCoef, strengthCoef)
 
 	for _, module := range car.Modules {
 		switch module.Characteristic {
@@ -86,64 +92,53 @@ func (s *CarService) СountSpeed(car *types.Car) float64 {
 		}
 	}
 
-	round := s.roundService.GetRound()
-	elementCoef := types.ElementEffects[car.Element][round.Element]
-
-	fmt.Println(car.Element, round.Element)
-	fmt.Println("Elem coef: ", elementCoef)
+	elementCoef := types.ElementEffects[car.Element][roundElement]
 
 	return float64(accelerationCoef+hendlingCoef+brakesCoef+strengthCoef) * (float64(elementCoef) / 100)
 }
 
-func (s *CarService) countMiles(duration int64, car *types.Car) float64 {
-	speed := s.СountSpeed(car)
-	return speed * float64(duration) / 60 / 60
+func (s *CarService) countMiles(speed float64, duration int64, car *types.Car) float64 {
+	return speed * (float64(duration) / 60 / 60)
 }
 
-func (s *CarService) countFuelWasting(duration int64, car *types.Car) float64 {
-	round := s.roundService.GetRound()
-	speed := s.СountSpeed(car)
+func (s *CarService) countFuelWasting(speed float64, duration int64, roundElement round_types.Element, car *types.Car) float64 {
 
-	fmt.Println(speed)
-	fmt.Println(car)
-	wasting := speed * 26 / 10 * float64(car.Tank) / 100 / float64(types.ElementEffectsFuel[car.Element][round.Element]) / 100
-	fmt.Println("Wasting: ", wasting)
-	miles := s.countMiles(duration, car)
+	wasting := speed * 26 / 10 * float64(car.Tank) / 100 / (float64(types.ElementEffectsFuel[car.Element][roundElement]) / 100)
+	miles := s.countMiles(speed, duration, car)
+
+	fmt.Printf("speed: %f, duration: %d, roundElement: %s, car: %+v\n", speed, duration, roundElement, car)
+	fmt.Printf("wasting: %f, miles: %f\n", wasting, miles)
 
 	wasted := miles / wasting
 
 	return wasted
 }
 
-func (s *CarService) countHealthWasting(duration int64, car *types.Car) float64 {
-	speed := s.СountSpeed(car)
+func (s *CarService) countHealthWasting(speed float64, duration int64, roundElement round_types.Element, car *types.Car) float64 {
 
-	wasting := speed * 52 / 10 * float64(car.Strength) / 100
+	wasting := speed * 52 / 10 * float64(car.Strength) / 100 / (float64(types.ElementEffectsFuel[car.Element][roundElement]) / 100)
 
-	miles := s.countMiles(duration, car)
+	miles := s.countMiles(speed, duration, car)
 
 	wasted := miles / wasting
 
 	return wasted
 }
 
-// TODO: rewrite using round info
-func (s *CarService) countDurationFromFuelWasting(wasting float64, car *types.Car) int64 {
-	// round := s.roundService.CurrentRound()
-	speed := s.СountSpeed(car)
-
-	miles := wasting * speed * 26 / 10 * 100 / float64(car.Fuel)
-
-	return int64(miles / speed * 60 * 60)
+func (s *CarService) countDurationFromFuelWasting(speed float64, wasted float64, roundElement round_types.Element, car *types.Car) int64 {
+	fmt.Printf("test speed: %f, wasted: %f, roundElement: %f, car: %+v\n", speed, wasted, float64(types.ElementEffectsFuel[car.Element][roundElement])/100, car)
+	wasting := speed * 26 / 10 * float64(car.Tank) / 100 / (float64(types.ElementEffectsFuel[car.Element][roundElement]) / 100)
+	miles := wasted * wasting
+	fmt.Println(miles, speed)
+	duration := int64(miles / speed * 60 * 60)
+	return duration
 }
 
-// TODO: rewrite using round info
-func (s *CarService) countDurationFromHealthWasting(wasting float64, car *types.Car) int64 {
-	speed := s.СountSpeed(car)
-
-	miles := wasting * speed * 52 / 10 * 100 / float64(car.Strength)
-
-	return int64(miles / speed * 60 * 60)
+func (s *CarService) countDurationFromHealthWasting(speed float64, wasted float64, roundElement round_types.Element, car *types.Car) int64 {
+	wasting := speed * 52 / 10 * float64(car.Strength) / 100 / (float64(types.ElementEffectsFuel[car.Element][roundElement]) / 100)
+	miles := wasted * wasting
+	duration := int64(miles / speed * 60 * 60)
+	return duration
 }
 
 func (s *CarService) GetAllCars(ctx context.Context) []types.Car {
@@ -172,7 +167,16 @@ func (s *CarService) BuyCar(ctx context.Context, element round_types.Element, us
 }
 
 func (s *CarService) GetMainCar(ctx context.Context, userID int64) (*types.Car, error) {
-	return s.repo.GetMainCar(ctx, userID)
+	car, err := s.repo.GetMainCar(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	if car != nil {
+		round := s.roundService.GetRound()
+		car.Speed = s.СountSpeed(round.Element, car)
+	}
+	return car, nil
 }
 
 func (s *CarService) GetCarByID(ctx context.Context, carID int64) (*types.Car, error) {
@@ -209,38 +213,40 @@ func (s *CarService) EndRace(ctx context.Context, userID int64) (race *types.Rac
 		return nil, err
 	}
 
+	speed := s.СountSpeed(round.Element, car)
+
 	now := time.Now().Unix()
 	raceTime := now - state.StartTime
 
-	fuelWasted := s.countFuelWasting(raceTime, car)
-	healthWasted := s.countHealthWasting(raceTime, car)
-
-	fmt.Printf("fuelWasted: %f, healthWasted: %f, timeSpent: %d\n", fuelWasted, healthWasted, raceTime)
+	fuelWasted := s.countFuelWasting(speed, raceTime, round.Element, car)
+	healthWasted := s.countHealthWasting(speed, raceTime, round.Element, car)
 
 	fuelLeft := car.Fuel - fuelWasted
 	healthLeft := car.Health - healthWasted
+
+	fmt.Printf("fuelLeft: %f, healthLeft: %f\n", fuelLeft, healthLeft)
 
 	// TODO: transfer to separate function
 	// Check if car was broken during the way
 	if fuelLeft <= 0 && healthLeft <= 0 {
 		if healthLeft < fuelLeft {
-			raceTime = s.countDurationFromHealthWasting(healthLeft, car)
+			raceTime = s.countDurationFromHealthWasting(speed, healthLeft, round.Element, car)
 		} else {
-			raceTime = s.countDurationFromFuelWasting(fuelLeft, car)
+			raceTime = s.countDurationFromFuelWasting(speed, fuelLeft, round.Element, car)
 		}
-		fuelWasted = s.countFuelWasting(raceTime, car)
-		healthWasted = s.countHealthWasting(raceTime, car)
+		fuelWasted = s.countFuelWasting(speed, raceTime, round.Element, car)
+		healthWasted = s.countHealthWasting(speed, raceTime, round.Element, car)
 	} else if fuelLeft <= 0 {
-		raceTime = s.countDurationFromFuelWasting(fuelLeft, car)
-		fuelWasted = s.countFuelWasting(raceTime, car)
-		healthWasted = s.countHealthWasting(raceTime, car)
+		raceTime = s.countDurationFromFuelWasting(speed, car.Fuel, round.Element, car)
+		fuelWasted = s.countFuelWasting(speed, raceTime, round.Element, car)
+		healthWasted = s.countHealthWasting(speed, raceTime, round.Element, car)
 	} else if healthLeft <= 0 {
-		raceTime = s.countDurationFromHealthWasting(healthLeft, car)
-		fuelWasted = s.countFuelWasting(raceTime, car)
-		healthWasted = s.countHealthWasting(raceTime, car)
+		raceTime = s.countDurationFromHealthWasting(speed, car.Health, round.Element, car)
+		fuelWasted = s.countFuelWasting(speed, raceTime, round.Element, car)
+		healthWasted = s.countHealthWasting(speed, raceTime, round.Element, car)
 	}
 
-	miles := s.countMiles(raceTime, car)
+	miles := s.countMiles(speed, raceTime, car)
 
 	if err = s.repo.EndRace(ctx, userID, round.ID, miles, fuelWasted, healthWasted); err != nil {
 		return nil, err
@@ -248,4 +254,43 @@ func (s *CarService) EndRace(ctx context.Context, userID int64) (race *types.Rac
 
 	return s.repo.GetRaceState(ctx, userID, round.ID)
 
+}
+
+func (s *CarService) GetModulesOfUser(ctx context.Context, carID int64) ([]types.Module, error) {
+	return s.repo.GetModulesOfUser(ctx, carID)
+}
+
+const (
+	FuelCost   = 1
+	HealthCost = 2
+)
+
+func (s *CarService) BuyFuel(ctx context.Context, userID int64) error {
+	car, err := s.repo.GetMainCar(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	amount := 10 - int(car.Fuel)
+
+	if err := s.repo.BuyFuel(ctx, userID, amount*FuelCost); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *CarService) BuyHealth(ctx context.Context, userID int64) error {
+	car, err := s.repo.GetMainCar(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	amount := 10 - int(car.Health)
+
+	if err := s.repo.BuyHealth(ctx, userID, amount*HealthCost); err != nil {
+		return err
+	}
+
+	return nil
 }

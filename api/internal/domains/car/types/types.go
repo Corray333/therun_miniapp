@@ -31,6 +31,8 @@ type Car struct {
 	Health       float64             `json:"health" db:"health"`
 
 	Modules []Module `json:"modules" db:"-"`
+
+	Speed float64 `json:"speed" db:"-"`
 }
 
 type Module struct {

@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"log/slog"
-	"sync"
 	"time"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/round/types"
@@ -49,10 +48,7 @@ func New(repo repository) *RoundService {
 }
 
 func (s *RoundService) RegisterSubscriber(subscriber newRoundSubscriber) {
-	var mu sync.Mutex
-	mu.Lock()
 	s.subscribers = append(s.subscribers, subscriber)
-	mu.Unlock()
 }
 
 func (s *RoundService) countRound() (roundID int, roundEndTime int64) {

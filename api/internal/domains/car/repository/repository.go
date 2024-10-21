@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/car/types"
+	user_types "github.com/Corray333/therun_miniapp/internal/domains/user/types"
 	"github.com/Corray333/therun_miniapp/internal/storage"
 	"github.com/jmoiron/sqlx"
 )
@@ -21,11 +22,17 @@ var (
 
 type CarRepository struct {
 	db *sqlx.DB
+	userRepository
 }
 
-func New(store *storage.Storage) *CarRepository {
+type userRepository interface {
+	ChangeBalances(ctx context.Context, userID int64, changes []user_types.BalanceChange) error
+}
+
+func New(store *storage.Storage, ususerRepository userRepository) *CarRepository {
 	return &CarRepository{
-		db: store.DB(),
+		db:             store.DB(),
+		userRepository: ususerRepository,
 	}
 }
 
@@ -90,6 +97,12 @@ func (r *CarRepository) GetMainCar(ctx context.Context, userID int64) (*types.Ca
 		return nil, err
 	}
 
+	err = r.db.Select(&car.Modules, "SELECT characteristic, boost, name FROM car_modules WHERE car_id = $1", car.ID)
+	if err != nil {
+		slog.Error("error while getting car modules: " + err.Error())
+		return nil, err
+	}
+
 	return &car, nil
 }
 
@@ -118,6 +131,12 @@ func (r *CarRepository) GetCarByID(ctx context.Context, carID int64) (*types.Car
 	err := r.db.Get(&car, "SELECT * FROM cars WHERE car_id = $1", carID)
 	if err != nil {
 		slog.Error("error while getting car by id: " + err.Error())
+		return nil, err
+	}
+
+	err = r.db.Get(&car.Modules, "SELECT characteristic, boost, name FROM car_modules WHERE car_id = $1", car.ID)
+	if err != nil {
+		slog.Error("error while getting car modules: " + err.Error())
 		return nil, err
 	}
 
@@ -160,6 +179,14 @@ func (r *CarRepository) GetOwnedCars(ctx context.Context, userID int64) []types.
 	if err != nil {
 		slog.Error("error while getting owned cars: " + err.Error())
 		return nil
+	}
+
+	for i := range cars {
+		err := r.db.Get(&cars[i].Modules, "SELECT characteristic, boost, name FROM car_modules WHERE car_id = $1", cars[i].ID)
+		if err != nil {
+			slog.Error("error while getting car modules: " + err.Error())
+			return nil
+		}
 	}
 
 	return cars
@@ -242,13 +269,101 @@ func (r *CarRepository) EndRace(ctx context.Context, userID int64, roundID int, 
 		defer tx.Rollback()
 	}
 
-	if _, err := tx.Exec("UPDATE races SET miles = $1, start_time = 0 WHERE user_id = $2 AND round_id = $3", miles, userID, roundID); err != nil {
+	if _, err := tx.Exec("UPDATE races SET miles = miles + $1, start_time = 0 WHERE user_id = $2 AND round_id = $3", miles, userID, roundID); err != nil {
 		slog.Error("error ending race: " + err.Error())
 		return err
 	}
 
 	if _, err := tx.Exec("UPDATE cars SET fuel = fuel - $1, health = health - $2 WHERE user_id = $3 AND is_main = true", fuelWasted, healthWasted, userID); err != nil {
 		slog.Error("error ending race: error updating car: " + err.Error())
+		return err
+	}
+
+	if isNew {
+		if err := tx.Commit(); err != nil {
+			slog.Error("failed to commit transaction: " + err.Error())
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (r *CarRepository) GetModulesOfUser(ctx context.Context, userID int64) ([]types.Module, error) {
+	var modules []types.Module
+	err := r.db.Select(&modules, "SELECT characteristic, boost, name FROM car_modules WHERE user_id = $1", userID)
+	if err != nil {
+		slog.Error("error while getting modules of user car: " + err.Error())
+		return nil, err
+	}
+
+	return modules, nil
+}
+
+func (r *CarRepository) GetModulesOfCar(ctx context.Context, carID int64) ([]types.Module, error) {
+	var modules []types.Module
+	err := r.db.Select(&modules, "SELECT characteristic, boost, name FROM car_modules WHERE car_id = $1", carID)
+	if err != nil {
+		slog.Error("error while getting modules of car: " + err.Error())
+		return nil, err
+	}
+
+	return modules, nil
+}
+
+func (r *CarRepository) BuyFuel(ctx context.Context, userID int64, cost int) error {
+	tx, isNew, err := r.getTx(ctx)
+	if err != nil {
+		return err
+	}
+	if isNew {
+		defer tx.Rollback()
+	}
+
+	if err := r.userRepository.ChangeBalances(ctx, userID, []user_types.BalanceChange{
+		{
+			Currency: user_types.Race,
+			Amount:   -cost,
+		},
+	}); err != nil {
+		return err
+	}
+
+	if _, err := tx.Exec("UPDATE cars SET fuel = 10 WHERE user_id = $1 AND is_main = true", userID); err != nil {
+		slog.Error("error while buying fuel: " + err.Error())
+		return err
+	}
+
+	if isNew {
+		if err := tx.Commit(); err != nil {
+			slog.Error("failed to commit transaction: " + err.Error())
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (r *CarRepository) BuyHealth(ctx context.Context, userID int64, cost int) error {
+	tx, isNew, err := r.getTx(ctx)
+	if err != nil {
+		return err
+	}
+	if isNew {
+		defer tx.Rollback()
+	}
+
+	if err := r.userRepository.ChangeBalances(ctx, userID, []user_types.BalanceChange{
+		{
+			Currency: user_types.Race,
+			Amount:   -cost,
+		},
+	}); err != nil {
+		return err
+	}
+
+	if _, err := tx.Exec("UPDATE cars SET health = 10 WHERE user_id = $1 AND is_main = true", userID); err != nil {
+		slog.Error("error while buying fuel: " + err.Error())
 		return err
 	}
 

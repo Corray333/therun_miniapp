@@ -17,7 +17,7 @@ type CarController struct {
 }
 
 func NewCarController(router *chi.Mux, store *storage.Storage, userService *user_service.UserService, roundService *round_service.RoundService) *CarController {
-	repo := repository.New(store)
+	repo := repository.New(store, userService.GetRepo())
 	service := service.New(repo, userService, roundService)
 	transport := transport.New(router, service)
 

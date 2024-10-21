@@ -3,6 +3,7 @@ import gift from '@/components/icons/gift-icon.vue'
 import chibi from '@/components/icons/chibi-icon.vue'
 import battles from '@/components/icons/battles-icon.vue'
 import friens from '@/components/icons/friens-icon.vue'
+import cars from '@/components/icons/cars-icon.vue'
 import tasks from '@/components/icons/tasks-icon.vue'
 import more from '@/components/icons/more-icon.vue'
 import { useI18n } from 'vue-i18n'
@@ -26,14 +27,22 @@ const showMore = ref<boolean>(false)
                         <aside v-if="showMore"
                             class=" text-dark absolute mb-24 mr-4 right-0 p-4 rounded-2xl bg-white sm-shadow">
                             <ul class=" flex flex-col more-list">
+                                
                                 <li class=" flex gap-2 p-2">
                                     <router-link to="/settings" class=" flex items-center gap-2">
                                         <i class="pi pi-cog"></i> Settings
                                     </router-link>
                                 </li>
+
                                 <li class=" flex gap-2 p-2">
                                     <router-link to="/onboarding" class=" flex items-center gap-2">
                                         <i class="pi pi-info-circle"></i> Info
+                                    </router-link>
+                                </li>
+
+                                <li class=" flex gap-2 p-2">
+                                    <router-link to="/friens" class=" flex items-center gap-2">
+                                        <friens /> Friens
                                     </router-link>
                                 </li>
                             </ul>
@@ -41,30 +50,41 @@ const showMore = ref<boolean>(false)
                     </Transition>
                 </div>
             </Transition>
+
             <li>
                 <router-link to="/" class=" flex flex-col gap-1 text-dark items-center router-link">
                     <gift :color="route.path == '/' ? 'var(--primary)' : 'var(--dark)'" />
                     <p>{{ t('menu.bonuses') }}</p>
                 </router-link>
             </li>
+
+            <li>
+                <router-link to="/cars" :class="route.path.includes('/cars') ? 'router-link-active' : ''" class=" flex flex-col gap-1 text-dark items-center router-link">
+                    <cars :color="route.path.includes('/cars') ? 'var(--primary)' : 'var(--dark)'" />
+                    <p>{{ t('menu.cars') }}</p>
+                </router-link>
+            </li>
+
             <li>
                 <router-link to="/chibi" :class="route.path.includes('/chibi') ? 'router-link-active' : ''" class=" flex flex-col gap-1 text-dark items-center router-link">
                     <chibi :color="route.path.includes('/chibi') ? 'var(--primary)' : 'var(--dark)'" />
                     <p>{{ t('menu.chibi') }}</p>
                 </router-link>
             </li>
+
             <li>
                 <router-link to="/battles" class=" flex flex-col gap-1 text-dark items-center router-link">
                     <battles :color="route.path.includes('/battles') ? 'var(--primary)' : 'var(--dark)'" />
                     <p>{{ t('menu.battles') }}</p>
                 </router-link>
             </li>
-            <li>
+
+            <!-- <li>
                 <router-link to="/friens"  :class="route.path.includes('/friens') ? 'router-link-active' : ''" class=" flex flex-col gap-1 text-dark items-center router-link">
                     <friens :color="route.path.includes('/friens') ? 'var(--primary)' : 'var(--dark)'" />
                     <p>{{ t('menu.friens') }}</p>
                 </router-link>
-            </li>
+            </li> -->
             <li>
                 <router-link to="/tasks/tasks" :class="route.path.includes('/tasks') ? 'router-link-active' : ''"  class=" flex flex-col gap-1 text-dark items-center router-link">
                     <tasks :color="route.path.includes('/tasks') ? 'var(--primary)' : 'var(--dark)'" />
@@ -72,10 +92,10 @@ const showMore = ref<boolean>(false)
                 </router-link>
             </li>
             <li>
-                <p @click="showMore = true" class=" flex flex-col gap-1 text-dark items-center">
+                <span @click="showMore = true" class=" flex flex-col gap-1 text-dark items-center">
                     <more :color="route.path.includes('/more') ? 'var(--primary)' : 'var(--dark)'" />
-                <p>{{ t('menu.more') }}</p>
-                </p>
+                    <p>{{ t('menu.more') }}</p>
+                </span>
             </li>
         </ul>
     </nav>

@@ -15,6 +15,16 @@ const router = createRouter({
       component: () => import('../views/ChibiView.vue')
     },
     {
+      path: '/cars',
+      name: 'cars',
+      component: () => import('../views/CarsView.vue')
+    },
+    {
+      path: '/cars/all',
+      name: 'all-cars',
+      component: () => import('../views/cars/FirstCarsview.vue')
+    },
+    {
       path: '/chibi/cases',
       name: 'cases',
       component: () => import('../views/chibi/CasesView.vue')

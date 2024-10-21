@@ -30,6 +30,11 @@ type service interface {
 	GetRace(ctx context.Context, userID int64) (race *types.RaceState, err error)
 	StartRace(ctx context.Context, userID int64) (race *types.RaceState, err error)
 	EndRace(ctx context.Context, userID int64) (race *types.RaceState, err error)
+
+	GetModulesOfUser(ctx context.Context, carID int64) ([]types.Module, error)
+
+	BuyFuel(ctx context.Context, userID int64) error
+	BuyHealth(ctx context.Context, userID int64) error
 }
 
 func New(router *chi.Mux, service service) *CarTransport {
@@ -52,6 +57,11 @@ func (t *CarTransport) RegisterRoutes() {
 		r.Get("/api/race", t.getRace)             // Get race state
 		r.Post("/api/start-race", t.startRace)    // Start moving
 		r.Post("/api/end-race", t.endRace)        // End moving
+
+		r.Get("/api/cars/modules", t.getCarModules)
+
+		r.Post("/api/buy-fuel", t.buyFuel)
+		r.Post("/api/buy-health", t.buyHealth)
 	})
 }
 
@@ -240,4 +250,62 @@ func (t *CarTransport) endRace(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func (t *CarTransport) getCarModules(w http.ResponseWriter, r *http.Request) {
+	carIDStr := r.URL.Query().Get("car_id")
+	if carIDStr == "" {
+		http.Error(w, "car id not found in query", http.StatusBadRequest)
+		slog.Error("car id not found in query")
+		return
+	}
+
+	carID, err := strconv.ParseInt(carIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	modules, err := t.service.GetModulesOfUser(r.Context(), carID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(modules); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (t *CarTransport) buyFuel(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(global_types.ContextID).(int64)
+	if !ok {
+		http.Error(w, "user id not found in context", http.StatusInternalServerError)
+		slog.Error("user id not found in context")
+		return
+	}
+
+	if err := t.service.BuyFuel(r.Context(), userID); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (t *CarTransport) buyHealth(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(global_types.ContextID).(int64)
+	if !ok {
+		http.Error(w, "user id not found in context", http.StatusInternalServerError)
+		slog.Error("user id not found in context")
+		return
+	}
+
+	if err := t.service.BuyHealth(r.Context(), userID); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

@@ -60,6 +60,7 @@ export class Battle {
 export interface Round {
     id: number;
     endTime: number;
+    element: string;
     battles: Battle[];
 }
 
@@ -159,4 +160,17 @@ export class Warehouse {
     currentLevel: LevelDetail | null = null;
     nextLevel: LevelDetail | null = null;
     moreLevel: LevelDetail | null = null;
+}
+
+export class Car {
+    element: string = 'desert';
+    img: string = '';
+    acceleration: number = 0;
+    hendling: number = 0;
+    brakes: number = 0;
+    strength: number = 0;
+    tank: number = 0;
+    fuel: number = 0;
+    health: number = 0;
+    modules: any = null;
 }

@@ -61,6 +61,10 @@ func New(repo repository, external external, fileManager fileManager) *UserServi
 	}
 }
 
+func (s *UserService) GetRepo() repository {
+	return s.repo
+}
+
 func (s *UserService) GetUser(userID int64) (*types.User, error) {
 	return s.repo.GetUser(userID)
 }
