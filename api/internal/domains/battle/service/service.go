@@ -51,7 +51,7 @@ type userService interface {
 }
 
 type roundService interface {
-	GetRound() *round_types.Round
+	GetRound() (*round_types.Round, error)
 }
 
 type BattleService struct {
@@ -145,7 +145,10 @@ func (s *BattleService) MakeBet(userID int64, battleID, pick int) error {
 		}
 	}
 
-	round := s.roundService.GetRound()
+	round, err := s.roundService.GetRound()
+	if err != nil {
+		return err
+	}
 	battle, err := s.repo.GetBattle(battleID)
 	if err != nil {
 		return err
@@ -160,7 +163,10 @@ func (s *BattleService) MakeBet(userID int64, battleID, pick int) error {
 
 func (s *BattleService) UpdateBattles() error {
 	slog.Info("Updating battles...")
-	round := s.roundService.GetRound()
+	round, err := s.roundService.GetRound()
+	if err != nil {
+		return err
+	}
 	battles, err := s.repo.GetBattles(round.ID, 0)
 	if err != nil {
 		return err
@@ -196,7 +202,10 @@ func (s *BattleService) ProcessBets(roundID int) error {
 }
 
 func (s *BattleService) GetBattles(userID int64) ([]types.Battle, error) {
-	round := s.roundService.GetRound()
+	round, err := s.roundService.GetRound()
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println(round)
 	return s.repo.GetBattles(round.ID, userID)
 }

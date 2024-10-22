@@ -165,7 +165,7 @@
                     "text":"If your car is not adapted to racing in this element, its performance will be reduced. Use tuning to drive as many miles as possible!"
                 }
             },
-            "carTypes":{
+            "carTypes": {
                 "header":{
                     "desert":"Your car is built for racing in the Desert.",
                     "track":"Your car is built for racing at the Race track",
@@ -174,8 +174,24 @@
                 "note":"Note: ",
                 "description":"If you race in other elements in the current World Round, your car's performance will be reduced. Use tuning to drive as many miles as possible!"
             },
-            "pitStop":{
-                "pitStop":"Pit stop"
+            "pitStop": {
+                "pitStop":"Pit stop",
+                "refuel":"Refuel",
+                "repair":"Repair",
+                "slot":"slot",
+                "header":"Pit Stop",
+                "description":"To continue the race you need to have fuel and good technical condition.",
+                "chibiBanner":{
+                    "description1":"Build your own gas station and service station to fuel and fix your cars for free, as well as earn ",
+                    "description2":" servicing other players",
+                    "goToChibiCityBtn":"Go to Chibi city"
+                }
+            },
+            "main":{
+                "prize":"Prize",
+                "startBtn":"Start",
+                "stopBtn":"Stop",
+                "characteristics":"Characteristics"
             }
         },
         "friens":{

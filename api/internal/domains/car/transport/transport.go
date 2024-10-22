@@ -21,7 +21,7 @@ type CarTransport struct {
 
 type service interface {
 	GetAllCars(ctx context.Context) []types.Car
-	GetOwnedCars(ctx context.Context, userID int64) []types.Car
+	GetOwnedCars(ctx context.Context, userID int64) ([]types.Car, error)
 	GetMainCar(ctx context.Context, userID int64) (*types.Car, error)
 	BuyCar(ctx context.Context, element round_types.Element, userID int64) error
 	GetCarByID(ctx context.Context, carID int64) (*types.Car, error)
@@ -51,7 +51,7 @@ func (t *CarTransport) RegisterRoutes() {
 		r.Get("/api/cars/all", t.getAllCars)      // All cars
 		r.Get("/api/cars/main", t.getMainCar)     // Current car
 		r.Get("/api/cars/owned", t.getOwnedCars)  // Get all available cars
-		r.Get("/api/cars/{car_id}", t.getMainCar) // Get car by id
+		r.Get("/api/cars/{car_id}", t.getCarByID) // Get car by id
 		r.Post("/api/buy-car", t.buyCar)          // Choose start car
 		r.Post("/api/pick-car", t.pickCar)        // Choose start car
 		r.Get("/api/race", t.getRace)             // Get race state
@@ -181,7 +181,11 @@ func (t *CarTransport) getOwnedCars(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cars := t.service.GetOwnedCars(r.Context(), userID)
+	cars, err := t.service.GetOwnedCars(r.Context(), userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	if err := json.NewEncoder(w).Encode(cars); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

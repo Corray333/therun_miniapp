@@ -173,23 +173,23 @@ func (r *CarRepository) PickCar(ctx context.Context, carID int64, userID int64) 
 	return nil
 }
 
-func (r *CarRepository) GetOwnedCars(ctx context.Context, userID int64) []types.Car {
+func (r *CarRepository) GetOwnedCars(ctx context.Context, userID int64) ([]types.Car, error) {
 	var cars []types.Car
 	err := r.db.Select(&cars, "SELECT * FROM cars WHERE user_id = $1", userID)
 	if err != nil {
 		slog.Error("error while getting owned cars: " + err.Error())
-		return nil
+		return nil, err
 	}
 
 	for i := range cars {
-		err := r.db.Get(&cars[i].Modules, "SELECT characteristic, boost, name FROM car_modules WHERE car_id = $1", cars[i].ID)
+		err := r.db.Select(&cars[i].Modules, "SELECT characteristic, boost, name FROM car_modules WHERE car_id = $1", cars[i].ID)
 		if err != nil {
 			slog.Error("error while getting car modules: " + err.Error())
-			return nil
+			return nil, err
 		}
 	}
 
-	return cars
+	return cars, nil
 }
 
 func (r *CarRepository) GetRaceState(ctx context.Context, userID int64, roundID int) (*types.RaceState, error) {

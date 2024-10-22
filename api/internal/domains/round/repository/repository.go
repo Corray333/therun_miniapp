@@ -26,3 +26,13 @@ func (r *RoundRepository) SetRound(round *types.Round) error {
 	}
 	return nil
 }
+
+func (r *RoundRepository) GetRoundElement(roundID int) (types.Element, error) {
+	var element types.Element
+	err := r.db.Get(&element, "SELECT element FROM rounds WHERE round_id = $1", roundID)
+	if err != nil {
+		slog.Error("error getting round element: " + err.Error())
+		return types.Element(""), err
+	}
+	return element, nil
+}

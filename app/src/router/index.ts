@@ -25,6 +25,11 @@ const router = createRouter({
       component: () => import('../views/cars/FirstCarsview.vue')
     },
     {
+      path: '/cars/pit-stop',
+      name: 'pit-stop',
+      component: () => import('../views/cars/PitStopView.vue')
+    },    
+    {
       path: '/chibi/cases',
       name: 'cases',
       component: () => import('../views/chibi/CasesView.vue')
@@ -92,8 +97,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const tg = Telegram.WebApp
-	var BackButton = Telegram.WebApp.BackButton
+	const BackButton = Telegram.WebApp.BackButton
   if (to.name === 'farm') {
     BackButton.hide()
   } else{

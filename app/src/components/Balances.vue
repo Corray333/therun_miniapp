@@ -35,7 +35,7 @@ onMounted(() => {
             class=" modal w-full rounded-t-2xl bg-white p-4 py-8 flex flex-col justify-center items-center shadow-lg">
             <div v-if="pick == 'race'" class=" w-full text-center flex flex-col items-center gap-2">
               <h2 class=" header flex items-center gap-2">
-                <race />Race
+                <race class=" text-2xl"/>Race
               </h2>
               <p class="mb-14">{{ t('wallet.raceDescription') }}</p>
               <button disabled>{{ t('wallet.withdraw') }}</button>
@@ -82,7 +82,7 @@ onMounted(() => {
     <div @click="pick = 'race'; showModal = true"
       class=" bg-white sm-shadow p-2 px-4 w-full rounded-2xl flex flex-col justify-center items-center">
       <span class=" flex gap-1">
-        <race color="var(--primary)" />
+        <race color="var(--primary)" class=" text-2xl" />
         <p class=" text-left font-bold flex items-center">{{ accStore.user.raceBalance }}</p>
       </span>
       <p class=" label flex items-center gap-1">{{ t('wallet.balance') }}<i class="pi pi-chevron-right text-dark"

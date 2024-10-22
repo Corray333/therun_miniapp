@@ -29,6 +29,7 @@ const (
 
 type repository interface {
 	SetRound(round *types.Round) error
+	GetRoundElement(roundID int) (types.Element, error)
 }
 
 type newRoundSubscriber interface {
@@ -101,32 +102,40 @@ func (s *RoundService) RunRounds() {
 	s.StartNextRoundTimer()
 }
 
-func (s *RoundService) GetRound() *types.Round {
-
+func (s *RoundService) GetRound() (*types.Round, error) {
 	// TODO: get element from db
 	roundID, roundEndTime := s.countRound()
+
+	element, err := s.repo.GetRoundElement(roundID)
+	if err != nil {
+		return nil, err
+	}
+
 	round := &types.Round{
 		ID:      roundID,
 		EndTime: roundEndTime,
-		Element: "desert",
+		Element: element,
 	}
 
-	return round
+	return round, nil
 }
 
 func (s *RoundService) StartRound() {
-	time.Sleep(5 * time.Second)
+	time.Sleep(time.Second)
 
-	go func() {
-		s.repo.SetRound(&types.Round{
-			ID:      s.GetRound().ID,
-			EndTime: s.GetRound().EndTime,
-			Element: s.generateElement(),
-		})
-	}()
+	roundID, endTime := s.countRound()
+	round := &types.Round{
+		ID:      roundID,
+		EndTime: endTime,
+		Element: s.generateElement(),
+	}
+
+	if err := s.repo.SetRound(round); err != nil {
+		slog.Error("error while setting new round: " + err.Error())
+	}
 
 	for _, sub := range s.subscribers {
-		sub.AcceptNewRound(s.GetRound())
+		sub.AcceptNewRound(round)
 	}
 
 }

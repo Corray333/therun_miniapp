@@ -21,42 +21,57 @@ const componentsStore = useComponentsStore()
 const baseURL = import.meta.env.VITE_BASE_URL
 
 const cars = ref<Car[]>([
-    {
-        "element": "desert",
-        "img": "",
-        "acceleration": 0,
-        "hendling": 0,
-        "brakes": 0,
-        "strength": 0,
-        "tank": 0,
-        "fuel": 0,
-        "health": 0,
-        "modules": null
-    },
-    {
-        "element": "city",
-        "img": "",
-        "acceleration": 0,
-        "hendling": 0,
-        "brakes": 0,
-        "strength": 0,
-        "tank": 0,
-        "fuel": 0,
-        "health": 0,
-        "modules": null
-    },
-    {
-        "element": "track",
-        "img": "",
-        "acceleration": 0,
-        "hendling": 0,
-        "brakes": 0,
-        "strength": 0,
-        "tank": 0,
-        "fuel": 0,
-        "health": 0,
-        "modules": null
-    }
+	{
+		"id": 0,
+		"isMain": false,
+		"element": "desert",
+		"img": "",
+		"acceleration": 0,
+		"hendling": 0,
+		"brakes": 0,
+		"strength": 0,
+		"tank": 0,
+		"fuel": 0,
+		"health": 0,
+		"modules": null,
+		"speed": 0,
+		"fuelWasting": 0,
+		"healthWasting": 0
+	},
+	{
+		"id": 0,
+		"isMain": false,
+		"element": "city",
+		"img": "",
+		"acceleration": 0,
+		"hendling": 0,
+		"brakes": 0,
+		"strength": 0,
+		"tank": 0,
+		"fuel": 0,
+		"health": 0,
+		"modules": null,
+		"speed": 0,
+		"fuelWasting": 0,
+		"healthWasting": 0
+	},
+	{
+		"id": 0,
+		"isMain": false,
+		"element": "track",
+		"img": "",
+		"acceleration": 0,
+		"hendling": 0,
+		"brakes": 0,
+		"strength": 0,
+		"tank": 0,
+		"fuel": 0,
+		"health": 0,
+		"modules": null,
+		"speed": 0,
+		"fuelWasting": 0,
+		"healthWasting": 0
+	}
 ])
 
 const getCars = async () => {
@@ -96,7 +111,7 @@ const getRound = async () => {
         if (isAxiosError(error) && error.response?.status === 401) {
             await auth()
             try {
-                await getCars()
+                await getRound()
             } catch (error) {
                 if (isAxiosError(error)) {
                     componentsStore.addError(error.message)

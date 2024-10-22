@@ -15,7 +15,7 @@ type RoundTransport struct {
 }
 
 type service interface {
-	GetRound() *types.Round
+	GetRound() (*types.Round, error)
 }
 
 func New(router *chi.Mux, service service) *RoundTransport {
@@ -34,7 +34,11 @@ func (t *RoundTransport) RegisterRoutes() {
 }
 
 func (t *RoundTransport) getRound(w http.ResponseWriter, r *http.Request) {
-	round := t.service.GetRound()
+	round, err := t.service.GetRound()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	if err := json.NewEncoder(w).Encode(round); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

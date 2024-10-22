@@ -163,6 +163,7 @@ export class Warehouse {
 }
 
 export class Car {
+    id: number = 0;
     element: string = 'desert';
     img: string = '';
     acceleration: number = 0;
@@ -173,4 +174,15 @@ export class Car {
     fuel: number = 0;
     health: number = 0;
     modules: any = null;
+    isMain: boolean = false;
+
+    speed: number = 0;
+    fuelWasting: number = 0;
+    healthWasting: number = 0;
+}
+
+export class RaceState{
+    currentMiles: number = 0;
+    startTime: number = 0;
+    place: number = 0;
 }
