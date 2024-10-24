@@ -45,8 +45,8 @@ const getMainCar = async (): Promise<boolean> => {
         }
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
-            await auth()
             try {
+                await auth()
                 return await getMainCar()
             } catch (error) {
                 if (isAxiosError(error)) {
@@ -73,8 +73,8 @@ const getRaceState = async () => {
         }
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
-            await auth()
             try {
+                await auth()
                 await getMainCar()
             } catch (error) {
                 if (isAxiosError(error)) {
@@ -86,15 +86,19 @@ const getRaceState = async () => {
 }
 
 onBeforeMount(async () => {
+    if (carsStore.mainCar != null){
+        loaded.value = true
+    }
     getRound()
     if (!await getMainCar()) {
-        // router.push('/cars/all')
+        router.push('/cars/all')
     }
     await getRaceState()
     countMiles(carsStore.mainCar.speed)
+    loaded.value = true
     setInterval(() => {
         countMiles(carsStore.mainCar.speed)
-    }, 1000)
+    }, 500)
 })
 
 
@@ -109,8 +113,8 @@ const getRound = async () => {
         componentsStore.round = data
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
-            await auth()
             try {
+                await auth()
                 await getRound()
             } catch (error) {
                 if (isAxiosError(error)) {
@@ -170,8 +174,8 @@ const endRace = async () => {
 const miles = ref<number>(0)
 
 const countMiles = (speed: number) => {
-    let timeSpent = carsStore.raceState.startTime == 0 ? 0 : (Math.floor(new Date().getTime() / 1000) - carsStore.raceState.startTime)
-    miles.value = speed * timeSpent / 60 / 60 + carsStore.raceState.currentMiles
+    let timeSpent = carsStore.raceState.startTime == 0 ? 0 : (Math.floor(new Date().getTime() / 500) - carsStore.raceState.startTime*2)
+    miles.value = (speed * timeSpent / 60 / 60 / 2 + carsStore.raceState.currentMiles)
 }
 
 const fuel = computed(() => {
@@ -184,10 +188,15 @@ const health = computed(() => {
     return wasting > 0 ? wasting : 0
 })
 
+const loaded = ref<boolean>(false)
+
 </script>
 
 <template>
-    <section class=" pb-20 flex flex-col h-screen justify-between">
+    <div v-if="!loaded" class="w-full flex justify-center p-4">
+        <i  class="pi pi-spinner pi-spin"></i>
+    </div>
+    <section v-else class=" pb-20 flex flex-col h-screen justify-between">
         <div class="p-4">
             <div class=" shields">
                 <roundCard :round="componentsStore.round" />
@@ -301,7 +310,7 @@ const health = computed(() => {
                     </div>
                     <img src="../components/icons/rating-icon.png" alt="">
                 </div>
-                <div class="shield2 w-full">
+                <div @click="router.push('/cars/characteristics')" class="shield2 w-full">
                     <div>
                         <p class="w-max">{{ t('screens.cars.main.characteristics') }}</p>
                     </div>

@@ -27,7 +27,7 @@ const cars = ref<Car[]>([
 		"element": "desert",
 		"img": "",
 		"acceleration": 0,
-		"hendling": 0,
+		"handling": 0,
 		"brakes": 0,
 		"strength": 0,
 		"tank": 0,
@@ -44,7 +44,7 @@ const cars = ref<Car[]>([
 		"element": "city",
 		"img": "",
 		"acceleration": 0,
-		"hendling": 0,
+		"handling": 0,
 		"brakes": 0,
 		"strength": 0,
 		"tank": 0,
@@ -61,7 +61,7 @@ const cars = ref<Car[]>([
 		"element": "track",
 		"img": "",
 		"acceleration": 0,
-		"hendling": 0,
+		"handling": 0,
 		"brakes": 0,
 		"strength": 0,
 		"tank": 0,
@@ -86,8 +86,9 @@ const getCars = async () => {
         cars.value = data
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
-            await auth()
             try {
+                await auth()
+                alert('auth')
                 await getCars()
             } catch (error) {
                 if (isAxiosError(error)) {
@@ -109,8 +110,8 @@ const getRound = async () => {
         componentsStore.round = data
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
-            await auth()
             try {
+                await auth()
                 await getRound()
             } catch (error) {
                 if (isAxiosError(error)) {
@@ -132,8 +133,8 @@ const chooseCar = async () => {
         router.push('/cars')
     } catch (error) {
         if (isAxiosError(error) && error.response?.status === 401) {
-            await auth()
             try {
+                await auth()
                 await getCars()
             } catch (error) {
                 if (isAxiosError(error)) {

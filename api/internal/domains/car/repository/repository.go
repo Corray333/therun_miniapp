@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"log/slog"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/car/types"
@@ -97,10 +99,13 @@ func (r *CarRepository) GetMainCar(ctx context.Context, userID int64) (*types.Ca
 		return nil, err
 	}
 
-	err = r.db.Select(&car.Modules, "SELECT characteristic, boost, name FROM car_modules WHERE car_id = $1", car.ID)
+	err = r.db.Select(&car.Modules, "SELECT characteristic, boost, name, is_temp, user_module_id, round_id, car_module_id FROM (SELECT * FROM user_car_modules WHERE car_id = $1) NATURAL JOIN car_modules", car.ID)
 	if err != nil {
 		slog.Error("error while getting car modules: " + err.Error())
 		return nil, err
+	}
+	for i := range car.Modules {
+		car.Modules[i].Img = os.Getenv("VITE_BASE_URL") + "/static/images/cars/modules/" + strconv.Itoa(int(car.Modules[i].ModuleID)) + ".png"
 	}
 
 	return &car, nil
@@ -117,7 +122,7 @@ func (r *CarRepository) BuyCar(ctx context.Context, car *types.Car, userID int64
 		return ErrAlreadyHasCar
 	}
 
-	_, err = r.db.Exec("INSERT INTO cars (user_id, element, acceleration, hendling, brakes, strength, tank, fuel, health, is_main) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", userID, car.Element, car.Acceleration, car.Hendling, car.Brakes, car.Strength, car.Tank, car.Fuel, car.Health, car.IsMain)
+	_, err = r.db.Exec("INSERT INTO cars (user_id, element, acceleration, handling, brakes, strength, tank, fuel, health, is_main) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", userID, car.Element, car.Acceleration, car.Handling, car.Brakes, car.Strength, car.Tank, car.Fuel, car.Health, car.IsMain)
 	if err != nil {
 		slog.Error("error while choosing car: " + err.Error())
 		return err
@@ -134,7 +139,7 @@ func (r *CarRepository) GetCarByID(ctx context.Context, carID int64) (*types.Car
 		return nil, err
 	}
 
-	err = r.db.Get(&car.Modules, "SELECT characteristic, boost, name FROM car_modules WHERE car_id = $1", car.ID)
+	err = r.db.Get(&car.Modules, "SELECT characteristic, boost, name, is_temp, user_module_id, round_id FROM (SELECT * FROM user_car_modules WHERE car_id = $1) NATURAL JOIN car_modules", car.ID)
 	if err != nil {
 		slog.Error("error while getting car modules: " + err.Error())
 		return nil, err
@@ -289,9 +294,14 @@ func (r *CarRepository) EndRace(ctx context.Context, userID int64, roundID int, 
 	return nil
 }
 
-func (r *CarRepository) GetModulesOfUser(ctx context.Context, userID int64) ([]types.Module, error) {
-	var modules []types.Module
-	err := r.db.Select(&modules, "SELECT characteristic, boost, name FROM car_modules WHERE user_id = $1", userID)
+func (r *CarRepository) GetModulesOfUser(ctx context.Context, userID int64, characteristic types.Characteristic) ([]types.Module, error) {
+	modules := []types.Module{}
+	addition := ""
+	if characteristic != "" {
+		addition = " WHERE characteristic = '" + string(characteristic) + "'"
+
+	}
+	err := r.db.Select(&modules, "SELECT characteristic, boost, name, is_temp, user_module_id, round_id, car_module_id FROM (SELECT * FROM user_car_modules WHERE user_id = $1) NATURAL JOIN car_modules"+addition, userID)
 	if err != nil {
 		slog.Error("error while getting modules of user car: " + err.Error())
 		return nil, err
@@ -302,7 +312,7 @@ func (r *CarRepository) GetModulesOfUser(ctx context.Context, userID int64) ([]t
 
 func (r *CarRepository) GetModulesOfCar(ctx context.Context, carID int64) ([]types.Module, error) {
 	var modules []types.Module
-	err := r.db.Select(&modules, "SELECT characteristic, boost, name FROM car_modules WHERE car_id = $1", carID)
+	err := r.db.Select(&modules, "SELECT characteristic, boost, name, is_temp, user_module_id, round_id FROM (SELECT * FROM user_car_modules WHERE car_id = $1) NATURAL JOIN car_modules", carID)
 	if err != nil {
 		slog.Error("error while getting modules of car: " + err.Error())
 		return nil, err
@@ -364,6 +374,49 @@ func (r *CarRepository) BuyHealth(ctx context.Context, userID int64, cost int) e
 
 	if _, err := tx.Exec("UPDATE cars SET health = 10 WHERE user_id = $1 AND is_main = true", userID); err != nil {
 		slog.Error("error while buying fuel: " + err.Error())
+		return err
+	}
+
+	if isNew {
+		if err := tx.Commit(); err != nil {
+			slog.Error("failed to commit transaction: " + err.Error())
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (r *CarRepository) GetRaceComplexes(ctx context.Context, roundID int, limit, offset int) ([]types.RaceComplex, error) {
+	var raceComplexes []types.RaceComplex
+	err := r.db.Select(&raceComplexes, "SELECT * FROM (SELECT * FROM races WHERE round_id = $1 LIMIT $2 OFFSET $3) AS r JOIN cars ON r.user_id = cars.user_id WHERE is_main = true", roundID, limit, offset)
+	if err != nil {
+		slog.Error("error while getting race complexes: " + err.Error())
+		return nil, err
+	}
+
+	for i := range raceComplexes {
+		err := r.db.Select(&raceComplexes[i].Modules, "SELECT characteristic, boost, name, is_temp, user_module_id, round_id FROM (SELECT * FROM user_car_modules WHERE car_id = $1) NATURAL JOIN car_modules", raceComplexes[i].ID)
+		if err != nil {
+			slog.Error("error while getting car modules: " + err.Error())
+			return nil, err
+		}
+	}
+
+	return raceComplexes, nil
+}
+
+func (r *CarRepository) UpdateTempMiles(ctx context.Context, userID int64, roundID int, tempMiles float64) error {
+	tx, isNew, err := r.getTx(ctx)
+	if err != nil {
+		return err
+	}
+	if isNew {
+		defer tx.Rollback()
+	}
+
+	if _, err := tx.Exec("UPDATE races SET temp_miles = $1 WHERE user_id = $2 AND round_id = $3", tempMiles, userID, roundID); err != nil {
+		slog.Error("error while updating temp miles: " + err.Error())
 		return err
 	}
 

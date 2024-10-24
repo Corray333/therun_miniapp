@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"errors"
 	"log/slog"
 	"time"
@@ -72,27 +73,18 @@ func (s *RoundService) generateElement() types.Element {
 
 func (s *RoundService) RunRounds() {
 	roundID, endTime := s.countRound()
-
-	s.repo.SetRound(&types.Round{
-		ID:      roundID,
-		EndTime: endTime,
-		Element: s.generateElement(),
-	})
-
-	// retriesNumber := 0
-	// for {
-	// 	if retriesNumber > 10 {
-	// 		panic("couldn't start new round: error processing bets")
-	// 	}
-	// 	if err := s.battleService.GetNewBattles(); err != nil {
-	// 		slog.Error("error processing bets: " + err.Error())
-	// 		retriesNumber++
-	// 		continue
-	// 	}
-	// 	break
-	// }
-
-	// go s.SetUpdateInterval()
+	_, err := s.repo.GetRoundElement(roundID)
+	if err == sql.ErrNoRows {
+		if err := s.repo.SetRound(&types.Round{
+			ID:      roundID,
+			EndTime: endTime,
+			Element: s.generateElement(),
+		}); err != nil {
+			panic(err)
+		}
+	} else if err != nil {
+		panic(err)
+	}
 
 	for {
 		if time.Now().Unix() >= endTime {

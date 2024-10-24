@@ -3,8 +3,11 @@ package service
 import (
 	"context"
 	"fmt"
+	"log"
 	"math/rand"
 	"os"
+	"strconv"
+	"sync"
 	"time"
 
 	"github.com/Corray333/therun_miniapp/internal/domains/car/types"
@@ -23,10 +26,13 @@ type repository interface {
 	StartRace(ctx context.Context, userID int64, roundID int) (*types.RaceState, error)
 	EndRace(ctx context.Context, userID int64, roundID int, miles float64, fuelWasted, healthWasted float64) error
 
-	GetModulesOfUser(ctx context.Context, carID int64) ([]types.Module, error)
+	GetModulesOfUser(ctx context.Context, carID int64, characteristic types.Characteristic) ([]types.Module, error)
 
 	BuyFuel(ctx context.Context, userID int64, cost int) error
 	BuyHealth(ctx context.Context, userID int64, cost int) error
+
+	GetRaceComplexes(ctx context.Context, roundID int, limit, offset int) ([]types.RaceComplex, error)
+	UpdateTempMiles(ctx context.Context, userID int64, roundID int, tempMiles float64) error
 }
 
 type userService interface {
@@ -61,7 +67,7 @@ func (s *CarService) GenerateCar(element round_types.Element) *types.Car {
 	max := 100
 
 	car.Acceleration = r.Intn(max-min+1) + min
-	car.Hendling = r.Intn(max-min+1) + min
+	car.Handling = r.Intn(max-min+1) + min
 	car.Brakes = r.Intn(max-min+1) + min
 	car.Strength = r.Intn(max-min+1) + min
 	car.Tank = r.Intn(max-min+1) + min
@@ -76,26 +82,26 @@ func (s *CarService) СountSpeed(roundElement round_types.Element, car *types.Ca
 		return 0
 	}
 	accelerationCoef := float64(car.Acceleration) / 100 * 25
-	hendlingCoef := float64(car.Hendling) / 100 * 25
+	handlingCoef := float64(car.Handling) / 100 * 25
 	brakesCoef := float64(car.Brakes) / 100 * 25
 	strengthCoef := float64(car.Strength) / 100 * 25
 
 	for _, module := range car.Modules {
 		switch module.Characteristic {
 		case types.CharacteristicAcceleration:
-			accelerationCoef *= module.Boost
-		case types.CharacteristicHendling:
-			hendlingCoef *= module.Boost
+			accelerationCoef *= module.Boost / 100
+		case types.CharacteristicHandling:
+			handlingCoef *= module.Boost / 100
 		case types.CharacteristicBrakes:
-			brakesCoef *= module.Boost
+			brakesCoef *= module.Boost / 100
 		case types.CharacteristicStrength:
-			strengthCoef *= module.Boost
+			strengthCoef *= module.Boost / 100
 		}
 	}
 
 	elementCoef := types.ElementEffects[car.Element][roundElement]
 
-	return float64(accelerationCoef+hendlingCoef+brakesCoef+strengthCoef) * (float64(elementCoef) / 100)
+	return float64(accelerationCoef+handlingCoef+brakesCoef+strengthCoef) * (float64(elementCoef) / 100)
 }
 
 func (s *CarService) countMiles(speed float64, duration int64) float64 {
@@ -216,6 +222,8 @@ func (s *CarService) GetOwnedCars(ctx context.Context, userID int64) ([]types.Ca
 			return nil, err
 		}
 		owned[i].Speed = s.СountSpeed(round.Element, &car)
+		owned[i].FuelWasting = s.countFuelWasting(owned[i].Speed, round.Element, &car)
+		owned[i].HealthWasting = s.countHealthWasting(owned[i].Speed, round.Element, &car)
 		owned[i].Img = os.Getenv("VITE_BASE_URL") + "/static/images/cars/" + string(car.Element) + "-car.png"
 	}
 	return owned, nil
@@ -238,6 +246,28 @@ func (s *CarService) GetRace(ctx context.Context, userID int64) (race *types.Rac
 			CurrentMiles: 0,
 			Place:        0,
 		}, nil
+	}
+
+	if race.StartTime == 0 {
+		return race, nil
+	}
+	now := time.Now().Unix()
+	raceTime := now - race.StartTime
+	car, err := s.repo.GetMainCar(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	speed := s.СountSpeed(round.Element, car)
+
+	fuelWasted := s.countFuelWasted(speed, raceTime, round.Element, car)
+	healthWasted := s.countHealthWasted(speed, raceTime, round.Element, car)
+
+	fuelLeft := car.Fuel - fuelWasted
+	healthLeft := car.Health - healthWasted
+
+	if fuelLeft <= 0 || healthLeft <= 0 {
+		return s.EndRace(ctx, userID)
 	}
 
 	return race, nil
@@ -308,8 +338,17 @@ func (s *CarService) EndRace(ctx context.Context, userID int64) (race *types.Rac
 
 }
 
-func (s *CarService) GetModulesOfUser(ctx context.Context, carID int64) ([]types.Module, error) {
-	return s.repo.GetModulesOfUser(ctx, carID)
+func (s *CarService) GetModulesOfUser(ctx context.Context, carID int64, characteristic types.Characteristic) ([]types.Module, error) {
+	modules, err := s.repo.GetModulesOfUser(ctx, carID, characteristic)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range modules {
+		modules[i].Img = os.Getenv("VITE_BASE_URL") + "/static/images/cars/modules/" + strconv.Itoa(int(modules[i].ModuleID)) + ".png"
+	}
+
+	return modules, nil
 }
 
 const (
@@ -318,6 +357,15 @@ const (
 )
 
 func (s *CarService) BuyFuel(ctx context.Context, userID int64) error {
+	race, err := s.repo.GetRaceState(ctx, userID, 1)
+	if err != nil {
+		return err
+	}
+
+	if race.StartTime != 0 {
+		return fmt.Errorf("you can't buy fuel while racing")
+	}
+
 	car, err := s.repo.GetMainCar(ctx, userID)
 	if err != nil {
 		return err
@@ -333,6 +381,15 @@ func (s *CarService) BuyFuel(ctx context.Context, userID int64) error {
 }
 
 func (s *CarService) BuyHealth(ctx context.Context, userID int64) error {
+	race, err := s.repo.GetRaceState(ctx, userID, 1)
+	if err != nil {
+		return err
+	}
+
+	if race.StartTime != 0 {
+		return fmt.Errorf("you can't buy fuel while racing")
+	}
+
 	car, err := s.repo.GetMainCar(ctx, userID)
 	if err != nil {
 		return err
@@ -345,4 +402,66 @@ func (s *CarService) BuyHealth(ctx context.Context, userID int64) error {
 	}
 
 	return nil
+}
+
+func (s *CarService) CountTempMiles(ctx context.Context) error {
+	const batchSize = 5000
+	const numWorkers = 5
+
+	currentTime := time.Now().Unix()
+	round, err := s.roundService.GetRound()
+	if err != nil {
+		return err
+	}
+
+	// Channel to send batches of races to workers
+	raceChan := make(chan []types.RaceComplex, numWorkers)
+	var wg sync.WaitGroup
+
+	// Start workers
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(1)
+		go s.worker(ctx, round, currentTime, raceChan, &wg)
+	}
+
+	offset := 0
+	for {
+		// Fetch a batch of current races
+		races, err := s.repo.GetRaceComplexes(ctx, round.ID, batchSize, offset)
+		if err != nil {
+			return err
+		}
+
+		if len(races) == 0 {
+			break // No more rows to process
+		}
+
+		// Send the batch to the workers
+		raceChan <- races
+		offset += batchSize
+	}
+
+	close(raceChan)
+	wg.Wait()
+
+	return nil
+}
+
+func (s *CarService) worker(ctx context.Context, round *round_types.Round, currentTime int64, raceChan <-chan []types.RaceComplex, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	for races := range raceChan {
+		for _, race := range races {
+
+			// Calculate the temp_miles (this is a placeholder, replace with actual calculation)
+			duration := currentTime - race.StartTime
+			speed := s.СountSpeed(round.Element, &race.Car)
+			tempMiles := s.countMiles(speed, duration)
+
+			// Update the temp_miles in the races table
+			if err := s.repo.UpdateTempMiles(ctx, race.UserID, round.ID, tempMiles); err != nil {
+				log.Println(err)
+			}
+		}
+	}
 }

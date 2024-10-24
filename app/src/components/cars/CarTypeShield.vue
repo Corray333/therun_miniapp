@@ -64,7 +64,7 @@ const showModal = ref<boolean>(false)
 }
 
 .shield {
-    @apply w-full bg-half_dark rounded-2xl p-2 px-4 flex flex-col gap-2 items-center;
+    @apply w-full bg-half_dark rounded-2xl p-2 px-4 flex flex-col justify-between items-center;
 }
 
 .shield>span {

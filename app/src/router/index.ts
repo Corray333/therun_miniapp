@@ -28,7 +28,47 @@ const router = createRouter({
       path: '/cars/pit-stop',
       name: 'pit-stop',
       component: () => import('../views/cars/PitStopView.vue')
-    },    
+    },
+    {
+      path: '/cars/tuning',
+      name: 'tuning',
+      component: () => import('../views/cars/tuning/TuningInventoryView.vue')
+    },
+    {
+      path: '/cars/tuning/:characteristic',
+      name: 'tuning-characteristic',
+      component: () => import('../views/cars/tuning/CharacteristicInventoryView.vue')
+    }, 
+    {
+      path: '/cars/characteristics',
+      name: 'characteristics',
+      component: () => import('../views/cars/CharacteristicsView.vue')
+    },
+    {
+      path: '/cars/characteristics/acceleration',
+      name: 'acceleration',
+      component: () => import('../views/cars/characteristics/AccelerationView.vue')
+    },
+    {
+      path: '/cars/characteristics/handling',
+      name: 'handling',
+      component: () => import('../views/cars/characteristics/HandlingView.vue')
+    },
+    {
+      path: '/cars/characteristics/brakes',
+      name: 'brakes',
+      component: () => import('../views/cars/characteristics/BrakesView.vue')
+    },
+    {
+      path: '/cars/characteristics/strength',
+      name: 'strength',
+      component: () => import('../views/cars/characteristics/StrengthView.vue')
+    },
+    {
+      path: '/cars/characteristics/fuel',
+      name: 'fuel',
+      component: () => import('../views/cars/characteristics/FuelView.vue')
+    },
     {
       path: '/chibi/cases',
       name: 'cases',

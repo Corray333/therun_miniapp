@@ -16,26 +16,20 @@ export const auth = async ():Promise<boolean> => {
         if (tg.initDataUnsafe){
             refCode = tg.initDataUnsafe.start_param
         }
-    } else {
-        console.log("Telegram Web App SDK не доступен.");
-    }
+    } 
     if (initData == ""){
+        throw new Error("Telegram not defined")
         return false
     }
 
-    try {
-        const {data} = await axios.post(`${import.meta.env.VITE_API_URL}/users/auth`, {
-            initData: initData,
-            refCode: refCode
-        }, {
-            withCredentials: true
-        })
-        store.token = data.accessToken
-        return data.isNew
-    } catch (error) {
-        console.log(error)
-        return false
-    }
+    const {data} = await axios.post(`${import.meta.env.VITE_API_URL}/users/auth`, {
+        initData: initData,
+        refCode: refCode
+    }, {
+        withCredentials: true
+    })
+    store.token = data.accessToken
+    return data.isNew
 }
 
 export const getUser = async (uid: number) => {

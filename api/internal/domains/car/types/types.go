@@ -9,7 +9,7 @@ type Characteristic string
 const (
 	CharacteristicAcceleration Characteristic = "acceleration"
 	CharacteristicSpeed        Characteristic = "speed"
-	CharacteristicHendling     Characteristic = "hendling"
+	CharacteristicHandling     Characteristic = "handling"
 	CharacteristicBrakes       Characteristic = "brakes"
 	CharacteristicStrength     Characteristic = "strength"
 	CharacteristicFuel         Characteristic = "fuel"
@@ -23,7 +23,7 @@ type Car struct {
 	Element      round_types.Element `json:"element" db:"element"`
 	Img          string              `json:"img" db:"-"`
 	Acceleration int                 `json:"acceleration" db:"acceleration"`
-	Hendling     int                 `json:"hendling" db:"hendling"`
+	Handling     int                 `json:"handling" db:"handling"`
 	Brakes       int                 `json:"brakes" db:"brakes"`
 	Strength     int                 `json:"strength" db:"strength"`
 	Tank         int                 `json:"tank" db:"tank"`
@@ -40,14 +40,26 @@ type Car struct {
 type Module struct {
 	Characteristic Characteristic `json:"characteristic" db:"characteristic"`
 	Boost          float64        `json:"boost" db:"boost"`
-	Img            string         `json:"img" db:"-"`
 	Name           string         `json:"name" db:"name"`
+	IsTemp         bool           `json:"isTemp" db:"is_temp"`
+	RoundID        *int64         `json:"roundId" db:"round_id"`
+	CarID          *int64         `json:"carId" db:"car_id"`
+	UserModuleID   int64          `json:"userModuleId" db:"user_module_id"`
+	ModuleID       int64          `json:"moduleId" db:"car_module_id"`
+
+	Img string `json:"img" db:"-"`
 }
 
 type RaceState struct {
 	CurrentMiles float64 `json:"currentMiles" db:"miles"`
 	StartTime    int64   `json:"startTime" db:"start_time"`
 	Place        int     `json:"place" db:"place"`
+	TempMiles    float64 `json:"tempMiles" db:"temp_miles"`
+}
+
+type RaceComplex struct {
+	RaceState
+	Car
 }
 
 var ElementEffects = map[round_types.Element]map[round_types.Element]int{

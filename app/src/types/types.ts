@@ -167,13 +167,13 @@ export class Car {
     element: string = 'desert';
     img: string = '';
     acceleration: number = 0;
-    hendling: number = 0;
+    handling: number = 0;
     brakes: number = 0;
     strength: number = 0;
     tank: number = 0;
     fuel: number = 0;
     health: number = 0;
-    modules: any = null;
+    modules: Module[] | null = null;
     isMain: boolean = false;
 
     speed: number = 0;
@@ -185,4 +185,26 @@ export class RaceState{
     currentMiles: number = 0;
     startTime: number = 0;
     place: number = 0;
+}
+
+export class Module {
+    characteristic: string;
+    boost: number;
+    name: string;
+    isTemp: boolean;
+    roundId: number | null;
+    carId: number | null;
+    userModuleId: number;
+    img: string;
+
+    constructor() {
+        this.characteristic = "brakes";
+        this.boost = 110;
+        this.name = "Thing";
+        this.isTemp = false;
+        this.roundId = null;
+        this.carId = null;
+        this.userModuleId = 2;
+        this.img = "";
+    }
 }

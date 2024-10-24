@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS cars (
     user_id BIGINT NOT NULL REFERENCES users(user_id),
     element VARCHAR(255) NOT NULL,
     acceleration INTEGER NOT NULL,
-    hendling INTEGER NOT NULL,
+    handling INTEGER NOT NULL,
     brakes INTEGER NOT NULL,
     strength INTEGER NOT NULL,
     tank INTEGER NOT NULL,

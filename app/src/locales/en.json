@@ -192,6 +192,51 @@
                 "startBtn":"Start",
                 "stopBtn":"Stop",
                 "characteristics":"Characteristics"
+            },
+            "tuning":{
+                "header":"Tuning",
+                "const":"Permanent",
+                "temp":"Temporary",
+                "noTuning":"You have no tuning modules yet"
+            },
+            "characteristics":{
+                "totalScore":"Total score",
+                "tuningShop":"Tuning shop",
+                "myInventory":"My inventory",
+                "speed":{
+                    "name":"Speed",
+                    "shortHours":"h",
+                    "maxPerRound":"Max per round",
+                    "description1":"This is the main parameter. The higher the speed, the more ",
+                    "description2":" you can collect in each World Round and the higher you will be in the rankings."
+                },
+                "tuning":{
+                    "header":"Tuning",
+                    "description":"Use tuning to increase the performance of your car temprorary or permanently",
+                    "constModule":"Apply permanent tuning",
+                    "tempModule":"Apply tuning for the current World Round"
+                },
+                "acceleration":{
+                    "name":"Acceleration"
+                },
+                "handling":{
+                    "name":"Handling"
+                },
+                "brakes":{
+                    "name":"Brakes"
+                },
+                "strength":{
+                    "name":"Strength",
+                    "description":"The higher the strength, the more miles you can drive without repairing",
+                    "slot": "slot",
+                    "wasting": "Wasting",
+                    "remaining": "Remaining"
+                },
+                "fuel":{
+                    "name":"Fuel",
+                    "description":"The higher the fuel, the more miles you can drive without refueling",
+                    "remaining": "Remaining"
+                }
             }
         },
         "friens":{
